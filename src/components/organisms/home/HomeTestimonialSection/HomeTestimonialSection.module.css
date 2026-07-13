@@ -1,151 +1,260 @@
 .section {
   padding: 100px 0;
+  background-color: var(--color-bg-light);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Split Layout Card */
+.splitLayout {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
   background-color: var(--color-bg-card);
-  border-top: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+/* Left Screen - Visual Handover Photo */
+.leftScreen {
+  position: relative;
+  height: 520px;
+  width: 100%;
+}
+
+.handoverImage {
+  object-fit: cover;
+}
+
+.imageOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.8) 0%, rgba(15, 23, 42, 0.1) 100%);
+  z-index: 1;
+}
+
+.imageOverlayContent {
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+  right: 40px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.customerTrustBadge {
+  font-size: 0.725rem;
+  font-weight: 800;
+  color: #10b981;
+  background-color: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 4px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  backdrop-filter: blur(4px);
+}
+
+.overlayText {
+  color: #f1f5f9;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.5;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Right Screen - Reviews Carousel */
+.rightScreen {
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 32px;
+  min-width: 0;
 }
 
 .header {
-  text-align: center;
-  max-width: 700px;
-  margin: 0 auto 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .title {
-  font-size: 2.25rem;
+  font-size: 2rem;
   font-weight: 800;
-  line-height: 1.2;
   color: var(--color-text-main);
-  margin-top: 16px;
-  margin-bottom: 16px;
   letter-spacing: -0.02em;
+  line-height: 1.25;
 }
 
 .subtitle {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: var(--color-text-muted);
-  line-height: 1.6;
+  line-height: 1.5;
+  font-weight: 500;
 }
 
-/* Testimonials Grid */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 32px;
+.sliderContainer {
+  position: relative;
+  min-height: 180px;
 }
 
-.card {
-  background-color: var(--color-bg-light);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 32px;
-  box-shadow: var(--shadow-sm);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+/* Slide animation */
+.slideCard {
+  animation: slideFadeIn 0.4s ease-out;
   display: flex;
   flex-direction: column;
-}
-
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
-  border-color: rgba(38, 122, 236, 0.2);
+  gap: 20px;
 }
 
 .cardHeader {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 16px;
-  position: relative;
+  gap: 14px;
 }
 
 .avatar {
+  font-size: 1.75rem;
+  background-color: var(--color-bg-light);
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background-color: #ffffff;
-  border: 1.5px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
 }
 
 .meta {
   display: flex;
   flex-direction: column;
+  gap: 2px;
+  flex-grow: 1;
 }
 
 .name {
   font-size: 1rem;
   font-weight: 800;
   color: var(--color-text-main);
-  line-height: 1.2;
 }
 
 .role {
-  font-size: 0.8rem;
+  font-size: 0.775rem;
   color: var(--color-text-muted);
   font-weight: 600;
-  margin-top: 2px;
 }
 
 .segmentBadge {
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 4px 8px;
-  font-size: 0.65rem;
+  font-size: 0.725rem !important;
+  font-weight: 700 !important;
 }
 
 .stars {
   display: flex;
   gap: 2px;
-  margin-bottom: 14px;
 }
 
 .star {
-  color: #ffb800;
-  font-size: 1rem;
+  color: #fbbf24;
+  font-size: 1.1rem;
 }
 
 .quote {
-  font-size: 0.925rem;
+  font-size: 1.05rem;
+  font-weight: 600;
   color: var(--color-text-main);
   line-height: 1.6;
   font-style: italic;
-  font-weight: 500;
-  flex-grow: 1;
+  font-family: var(--font-sans);
+}
+
+/* Modern Dots indicators */
+.paginationDots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background-color: #cbd5e1;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all var(--transition-normal);
+}
+
+.dotActive {
+  background-color: var(--color-primary);
+  width: 24px;
+  box-shadow: 0 0 0 3px rgba(38, 122, 236, 0.15);
+}
+
+@keyframes slideFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* Responsiveness */
 @media (max-width: 992px) {
-  .grid {
+  .section {
+    padding: 60px 0;
+  }
+  
+  .splitLayout {
     grid-template-columns: 1fr;
-    gap: 24px;
+  }
+  
+  .leftScreen {
+    height: 320px;
+  }
+  
+  .rightScreen {
+    padding: 40px;
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 576px) {
+  .rightScreen {
+    padding: 30px 20px;
+    gap: 24px;
+  }
+  
   .title {
-    font-size: 1.75rem;
+    font-size: 1.6rem;
   }
   
-  .card {
-    padding: 24px;
-  }
-  
-  .segmentBadge {
-    position: relative;
-    top: auto;
-    right: auto;
-    margin-top: 8px;
-    align-self: flex-start;
+  .quote {
+    font-size: 0.95rem;
   }
   
   .cardHeader {
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 10px;
+  }
+  
+  .segmentBadge {
+    width: 100%;
+    text-align: center;
+    margin-top: 4px;
   }
 }

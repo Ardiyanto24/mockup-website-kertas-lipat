@@ -1,4 +1,7 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Badge } from '@/components/atoms/Badge/Badge';
 import styles from './HomeTestimonialSection.module.css';
 
@@ -52,41 +55,105 @@ const testimonials: Testimonial[] = [
 ];
 
 export function HomeTestimonialSection() {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  // Auto-slide carousel effect
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
+    }, 5000); // Slide every 5 seconds
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const activeTestimonial = testimonials[activeIndex];
+
   return (
     <section id="testimonials" className={styles.section}>
       <div className={`${styles.container} container`}>
-        <div className={styles.header}>
-          <Badge variant="success">Testimoni</Badge>
-          <h2 className={styles.title}>Dipercaya Lintas Generasi & Skala Usaha</h2>
-          <p className={styles.subtitle}>
-            Apa kata mereka yang telah mempercayakan branding, cetakan, dan merchandise kustom mereka kepada Kertas Lipat?
-          </p>
-        </div>
-
-        {/* Testimonials Masonry Grid */}
-        <div className={styles.grid}>
-          {testimonials.map((t) => (
-            <div key={t.id} className={styles.card}>
-              <div className={styles.cardHeader}>
-                <div className={styles.avatar}>{t.avatar}</div>
-                <div className={styles.meta}>
-                  <h4 className={styles.name}>{t.name}</h4>
-                  <span className={styles.role}>{t.role}</span>
-                </div>
-                <Badge variant={t.segment === 'Mahasiswa' ? 'primary' : t.segment === 'UMKM' ? 'secondary' : t.segment === 'Sekolah' ? 'purple' : 'success'} className={styles.segmentBadge}>
-                  {t.segment}
-                </Badge>
-              </div>
-
-              <div className={styles.stars}>
-                {Array.from({ length: t.rating }).map((_, i) => (
-                  <span key={i} className={styles.star}>★</span>
-                ))}
-              </div>
-
-              <p className={styles.quote}>&ldquo;{t.quote}&rdquo;</p>
+        <div className={styles.splitLayout}>
+          
+          {/* Left Screen: Customer Handover Photo */}
+          <div className={styles.leftScreen}>
+            <div className={styles.imageOverlay}></div>
+            <Image
+              src="/images/showcase_handover.png"
+              alt="Penyerahan produk Kertas Lipat ke customer"
+              fill
+              className={styles.handoverImage}
+              priority
+            />
+            <div className={styles.imageOverlayContent}>
+              <span className={styles.customerTrustBadge}>✓ Mitra Terpercaya</span>
+              <p className={styles.overlayText}>Kertas Lipat mengutamakan senyuman & kepuasan di setiap pengerjaan kustom Anda.</p>
             </div>
-          ))}
+          </div>
+
+          {/* Right Screen: Auto-sliding Reviews Carousel */}
+          <div className={styles.rightScreen}>
+            <div className={styles.header}>
+              <Badge variant="success">Testimoni</Badge>
+              <h2 className={styles.title}>Dipercaya Lintas Generasi</h2>
+              <p className={styles.subtitle}>
+                Apa kata mereka yang telah mempercayakan branding, cetakan, dan merchandise kustom kepada Kertas Lipat?
+              </p>
+            </div>
+
+            {/* Slider Container */}
+            <div className={styles.sliderContainer}>
+              <div key={activeTestimonial.id} className={styles.slideCard}>
+                
+                {/* Author Info */}
+                <div className={styles.cardHeader}>
+                  <div className={styles.avatar}>{activeTestimonial.avatar}</div>
+                  <div className={styles.meta}>
+                    <h4 className={styles.name}>{activeTestimonial.name}</h4>
+                    <span className={styles.role}>{activeTestimonial.role}</span>
+                  </div>
+                  <Badge 
+                    variant={
+                      activeTestimonial.segment === 'Mahasiswa' 
+                        ? 'primary' 
+                        : activeTestimonial.segment === 'UMKM' 
+                        ? 'secondary' 
+                        : activeTestimonial.segment === 'Sekolah' 
+                        ? 'purple' 
+                        : 'success'
+                    } 
+                    className={styles.segmentBadge}
+                  >
+                    {activeTestimonial.segment}
+                  </Badge>
+                </div>
+
+                {/* Rating Stars */}
+                <div className={styles.stars}>
+                  {Array.from({ length: activeTestimonial.rating }).map((_, i) => (
+                    <span key={i} className={styles.star}>★</span>
+                  ))}
+                </div>
+
+                {/* Testimonial Quote */}
+                <blockquote className={styles.quote}>
+                  &ldquo;{activeTestimonial.quote}&rdquo;
+                </blockquote>
+              </div>
+            </div>
+
+            {/* Dots Pagination Indicators */}
+            <div className={styles.paginationDots}>
+              {testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  className={`${styles.dot} ${index === activeIndex ? styles.dotActive : ''}`}
+                  onClick={() => setActiveIndex(index)}
+                  aria-label={`Lihat review ke-${index + 1}`}
+                />
+              ))}
+            </div>
+
+          </div>
+
         </div>
       </div>
     </section>
