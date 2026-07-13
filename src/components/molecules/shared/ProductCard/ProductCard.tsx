@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { Badge } from '@/components/atoms/Badge/Badge';
 import { Button } from '@/components/atoms/Button/Button';
 import styles from './ProductCard.module.css';
@@ -12,6 +13,7 @@ export interface ProductCardProps {
   unit: string;
   features: string[];
   description: string;
+  imageUrl?: string;
   rating?: number;
   reviewCount?: number;
 }
@@ -25,6 +27,7 @@ export function ProductCard({
   unit,
   features,
   description,
+  imageUrl,
   rating = 4.8,
   reviewCount = 12,
 }: ProductCardProps) {
@@ -61,10 +64,24 @@ export function ProductCard({
 
   return (
     <div className={styles.card}>
-      {/* Decorative top section with abstract origami shape background */}
-      <div className={`${styles.cardHeader} ${styles[scheme === 'Paket Bundling' ? 'bundleBg' : 'singleBg']}`}>
+      {/* Product Image Header with overlays */}
+      <div className={styles.cardHeader}>
+        {imageUrl ? (
+          <Image
+            src={imageUrl}
+            alt={name}
+            fill
+            className={styles.cardImage}
+          />
+        ) : (
+          <div className={`${styles.cardImagePlaceholder} ${styles[scheme === 'Paket Bundling' ? 'bundleBg' : 'singleBg']}`}></div>
+        )}
+        
+        {/* Scrim overlay for card header badges contrast */}
+        <div className={styles.headerScrim}></div>
+
         <span className={styles.sku}>{sku}</span>
-        <Badge variant={scheme === 'Paket Bundling' ? 'secondary' : 'teal'}>
+        <Badge variant={scheme === 'Paket Bundling' ? 'secondary' : 'teal'} className={styles.schemeBadge}>
           {scheme}
         </Badge>
       </div>
@@ -100,8 +117,8 @@ export function ProductCard({
             <span className={styles.priceUnit}>/{unit}</span>
           </div>
         </div>
-        <Button variant="outline" size="sm" className={styles.actionBtn}>
-          Pesan Custom
+        <Button href={`/products/${sku.toLowerCase()}`} variant="outline" size="sm" className={styles.actionBtn}>
+          Lihat Detail
         </Button>
       </div>
     </div>
