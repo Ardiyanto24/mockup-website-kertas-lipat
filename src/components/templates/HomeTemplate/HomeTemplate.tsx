@@ -10,6 +10,7 @@ import { HomeQualitySection } from '@/components/organisms/home/HomeQualitySecti
 import { HomeShowcaseSection } from '@/components/organisms/home/HomeShowcaseSection/HomeShowcaseSection';
 import { HomeTestimonialSection } from '@/components/organisms/home/HomeTestimonialSection/HomeTestimonialSection';
 import { HomeContactSection } from '@/components/organisms/home/HomeContactSection/HomeContactSection';
+import { HomeMapSection } from '@/components/organisms/home/HomeMapSection/HomeMapSection';
 import styles from './HomeTemplate.module.css';
 
 export function HomeTemplate() {
@@ -26,6 +27,7 @@ export function HomeTemplate() {
         <HomeShowcaseSection />
         <HomeTestimonialSection />
         <HomeContactSection />
+        <HomeMapSection />
       </main>
       <Footer />
     </div>
