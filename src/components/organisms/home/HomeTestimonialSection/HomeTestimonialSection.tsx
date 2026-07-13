@@ -63,6 +63,10 @@ export function HomeTestimonialSection() {
 
   const activeTestimonial = testimonials[activeIndex];
 
+  const handleImageClick = () => {
+    setActiveIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
+  };
+
   return (
     <section id="testimonials" className={styles.section}>
       <div className={`${styles.container} container`}>
@@ -77,7 +81,12 @@ export function HomeTestimonialSection() {
         <div className={styles.splitLayout}>
           
           {/* Left Screen: Active Handover Photo corresponding to the review */}
-          <div className={styles.leftScreen}>
+          <div 
+            className={styles.leftScreen}
+            onClick={handleImageClick}
+            title="Klik untuk melihat testimoni berikutnya"
+            style={{ cursor: 'pointer' }}
+          >
             <div className={styles.imageOverlay}></div>
             <div key={`img-${activeTestimonial.id}`} className={styles.imageWrapper}>
               <Image

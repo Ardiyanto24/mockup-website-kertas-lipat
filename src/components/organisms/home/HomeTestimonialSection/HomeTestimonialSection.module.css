@@ -37,6 +37,11 @@
 
 .handoverImage {
   object-fit: cover;
+  transition: transform var(--transition-normal);
+}
+
+.leftScreen:hover .handoverImage {
+  transform: scale(1.02);
 }
 
 .imageOverlay {
