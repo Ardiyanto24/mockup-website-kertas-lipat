@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { Product } from '@/data/products';
-import { ProductCard } from '@/components/molecules/shared/ProductCard/ProductCard';
+import { CatalogProductCard } from '@/components/molecules/shared/CatalogProductCard/CatalogProductCard';
 import { Button } from '@/components/atoms/Button/Button';
 import styles from './ProductsCatalogSection.module.css';
 
@@ -240,17 +240,7 @@ export function ProductsCatalogSection({
               <div className={styles.grid}>
                 {processedProducts.map((product) => (
                   <div key={product.sku} className={styles.gridItem}>
-                    <ProductCard
-                      sku={product.sku}
-                      name={product.name}
-                      category={product.category}
-                      scheme={product.scheme}
-                      basePrice={product.basePrice}
-                      unit={product.unit}
-                      features={product.features}
-                      description={product.description}
-                      imageUrl={product.imageUrl}
-                    />
+                    <CatalogProductCard product={product} />
                   </div>
                 ))}
               </div>
