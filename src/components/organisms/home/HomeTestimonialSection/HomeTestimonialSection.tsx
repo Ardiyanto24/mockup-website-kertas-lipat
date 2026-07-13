@@ -84,7 +84,7 @@ export function HomeTestimonialSection() {
                 ))}
               </div>
 
-              <p className={styles.quote}>"{t.quote}"</p>
+              <p className={styles.quote}>&ldquo;{t.quote}&rdquo;</p>
             </div>
           ))}
         </div>

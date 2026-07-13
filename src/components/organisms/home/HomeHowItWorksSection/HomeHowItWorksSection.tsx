@@ -78,7 +78,7 @@ export function HomeHowItWorksSection() {
           <div className={styles.connectorLine}></div>
 
           <div className={styles.grid}>
-            {steps.map((step, idx) => (
+            {steps.map((step) => (
               <div key={step.id} className={styles.stepCard}>
                 <div className={styles.stepNumWrapper}>
                   <div className={styles.stepNum}>{step.id}</div>

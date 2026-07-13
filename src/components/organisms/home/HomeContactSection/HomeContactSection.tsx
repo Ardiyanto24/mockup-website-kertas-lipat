@@ -112,7 +112,7 @@ Terima kasih.`;
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label htmlFor="whatsapp" className={styles.label fontClass}>Nomor WhatsApp Aktif *</label>
+                  <label htmlFor="whatsapp" className={styles.label}>Nomor WhatsApp Aktif *</label>
                   <input
                     type="tel"
                     id="whatsapp"
