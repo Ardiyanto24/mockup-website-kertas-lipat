@@ -36,6 +36,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     try {
       const storedCart = localStorage.getItem('kertas_lipat_cart');
       if (storedCart) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCartItems(JSON.parse(storedCart));
       }
     } catch (e) {
