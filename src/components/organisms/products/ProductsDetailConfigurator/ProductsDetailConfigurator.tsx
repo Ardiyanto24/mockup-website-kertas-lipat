@@ -249,17 +249,6 @@ export function ProductsDetailConfigurator({
           <span className={styles.metaLabel}>Tags:</span>
           <span className={styles.metaValue}>{category}, {scheme}</span>
         </div>
-        
-        {/* Social Share Icons */}
-        <div className={styles.shareLine}>
-          <span className={styles.metaLabel}>Bagikan:</span>
-          <div className={styles.shareIcons}>
-            <span className={styles.shareIcon} title="Share on Facebook">ⓕ</span>
-            <span className={styles.shareIcon} title="Share on X">𝕏</span>
-            <span className={styles.shareIcon} title="Share on Pinterest">℗</span>
-            <span className={styles.shareIcon} title="Share on Instagram">📷</span>
-          </div>
-        </div>
       </div>
 
       {/* Success Toast Notification */}

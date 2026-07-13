@@ -144,10 +144,10 @@
 }
 
 .pillSelected {
-  background-color: var(--color-primary) !important;
-  border-color: var(--color-primary) !important;
+  background-color: var(--color-text-main) !important;
+  border-color: var(--color-text-main) !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 10px rgba(38, 122, 236, 0.15);
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
 }
 
 /* Actions Row */
