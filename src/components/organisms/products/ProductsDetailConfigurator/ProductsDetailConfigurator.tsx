@@ -243,9 +243,9 @@ export function ProductsDetailConfigurator({
         </Button>
 
         {/* Buy Now button */}
-        <button className={styles.buyNowBtn} onClick={handleBuyNow}>
+        <Button variant="secondary" size="lg" className={styles.buyNowBtn} onClick={handleBuyNow}>
           Beli Sekarang
-        </button>
+        </Button>
 
         {/* Wishlist Heart button */}
         <button
