@@ -3,12 +3,14 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/atoms/Button/Button';
 import styles from './Navbar.module.css';
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { cartItems } = useCart();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -16,6 +18,8 @@ export function Navbar() {
 
   const isHomeActive = pathname === '/';
   const isProductsActive = pathname === '/products' || pathname?.startsWith('/products/');
+
+  const totalCartQty = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
     <header className={styles.header}>
@@ -36,23 +40,36 @@ export function Navbar() {
           </Link>
         </nav>
 
-        {/* Header Action Button */}
-        <div className={styles.headerAction}>
-          <Button href="/#contact" variant="primary" size="sm">
-            Konsultasi Gratis
-          </Button>
-        </div>
+        {/* Actions Container */}
+        <div className={styles.navActions}>
+          <Link href="/cart" className={styles.cartIconWrapper} aria-label="Buka Keranjang">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={styles.cartIcon}>
+              <circle cx="9" cy="21" r="1" />
+              <circle cx="20" cy="21" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+            </svg>
+            {totalCartQty > 0 && (
+              <span className={styles.cartBadge}>{totalCartQty}</span>
+            )}
+          </Link>
 
-        {/* Mobile Hamburger Button */}
-        <button 
-          className={`${styles.hamburger} ${isMenuOpen ? styles.hamburgerActive : ''}`} 
-          onClick={toggleMenu}
-          aria-label="Toggle Menu"
-        >
-          <span className={styles.hamburgerLine}></span>
-          <span className={styles.hamburgerLine}></span>
-          <span className={styles.hamburgerLine}></span>
-        </button>
+          <div className={styles.headerActionBtn}>
+            <Button href="/#contact" variant="primary" size="sm">
+              Konsultasi Gratis
+            </Button>
+          </div>
+
+          {/* Mobile Hamburger Button */}
+          <button 
+            className={`${styles.hamburger} ${isMenuOpen ? styles.hamburgerActive : ''}`} 
+            onClick={toggleMenu}
+            aria-label="Toggle Menu"
+          >
+            <span className={styles.hamburgerLine}></span>
+            <span className={styles.hamburgerLine}></span>
+            <span className={styles.hamburgerLine}></span>
+          </button>
+        </div>
       </div>
 
       {/* Mobile Dropdown Menu */}
