@@ -15,6 +15,7 @@ interface ProductsDetailConfiguratorProps {
   unit: string;
   minOrder: number;
   imageUrl?: string;
+  description: string;
 }
 
 export function ProductsDetailConfigurator({
@@ -26,77 +27,82 @@ export function ProductsDetailConfigurator({
   unit,
   minOrder,
   imageUrl = '/images/categories/cat_printing.png',
+  description,
 }: ProductsDetailConfiguratorProps) {
   const { addToCart } = useCart();
 
   // Configurator states
   const [quantity, setQuantity] = useState(minOrder);
   const [selectedVariant, setSelectedVariant] = useState('STANDARD');
+  const [isWishlisted, setIsWishlisted] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
+
+  // Ratings
+  const ratingScore = 4.8;
+  const reviewCount = 245;
 
   // Varian configuration mapping based on category/SKU
   const variantOptions = useMemo(() => {
     if (sku.startsWith('KL-STI-04')) {
       // Notebook custom series
       return [
-        { id: 'STANDARD', name: 'Jilid Steples Tengah (Hemat)', addPrice: 0 },
-        { id: 'LEM', name: 'Jilid Lem (Rapi)', addPrice: 1200 },
-        { id: 'SPIRAL', name: 'Jilid Spiral (Bisa Buka Rata)', addPrice: 1900 },
+        { id: 'STANDARD', name: 'Steples Tengah', addPrice: 0 },
+        { id: 'LEM', name: 'Jilid Lem', addPrice: 1200 },
+        { id: 'SPIRAL', name: 'Jilid Spiral', addPrice: 1900 },
       ];
     } else if (sku.startsWith('KL-MRC-07')) {
       // Kipas Tangan series
       return [
-        { id: 'STANDARD', name: 'Bahan Art Carton (Ringan)', addPrice: 0 },
-        { id: 'PVC', name: 'Bahan PVC Premium (Kokoh)', addPrice: 850 },
+        { id: 'STANDARD', name: 'Art Carton', addPrice: 0 },
+        { id: 'PVC', name: 'PVC Premium', addPrice: 850 },
       ];
     } else if (category.includes('Yearbook')) {
       // Yearbook series
       return [
-        { id: 'STANDARD', name: 'Laminasi Doff (Sleek)', addPrice: 0 },
-        { id: 'GLOSSY', name: 'Laminasi Glossy (Mengkilap)', addPrice: 2000 },
-        { id: 'SPOT_UV', name: 'Cover Hard + Spot UV (Mewah)', addPrice: 10000 },
+        { id: 'STANDARD', name: 'Laminasi Doff', addPrice: 0 },
+        { id: 'GLOSSY', name: 'Laminasi Glossy', addPrice: 2000 },
+        { id: 'SPOT_UV', name: 'Spot UV Cover', addPrice: 10000 },
       ];
     } else {
       // General fallbacks
       return [
-        { id: 'STANDARD', name: 'Varian Standar', addPrice: 0 },
-        { id: 'PREMIUM', name: 'Varian Premium / Laminasi', addPrice: 10000 },
+        { id: 'STANDARD', name: 'Bahan Standar', addPrice: 0 },
+        { id: 'PREMIUM', name: 'Bahan Premium', addPrice: 10000 },
       ];
     }
   }, [sku, category]);
 
   const activeVariantObj = variantOptions.find((v) => v.id === selectedVariant) || variantOptions[0];
 
-  // Dynamic pricing calculation logic (excluding design fee from PDP)
-  const pricingCalculation = useMemo(() => {
-    // 1. Calculate base unit price with variant addon
-    const unitPriceWithVariant = basePrice + activeVariantObj.addPrice;
+  // Dynamic pricing calculations (regular vs original crossed-out)
+  const pricing = useMemo(() => {
+    const rawUnitPrice = basePrice + activeVariantObj.addPrice;
+    
+    // Original price is mapped to a 25% markup to show discount
+    const originalUnitPrice = Math.round(rawUnitPrice * 1.25);
 
-    // 2. Volume Discount Tiers
+    // Volume Discount Tiers
     let discountPct = 0;
     if (scheme === 'Produk Satuan') {
       if (quantity >= 10 && quantity < 50) {
-        discountPct = 0.10; // 10% discount
+        discountPct = 0.10;
       } else if (quantity >= 50) {
-        discountPct = 0.20; // 20% discount (Grosir)
+        discountPct = 0.20;
       }
     } else {
-      // Bundles have smaller volume tiers or bulk discounts
       if (quantity >= 10) {
         discountPct = 0.10;
       }
     }
 
-    const discountedUnitPrice = Math.max(0, Math.round(unitPriceWithVariant * (1 - discountPct)));
+    const discountedUnitPrice = Math.max(0, Math.round(rawUnitPrice * (1 - discountPct)));
     const itemsTotal = discountedUnitPrice * quantity;
 
     return {
-      baseUnitPrice: basePrice,
-      variantAddon: activeVariantObj.addPrice,
-      rawUnitPrice: unitPriceWithVariant,
-      discountPercentage: Math.round(discountPct * 100),
+      unitPriceOriginal: originalUnitPrice,
       unitPriceFinal: discountedUnitPrice,
       itemsTotal: itemsTotal,
+      discountPct: Math.round(discountPct * 100),
     };
   }, [basePrice, activeVariantObj, quantity, scheme]);
 
@@ -106,6 +112,7 @@ export function ProductsDetailConfigurator({
       style: 'currency',
       currency: 'IDR',
       minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(price);
   };
 
@@ -140,94 +147,135 @@ export function ProductsDetailConfigurator({
     }, 3000);
   };
 
+  // SVG Icons
+  const StarIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="#F5A623" stroke="#F5A623">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  );
+
   return (
     <div className={styles.configurator}>
-      {/* Desktop Meta header info */}
-      <div className={styles.desktopMeta}>
-        <div className={styles.badgesRow}>
-          <Badge variant="primary">{category}</Badge>
-          <Badge variant={scheme === 'Paket Bundling' ? 'secondary' : 'teal'}>{scheme}</Badge>
-        </div>
+      {/* 1. Category Tag Pill */}
+      <span className={styles.categoryLabel}>{category}</span>
+
+      {/* 2. Title & Stock Status Badge */}
+      <div className={styles.titleRow}>
         <h1 className={styles.title}>{name}</h1>
-        <span className={styles.sku}>SKU: {sku}</span>
+        <span className={styles.stockBadge}>In Stock</span>
       </div>
 
-      <div className={styles.contentDivider}></div>
+      {/* 3. Ratings score & review count */}
+      <div className={styles.ratingRow}>
+        <div className={styles.stars}>
+          <StarIcon />
+          <StarIcon />
+          <StarIcon />
+          <StarIcon />
+          <StarIcon />
+        </div>
+        <span className={styles.ratingScore}>{ratingScore}</span>
+        <span className={styles.reviewCount}>({reviewCount} Review)</span>
+      </div>
 
-      {/* Varian Option Selector */}
+      {/* 4. Crossed-out Original vs Discount Price */}
+      <div className={styles.priceRow}>
+        <span className={styles.finalPrice}>{formatPrice(pricing.unitPriceFinal)}</span>
+        <span className={styles.originalPrice}>{formatPrice(pricing.unitPriceOriginal)}</span>
+        {pricing.discountPct > 0 && (
+          <span className={styles.discountBadge}>Hemat {pricing.discountPct}%</span>
+        )}
+      </div>
+
+      {/* 5. Description snippet */}
+      <p className={styles.briefDescription}>{description.slice(0, 160)}...</p>
+
+      <div className={styles.divider}></div>
+
+      {/* 6. Variant Pills side-by-side */}
       <div className={styles.configGroup}>
-        <h3 className={styles.groupTitle}>Pilih Varian & Finishing</h3>
-        <div className={styles.variantGrid}>
+        <h3 className={styles.groupTitle}>Pilihan Varian</h3>
+        <div className={styles.variantPills}>
           {variantOptions.map((v) => (
             <button
               key={v.id}
-              className={`${styles.variantOption} ${selectedVariant === v.id ? styles.variantSelected : ''}`}
+              className={`${styles.variantPill} ${selectedVariant === v.id ? styles.pillSelected : ''}`}
               onClick={() => setSelectedVariant(v.id)}
             >
-              <span className={styles.variantName}>{v.name}</span>
-              {v.addPrice > 0 && (
-                <span className={styles.variantAddPrice}>+{formatPrice(v.addPrice)}</span>
-              )}
+              {v.name}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Quantity Selector */}
-      <div className={styles.configGroup}>
-        <h3 className={styles.groupTitle}>Tentukan Kuantitas ({unit})</h3>
-        <div className={styles.qtyRow}>
-          <div className={styles.qtySelector}>
-            <button 
-              className={styles.qtyBtn} 
-              onClick={() => handleQtyChange(quantity - 1)}
-              disabled={quantity <= minOrder}
-            >
-              -
-            </button>
-            <span className={styles.qtyValue}>{quantity}</span>
-            <button className={styles.qtyBtn} onClick={() => handleQtyChange(quantity + 1)}>+</button>
-          </div>
-          <span className={styles.qtyMinLabel}>Minimal order: {minOrder} {unit}</span>
-        </div>
-      </div>
-
-      {/* Price breakdown and Cart addition */}
-      <div className={styles.pricingSummary}>
-        <div className={styles.priceRow}>
-          <span className={styles.priceLabel}>Harga Varian Unit</span>
-          <span className={styles.priceValue}>{formatPrice(pricingCalculation.rawUnitPrice)}</span>
-        </div>
-        
-        {pricingCalculation.discountPercentage > 0 && (
-          <div className={styles.priceRow}>
-            <span className={`${styles.priceLabel} ${styles.discountColor}`}>Diskon Volume ({pricingCalculation.discountPercentage}%)</span>
-            <span className={`${styles.priceValue} ${styles.discountColor}`}>-{formatPrice(pricingCalculation.rawUnitPrice - pricingCalculation.unitPriceFinal)}</span>
-          </div>
-        )}
-
-        <div className={styles.totalRow}>
-          <span className={styles.totalLabel}>Subtotal Barang</span>
-          <span className={styles.totalValue}>{formatPrice(pricingCalculation.itemsTotal)}</span>
+      {/* 7. Qty selector + Add to Cart + Wishlist side-by-side */}
+      <div className={styles.actionRow}>
+        {/* Qty Selector */}
+        <div className={styles.qtySelector}>
+          <button 
+            className={styles.qtyBtn} 
+            onClick={() => handleQtyChange(quantity - 1)}
+            disabled={quantity <= minOrder}
+          >
+            -
+          </button>
+          <span className={styles.qtyValue}>{quantity}</span>
+          <button className={styles.qtyBtn} onClick={() => handleQtyChange(quantity + 1)}>+</button>
         </div>
 
-        <Button variant="primary" size="lg" className={styles.checkoutBtn} onClick={handleAddToCart}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={styles.cartBtnIcon}>
-            <circle cx="9" cy="21" r="1" />
-            <circle cx="20" cy="21" r="1" />
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-          </svg>
+        {/* Add to Cart button */}
+        <Button variant="primary" size="lg" className={styles.cartBtn} onClick={handleAddToCart}>
           Tambah ke Keranjang
         </Button>
+
+        {/* Wishlist Heart button */}
+        <button
+          className={`${styles.wishlistBtn} ${isWishlisted ? styles.wishlisted : ''}`}
+          onClick={() => setIsWishlisted(!isWishlisted)}
+          aria-label="Add to wishlist"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill={isWishlisted ? '#ef4444' : 'none'} stroke={isWishlisted ? '#ef4444' : 'currentColor'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+        </button>
       </div>
 
-      {/* Success Notification Alert */}
+      <div className={styles.divider}></div>
+
+      {/* 8. SKU & Tags details */}
+      <div className={styles.metaDetails}>
+        <div className={styles.metaLine}>
+          <span className={styles.metaLabel}>SKU:</span>
+          <span className={styles.metaValue}>{sku}</span>
+        </div>
+        <div className={styles.metaLine}>
+          <span className={styles.metaLabel}>Minimal Order:</span>
+          <span className={styles.metaValue}>{minOrder} {unit}</span>
+        </div>
+        <div className={styles.metaLine}>
+          <span className={styles.metaLabel}>Tags:</span>
+          <span className={styles.metaValue}>{category}, {scheme}</span>
+        </div>
+        
+        {/* Social Share Icons */}
+        <div className={styles.shareLine}>
+          <span className={styles.metaLabel}>Bagikan:</span>
+          <div className={styles.shareIcons}>
+            <span className={styles.shareIcon} title="Share on Facebook">ⓕ</span>
+            <span className={styles.shareIcon} title="Share on X">𝕏</span>
+            <span className={styles.shareIcon} title="Share on Pinterest">℗</span>
+            <span className={styles.shareIcon} title="Share on Instagram">📷</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Success Toast Notification */}
       {showSuccessToast && (
         <div className={styles.toast}>
           <span className={styles.toastIcon}>✓</span>
           <div className={styles.toastText}>
-            <strong>Berhasil Ditambahkan!</strong>
-            <span>Produk masuk ke keranjang belanja Anda.</span>
+            <strong>Berhasil!</strong>
+            <span>Item ditambahkan ke keranjang belanja.</span>
           </div>
         </div>
       )}
