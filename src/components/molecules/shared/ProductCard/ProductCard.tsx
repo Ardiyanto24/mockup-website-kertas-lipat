@@ -62,6 +62,24 @@ export function ProductCard({
     }
   };
 
+  // Simplify category name helper for single-line badge presentation
+  const getShortCategoryName = (cat: string) => {
+    switch (cat) {
+      case 'Custom Merchandise & Apparel':
+        return 'Merchandise';
+      case 'Paket Branding UMKM':
+        return 'Branding UMKM';
+      case 'School Yearbook & Graduation Kits':
+        return 'Buku Tahunan';
+      case 'Stationery & Identity':
+        return 'Stationery';
+      case 'Stickers & Labels':
+        return 'Stickers';
+      default:
+        return cat;
+    }
+  };
+
   return (
     <div className={styles.card}>
       {/* Product Image Header with overlays */}
@@ -87,7 +105,7 @@ export function ProductCard({
 
       <div className={styles.cardBody}>
         <div className={styles.meta}>
-          <Badge variant={getBadgeVariant(category)}>{category}</Badge>
+          <Badge variant={getBadgeVariant(category)}>{getShortCategoryName(category)}</Badge>
           <div className={styles.rating}>
             <span className={styles.star}>★</span>
             <span className={styles.ratingValue}>{rating.toFixed(1)}</span>
