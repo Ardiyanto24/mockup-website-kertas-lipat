@@ -1,0 +1,134 @@
+.accordionContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.accordionItem {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.accordionHeader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color var(--transition-fast);
+}
+
+.accordionHeader:hover {
+  background-color: #fafbfc;
+}
+
+.headerText {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+}
+
+.headerIcon {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  transition: transform var(--transition-fast);
+}
+
+.accordionContent {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s cubic-bezier(0, 1, 0, 1), padding 0.3s ease;
+  padding: 0 24px;
+}
+
+.contentOpen {
+  max-height: 1000px; /* Large enough fallback limit for smooth transition */
+  padding: 8px 24px 24px;
+  border-top: 1px solid var(--color-border);
+}
+
+/* Deskripsi text styles */
+.descParagraph {
+  font-size: 0.925rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.descParagraph:last-child {
+  margin-bottom: 0;
+}
+
+/* Specs Table */
+.specsTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
+.specsRow {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.specsRow:last-child {
+  border-bottom: none;
+}
+
+.specLabel {
+  padding: 12px 16px 12px 0;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  width: 35%;
+}
+
+.specValue {
+  padding: 12px 0;
+  color: var(--color-text-main);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+/* Print Guidelines list */
+.guidelinesList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.guidelineItem {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  position: relative;
+  padding-left: 20px;
+}
+
+.guidelineItem::before {
+  content: '•';
+  position: absolute;
+  left: 4px;
+  color: var(--color-primary);
+  font-weight: 900;
+  font-size: 1.25rem;
+  top: -2px;
+}
+
+.guidelineItem code {
+  background-color: #f1f5f9;
+  color: var(--color-primary);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-family: monospace;
+  font-weight: 700;
+}
