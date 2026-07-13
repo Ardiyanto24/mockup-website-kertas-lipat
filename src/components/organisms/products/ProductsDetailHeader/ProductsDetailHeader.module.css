@@ -1,0 +1,140 @@
+.galleryContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.mobileMeta {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.badgesRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+  line-height: 1.2;
+}
+
+.sku {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+/* Main visual container */
+.mainView {
+  position: relative;
+  width: 100%;
+  height: 480px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  background-color: var(--color-bg-card);
+}
+
+.mainImage {
+  object-fit: cover;
+}
+
+.mainImagePlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholderLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 16px 28px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.placeholderIcon {
+  font-size: 2rem;
+}
+
+/* Thumbnails list */
+.thumbnails {
+  display: flex;
+  gap: 16px;
+}
+
+.thumbnailBtn {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 2px solid var(--color-border);
+  background-color: var(--color-bg-card);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.thumbnailBtn:hover {
+  transform: translateY(-2px);
+  border-color: rgba(38, 122, 236, 0.4);
+}
+
+.thumbnailSelected {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(38, 122, 236, 0.15);
+}
+
+.thumbImage {
+  object-fit: cover;
+}
+
+.thumbPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.thumbIcon {
+  font-size: 1.5rem;
+}
+
+/* Responsiveness */
+@media (max-width: 992px) {
+  .mobileMeta {
+    display: flex;
+  }
+  
+  .mainView {
+    height: 380px;
+  }
+}
+
+@media (max-width: 576px) {
+  .mainView {
+    height: 280px;
+  }
+  
+  .thumbnailBtn {
+    width: 64px;
+    height: 64px;
+  }
+}
