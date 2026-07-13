@@ -8,6 +8,7 @@ This document tracks the mapping of routes, layouts, templates, and organisms in
 | :--- | :--- | :--- | :--- |
 | `src/app/(public)/page.tsx` (`/`) | `HomeTemplate` | - `shared/public/Navbar`<br>- `home/HomeHeroSection`<br>- `home/HomeValuePropSection`<br>- `home/HomeOrderSchemeSection`<br>- `home/HomeFeaturedSection`<br>- `home/HomeHowItWorksSection`<br>- `home/HomeQualitySection`<br>- `home/HomeShowcaseSection`<br>- `home/HomeTestimonialSection`<br>- `home/HomeContactSection`<br>- `shared/public/Footer` | Homepage for Kertas Lipat with 9 sections. |
 | `src/app/(public)/products/page.tsx` (`/products`) | `ProductsTemplate` | - `shared/public/Navbar`<br>- `products/ProductsHeaderSection`<br>- `products/ProductsCatalogSection`<br>- `shared/public/Footer` | Products catalog listing page with filters and search. |
+| `src/app/(public)/products/[sku]/page.tsx` (`/products/[sku]`) | `ProductsDetailTemplate` | - `shared/public/Navbar`<br>- `products/ProductsDetailHeader`<br>- `products/ProductsDetailConfigurator`<br>- `products/ProductsDetailAccordion`<br>- `shared/public/Footer` | Dynamic product detail page with mockup gallery, pricing calculator, and WhatsApp checkout. |
 
 ## Component Directory Structure (Atomic Design)
 
@@ -16,5 +17,5 @@ This document tracks the mapping of routes, layouts, templates, and organisms in
 - `src/components/organisms/`: Large section-level components.
   - `shared/public/`: Shared global public organisms (e.g., `Navbar`, `Footer`).
   - `home/`: Organisms specific to the home route.
-  - `products/`: Organisms specific to the products catalog route.
-- `src/components/templates/`: Layout orchestrators linking pages and organisms.
+  - `products/`: Organisms specific to the products catalog & detail routes.
+- `src/components/templates/`: Layout orchestrators linking pages and organisms (e.g., `HomeTemplate`, `ProductsTemplate`, `ProductsDetailTemplate`).
