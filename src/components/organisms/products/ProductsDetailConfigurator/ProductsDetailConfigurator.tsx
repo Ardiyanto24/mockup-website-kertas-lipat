@@ -2,7 +2,6 @@
 
 import React, { useState, useMemo } from 'react';
 import { useCart } from '@/context/CartContext';
-import { Badge } from '@/components/atoms/Badge/Badge';
 import { Button } from '@/components/atoms/Button/Button';
 import styles from './ProductsDetailConfigurator.module.css';
 
@@ -147,12 +146,6 @@ export function ProductsDetailConfigurator({
     }, 3000);
   };
 
-  // SVG Icons
-  const StarIcon = () => (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="#F5A623" stroke="#F5A623">
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-    </svg>
-  );
 
   return (
     <div className={styles.configurator}>
@@ -282,3 +275,12 @@ export function ProductsDetailConfigurator({
     </div>
   );
 }
+
+function StarIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="#F5A623" stroke="#F5A623">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  );
+}
+
