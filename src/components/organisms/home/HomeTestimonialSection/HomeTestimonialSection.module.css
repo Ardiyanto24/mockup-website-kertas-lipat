@@ -1,35 +1,120 @@
 .section {
+  position: relative;
   padding: 100px 0;
-  background-color: var(--color-bg-light);
+  background: linear-gradient(135deg, #0b0f19 0%, #151d30 100%);
+  overflow: hidden;
+}
+
+/* Faint grid overlay matching reference style */
+.gridBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Glowing background overlay */
+.glowBg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(38, 122, 236, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 2;
 }
 
 .container {
+  position: relative;
+  z-index: 3;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-/* Split Layout Card */
-.splitLayout {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  background-color: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+/* Header styling */
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  margin-bottom: 60px;
 }
 
-/* Left Screen - Visual Handover Photo */
+.sectionBadge {
+  font-size: 0.775rem;
+  font-weight: 800;
+  color: #ffffff;
+  background: rgba(38, 122, 236, 0.2);
+  border: 1.5px solid rgba(38, 122, 236, 0.4);
+  padding: 6px 16px;
+  border-radius: 30px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  max-width: 600px;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+/* Two Column Layout */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 60px;
+  align-items: center;
+}
+
+/* Left Screen: Image Card styling */
 .leftScreen {
   position: relative;
-  height: 420px;
+  padding-top: 15px;
+  padding-right: 15px;
+}
+
+.decoDots {
+  position: absolute;
+  top: -15px;
+  right: -5px;
+  z-index: 1;
+  opacity: 0.6;
+}
+
+.imageCard {
+  position: relative;
+  z-index: 2;
   width: 100%;
+  height: 380px;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
 }
 
 .imageWrapper {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
   width: 100%;
   height: 100%;
   animation: slideFadeIn 0.4s ease-out;
@@ -37,143 +122,103 @@
 
 .handoverImage {
   object-fit: cover;
-  transition: transform var(--transition-normal);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.leftScreen:hover .handoverImage {
-  transform: scale(1.02);
+.imageCard:hover .handoverImage {
+  transform: scale(1.05);
 }
 
-.imageOverlay {
+/* Overlapping Trusted Badge on Bottom-Left */
+.trustedBadge {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to top, rgba(15, 23, 42, 0.8) 0%, rgba(15, 23, 42, 0.1) 100%);
-  z-index: 1;
-}
-
-.imageOverlayContent {
-  position: absolute;
-  bottom: 40px;
-  left: 40px;
-  right: 40px;
+  bottom: 20px;
+  left: 20px;
   z-index: 10;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
+  background-color: #ffffff;
+  border-radius: 30px;
+  padding: 6px 14px 6px 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  animation: slideFadeIn 0.5s ease-out;
 }
 
-.customerTrustBadge {
-  font-size: 0.725rem;
+.badgeText {
+  color: #0f172a;
+  font-size: 0.75rem;
   font-weight: 800;
-  color: #10b981;
-  background-color: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  padding: 4px 10px;
-  border-radius: 12px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  backdrop-filter: blur(4px);
+  letter-spacing: 0.04em;
 }
 
-.overlayText {
-  color: #f1f5f9;
-  font-size: 0.95rem;
-  font-weight: 600;
-  line-height: 1.5;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+.avatarGroup {
+  display: flex;
+  align-items: center;
 }
 
-/* Right Screen - Reviews Carousel */
-.rightScreen {
-  padding: 40px 50px;
+.miniAvatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #f8fafc;
+  border: 2px solid #ffffff;
+  margin-left: -6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.miniAvatarPlus {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  margin-left: -6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 800;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Right Screen: Kertas Lipat Brand Blue Quote Box Card */
+.rightCard {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #175bb8 100%);
+  border-radius: 24px;
+  padding: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px rgba(38, 122, 236, 0.15);
+  position: relative;
+  min-height: 380px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 32px;
   min-width: 0;
 }
 
-.header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 10px;
-  margin-bottom: 50px;
-}
-
-.title {
-  font-size: 2rem;
-  font-weight: 800;
-  color: var(--color-text-main);
-  letter-spacing: -0.02em;
-  line-height: 1.25;
-}
-
-.subtitle {
-  font-size: 0.9rem;
-  color: var(--color-text-muted);
-  line-height: 1.5;
-  font-weight: 500;
-}
-
-.sliderContainer {
-  position: relative;
-  min-height: 180px;
-}
-
-/* Slide animation */
 .slideCard {
   animation: slideFadeIn 0.4s ease-out;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
-.cardHeader {
+.cardTopRow {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 14px;
 }
 
-.avatar {
-  font-size: 1.75rem;
-  background-color: var(--color-bg-light);
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--color-border);
-}
-
-.meta {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex-grow: 1;
-}
-
-.name {
-  font-size: 1rem;
-  font-weight: 800;
-  color: var(--color-text-main);
-}
-
-.role {
-  font-size: 0.775rem;
-  color: var(--color-text-muted);
-  font-weight: 600;
-}
-
-.segmentBadge {
-  font-size: 0.725rem !important;
-  font-weight: 700 !important;
+.quoteIcon {
+  color: rgba(255, 255, 255, 0.25);
+  transform: scaleX(-1); /* Flips to render as standard starting double-quote */
 }
 
 .stars {
@@ -183,46 +228,72 @@
 
 .star {
   color: #fbbf24;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
 }
 
 .quote {
-  font-size: 1.15rem;
+  font-size: 1.25rem;
   font-weight: 600;
-  color: var(--color-text-main);
+  color: #ffffff;
   line-height: 1.65;
   font-style: italic;
   font-family: var(--font-sans);
-  position: relative;
-  margin-top: 15px;
-  z-index: 2;
 }
 
-.quote::before {
-  content: "“";
-  position: absolute;
-  top: -45px;
-  left: -20px;
-  font-size: 8rem;
-  font-family: "Playfair Display", Georgia, serif;
-  color: rgba(38, 122, 236, 0.08);
-  line-height: 1;
-  z-index: -1;
-  pointer-events: none;
+/* Author Profile row */
+.authorRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  padding-top: 20px;
+  margin-top: 10px;
 }
 
-/* Modern Dots indicators */
+.avatar {
+  font-size: 1.75rem;
+  background-color: rgba(255, 255, 255, 0.12);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+}
+
+.authorMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.role {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+}
+
+/* Pagination line-indicators underneath the slider */
 .paginationDots {
   display: flex;
-  gap: 8px;
+  justify-content: center;
+  gap: 10px;
   align-items: center;
+  margin-top: 50px;
 }
 
 .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 4px;
-  background-color: #cbd5e1;
+  width: 14px;
+  height: 4px;
+  border-radius: 2px;
+  background-color: rgba(255, 255, 255, 0.25);
   border: none;
   cursor: pointer;
   padding: 0;
@@ -230,9 +301,9 @@
 }
 
 .dotActive {
-  background-color: var(--color-primary);
-  width: 24px;
-  box-shadow: 0 0 0 3px rgba(38, 122, 236, 0.15);
+  background-color: #ffffff;
+  width: 32px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
 }
 
 @keyframes slideFadeIn {
@@ -249,26 +320,31 @@
 /* Responsiveness */
 @media (max-width: 992px) {
   .section {
-    padding: 60px 0;
+    padding: 80px 0;
   }
   
-  .splitLayout {
+  .layout {
     grid-template-columns: 1fr;
+    gap: 40px;
   }
   
-  .leftScreen {
+  .imageCard {
     height: 320px;
   }
   
-  .rightScreen {
-    padding: 40px;
+  .rightCard {
+    min-height: auto;
+    padding: 36px;
+  }
+  
+  .title {
+    font-size: 2rem;
   }
 }
 
 @media (max-width: 576px) {
-  .rightScreen {
-    padding: 30px 20px;
-    gap: 24px;
+  .section {
+    padding: 60px 0;
   }
   
   .title {
@@ -276,17 +352,24 @@
   }
   
   .quote {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
   }
   
-  .cardHeader {
-    flex-wrap: wrap;
-    gap: 10px;
+  .imageCard {
+    height: 260px;
   }
   
-  .segmentBadge {
-    width: 100%;
-    text-align: center;
-    margin-top: 4px;
+  .rightCard {
+    padding: 28px 24px;
+  }
+  
+  .trustedBadge {
+    padding: 4px 10px 4px 14px;
+    bottom: 12px;
+    left: 12px;
+  }
+  
+  .badgeText {
+    font-size: 0.7rem;
   }
 }
