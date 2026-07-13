@@ -1,0 +1,118 @@
+.section {
+  padding: 100px 0;
+  background-color: var(--color-bg-card);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.container {
+  width: 100%;
+}
+
+.header {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--color-text-main);
+  margin: 16px 0;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+/* Filter Controls */
+.filterContainer {
+  display: inline-flex;
+  background-color: var(--color-bg-light);
+  border: 1px solid var(--color-border);
+  padding: 6px;
+  border-radius: var(--radius-full);
+}
+
+.filterBtn {
+  background: none;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  padding: 10px 24px;
+  border-radius: var(--radius-full);
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.filterBtn:hover {
+  color: var(--color-primary);
+}
+
+.filterBtnActive {
+  background-color: var(--color-primary);
+  color: #ffffff !important;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Product Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  animation: fadeIn 0.4s ease;
+}
+
+.gridItem {
+  height: 100%;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsiveness */
+@media (max-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .title {
+    font-size: 1.75rem;
+  }
+  
+  .filterContainer {
+    width: 100%;
+    flex-direction: column;
+    border-radius: var(--radius-md);
+  }
+  
+  .filterBtn {
+    width: 100%;
+    text-align: center;
+    border-radius: var(--radius-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
