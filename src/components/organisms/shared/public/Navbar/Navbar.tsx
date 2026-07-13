@@ -2,15 +2,20 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Button } from '@/components/atoms/Button/Button';
 import styles from './Navbar.module.css';
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  const isHomeActive = pathname === '/';
+  const isProductsActive = pathname === '/products' || pathname?.startsWith('/products/');
 
   return (
     <header className={styles.header}>
@@ -23,17 +28,17 @@ export function Navbar() {
 
         {/* Desktop Menu */}
         <nav className={styles.desktopNav}>
-          <Link href="/" className={`${styles.navLink} ${styles.active}`}>Beranda</Link>
-          <Link href="#skema-order" className={styles.navLink}>Varian Produk</Link>
-          <Link href="#featured-products" className={styles.navLink}>Produk Terlaris</Link>
-          <Link href="#how-it-works" className={styles.navLink}>Cara Kerja</Link>
-          <Link href="#showcase" className={styles.navLink}>Portfolio</Link>
-          <Link href="#contact" className={styles.navLink}>Form Konsultasi</Link>
+          <Link href="/" className={`${styles.navLink} ${isHomeActive ? styles.active : ''}`}>
+            Beranda
+          </Link>
+          <Link href="/products" className={`${styles.navLink} ${isProductsActive ? styles.active : ''}`}>
+            Produk
+          </Link>
         </nav>
 
         {/* Header Action Button */}
         <div className={styles.headerAction}>
-          <Button href="#contact" variant="primary" size="sm">
+          <Button href="/#contact" variant="primary" size="sm">
             Konsultasi Gratis
           </Button>
         </div>
@@ -53,14 +58,14 @@ export function Navbar() {
       {/* Mobile Dropdown Menu */}
       <div className={`${styles.mobileMenu} ${isMenuOpen ? styles.mobileMenuOpen : ''}`}>
         <nav className={styles.mobileNav}>
-          <Link href="/" className={styles.mobileNavLink} onClick={toggleMenu}>Beranda</Link>
-          <Link href="#skema-order" className={styles.mobileNavLink} onClick={toggleMenu}>Varian Produk</Link>
-          <Link href="#featured-products" className={styles.mobileNavLink} onClick={toggleMenu}>Produk Terlaris</Link>
-          <Link href="#how-it-works" className={styles.mobileNavLink} onClick={toggleMenu}>Cara Kerja</Link>
-          <Link href="#showcase" className={styles.mobileNavLink} onClick={toggleMenu}>Portfolio</Link>
-          <Link href="#contact" className={styles.mobileNavLink} onClick={toggleMenu}>Form Konsultasi</Link>
+          <Link href="/" className={`${styles.mobileNavLink} ${isHomeActive ? styles.activeMobile : ''}`} onClick={toggleMenu}>
+            Beranda
+          </Link>
+          <Link href="/products" className={`${styles.mobileNavLink} ${isProductsActive ? styles.activeMobile : ''}`} onClick={toggleMenu}>
+            Produk
+          </Link>
           <div className={styles.mobileMenuAction}>
-            <Button href="#contact" variant="primary" size="md" onClick={toggleMenu}>
+            <Button href="/#contact" variant="primary" size="md" onClick={toggleMenu}>
               Konsultasi Gratis
             </Button>
           </div>

@@ -180,6 +180,11 @@
   color: var(--color-primary);
 }
 
+.activeMobile {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
 .mobileMenuAction {
   margin-top: 20px;
 }
