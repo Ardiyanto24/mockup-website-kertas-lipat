@@ -1,12 +1,10 @@
 .uspSection {
-  background-color: var(--color-bg-card);
-  padding: 40px 0;
-  border-bottom: 1px solid var(--color-border);
-  box-shadow: var(--shadow-sm);
+  background-color: #ffffff;
+  padding: 30px 0;
+  border-top: 1px solid rgba(226, 232, 240, 0.8);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
   position: relative;
   z-index: 5;
-  margin-top: -30px; /* Pull it slightly over the hero section for depth */
-  border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 
 .uspContainer {
@@ -16,55 +14,89 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
+  gap: 20px;
 }
 
 .uspCard {
   display: flex;
   gap: 16px;
-  align-items: flex-start;
-  padding: 16px;
+  align-items: center;
+  padding: 10px 24px 10px 10px;
+  border-right: 1px solid rgba(226, 232, 240, 0.8);
   transition: transform var(--transition-fast);
 }
 
+.uspCard:last-child {
+  border-right: none;
+}
+
 .uspCard:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .iconWrapper {
-  color: var(--color-primary);
-  background-color: var(--color-primary-light);
-  width: 56px;
-  height: 56px;
-  border-radius: var(--radius-md);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: background-color var(--transition-fast), color var(--transition-fast);
+  transition: transform var(--transition-normal), filter var(--transition-normal);
 }
 
 .uspCard:hover .iconWrapper {
-  background-color: var(--color-primary);
-  color: #ffffff;
+  transform: scale(1.08);
+  filter: brightness(0.98);
+}
+
+.icon {
+  stroke-width: 2.25px;
+}
+
+/* Color Glow Variations for illustrative look */
+.greenGlow {
+  background-color: #f0fdf4;
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.orangeGlow {
+  background-color: #fff7ed;
+  color: #f97316;
+  border: 1px solid rgba(249, 115, 22, 0.15);
+}
+
+.purpleGlow {
+  background-color: #faf5ff;
+  color: #a855f7;
+  border: 1px solid rgba(168, 85, 247, 0.15);
+}
+
+.blueGlow {
+  background-color: #f0f9ff;
+  color: #0284c7;
+  border: 1px solid rgba(2, 132, 199, 0.15);
 }
 
 .textWrapper {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .title {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 800;
   color: var(--color-text-main);
+  letter-spacing: -0.01em;
 }
 
 .description {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--color-text-muted);
-  line-height: 1.5;
+  line-height: 1.4;
+  font-weight: 500;
 }
 
 /* Responsiveness */
@@ -73,21 +105,35 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 32px;
   }
+  
+  .uspCard {
+    border-right: none;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+    padding-bottom: 24px;
+  }
+  
+  .uspCard:nth-child(2),
+  .uspCard:last-child {
+    border-bottom: none;
+  }
 }
 
 @media (max-width: 768px) {
   .uspSection {
-    margin-top: 0;
-    border-radius: 0;
-    padding: 32px 0;
+    padding: 24px 0;
   }
   
   .grid {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 16px;
   }
   
   .uspCard {
-    padding: 8px 0;
+    border-bottom: 1px dashed rgba(226, 232, 240, 0.8);
+    padding: 12px 0;
+  }
+  
+  .uspCard:last-child {
+    border-bottom: none;
   }
 }
