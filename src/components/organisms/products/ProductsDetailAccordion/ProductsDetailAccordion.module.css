@@ -5,6 +5,7 @@
 
 .tabHeaders {
   display: flex;
+  justify-content: center;
   gap: 32px;
   border-bottom: 1.5px solid var(--color-border);
   position: relative;
