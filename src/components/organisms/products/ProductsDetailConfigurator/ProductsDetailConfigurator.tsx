@@ -239,12 +239,12 @@ export function ProductsDetailConfigurator({
 
         {/* Add to Cart button */}
         <Button variant="primary" size="lg" className={styles.cartBtn} onClick={handleAddToCart}>
-          Tambah ke Keranjang
+          Add to Cart
         </Button>
 
         {/* Buy Now button */}
         <Button variant="secondary" size="lg" className={styles.buyNowBtn} onClick={handleBuyNow}>
-          Beli Sekarang
+          Buy Now
         </Button>
 
         {/* Wishlist Heart button */}
