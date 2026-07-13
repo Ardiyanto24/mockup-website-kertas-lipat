@@ -1,57 +1,445 @@
 .section {
+  position: relative;
   padding: 100px 0;
-  background-color: var(--color-bg-light);
+  background-color: #ffffff;
+  overflow: hidden;
 }
 
+/* Decorative background glows */
+.glowLeft {
+  position: absolute;
+  top: 20%;
+  left: -200px;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(38, 122, 236, 0.02) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.glowRight {
+  position: absolute;
+  bottom: 10%;
+  right: -200px;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(255, 107, 74, 0.02) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.container {
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Section Header styling */
 .header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
-  max-width: 700px;
-  margin: 0 auto 60px;
+  gap: 16px;
+  margin-bottom: 60px;
+}
+
+.sectionBadge {
+  font-size: 0.775rem !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .title {
   font-size: 2.25rem;
   font-weight: 800;
-  line-height: 1.2;
   color: var(--color-text-main);
-  margin-top: 16px;
-  margin-bottom: 16px;
   letter-spacing: -0.02em;
+  line-height: 1.25;
 }
 
 .subtitle {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: var(--color-text-muted);
+  max-width: 600px;
   line-height: 1.6;
+  font-weight: 500;
 }
 
-/* Flatlay Wrapper */
-.flatlayWrapper {
+/* Asymmetric CSS Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 240px;
+  gap: 20px;
+}
+
+.gridItem {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, 0.05);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.02);
+  cursor: pointer;
+  background-color: #f8fafc;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
+}
+
+.gridItem:hover {
+  transform: translateY(-4px);
+  border-color: rgba(38, 122, 236, 0.2);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+}
+
+/* Custom layout cell spans */
+.gridLarge {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.gridTall {
+  grid-column: span 1;
+  grid-row: span 2;
+}
+
+.gridWide {
+  grid-column: span 2;
+  grid-row: span 1;
+}
+
+.gridSquare {
+  grid-column: span 1;
+  grid-row: span 1;
+}
+
+.gridBanner {
+  grid-column: span 4;
+  grid-row: span 1;
+}
+
+/* Image behavior inside grid cells */
+.galleryImage {
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gridItem:hover .galleryImage {
+  transform: scale(1.06);
+}
+
+/* Hover Content Overlay */
+.hoverOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.05) 0%, rgba(15, 23, 42, 0.85) 100%);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px;
+  z-index: 10;
+}
+
+.gridItem:hover .hoverOverlay {
+  opacity: 1;
+}
+
+.zoomButton {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-normal), background-color var(--transition-normal);
+  transform: scale(0.9) translateY(-10px);
+  opacity: 0;
+}
+
+.gridItem:hover .zoomButton {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+
+.zoomButton:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.hoverContent {
+  transform: translateY(10px);
+  transition: transform var(--transition-normal);
+}
+
+.gridItem:hover .hoverContent {
+  transform: translateY(0);
+}
+
+.itemTitle {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+
+.itemDesc {
+  font-size: 0.825rem;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+/* Lightbox fullscreen Modal styling */
+.lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(11, 15, 25, 0.96);
+  backdrop-filter: blur(16px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn var(--transition-normal);
+}
+
+.lightboxContent {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 92%;
+  max-width: 1080px;
+  height: 90%;
+  gap: 24px;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  color: #ffffff;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 220;
+  transition: all var(--transition-fast);
+}
+
+.closeBtn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.navArrow {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 210;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.navArrow:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: scale(1.05);
+}
+
+.imageDisplayContainer {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  max-width: 100%;
+}
+
+.lightboxImageWrapper {
   position: relative;
   width: 100%;
-  max-width: 1000px;
-  margin: 0 auto;
-  border-radius: var(--radius-lg);
+  height: 60vh;
+  max-height: 520px;
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: var(--shadow-premium);
-  background-color: var(--color-bg-dark);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+  animation: slideFadeIn 0.35s ease-out;
 }
 
-.flatlayImage {
-  display: block;
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  transition: transform var(--transition-slow);
+.lightboxImage {
+  object-fit: contain;
 }
 
-.flatlayWrapper:hover .flatlayImage {
-  transform: scale(1.02);
+/* Caption panel underneath lightbox image */
+.captionPanel {
+  text-align: center;
+  max-width: 640px;
+  color: #ffffff;
+}
+
+.indexCounter {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-primary-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.lightboxTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 6px 0 8px;
+  letter-spacing: -0.01em;
+}
+
+.lightboxDesc {
+  font-size: 0.925rem;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Responsiveness */
+@media (max-width: 992px) {
+  .section {
+    padding: 80px 0;
+  }
+  
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 200px;
+  }
+  
+  .gridLarge {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+  
+  .gridTall {
+    grid-column: span 1;
+    grid-row: span 2;
+  }
+  
+  .gridWide {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+  
+  .gridSquare {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+  
+  .gridBanner {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+  
+  .closeBtn {
+    top: -60px;
+    right: 20px;
+  }
+  
+  .lightboxContent {
+    height: 85%;
+  }
+}
+
 @media (max-width: 768px) {
+  .navArrow {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .lightboxImageWrapper {
+    height: 45vh;
+  }
+}
+
+@media (max-width: 576px) {
+  .section {
+    padding: 60px 0;
+  }
+  
   .title {
-    font-size: 1.75rem;
+    font-size: 1.8rem;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: 200px;
+  }
+  
+  .gridLarge,
+  .gridTall,
+  .gridWide,
+  .gridSquare,
+  .gridBanner {
+    grid-column: span 1 !important;
+    grid-row: span 1 !important;
+  }
+  
+  .lightboxContent {
+    width: 95%;
+  }
+  
+  .navArrow {
+    display: none; /* Hide arrow navigation buttons on phone screens, swipe/drag can be used or dots indicator */
+  }
+  
+  .closeBtn {
+    top: -50px;
+    right: 10px;
+  }
+  
+  .lightboxTitle {
+    font-size: 1.25rem;
+  }
+  
+  .lightboxDesc {
+    font-size: 0.85rem;
   }
 }
