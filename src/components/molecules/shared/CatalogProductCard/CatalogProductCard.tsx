@@ -12,6 +12,21 @@ interface CatalogProductCardProps {
   product: Product;
 }
 
+// SVG Icons declared outside the component to pass react-hooks/static-components eslint checks
+const StarIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="#F5A623" stroke="#F5A623" className={styles.starIcon}>
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+  </svg>
+);
+
+const FallbackIcon = () => (
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className={styles.fallbackIcon}>
+    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+    <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+    <line x1="12" y1="22.08" x2="12" y2="12" />
+  </svg>
+);
+
 export function CatalogProductCard({ product }: CatalogProductCardProps) {
   // Formatting currency to Rupiah
   const formatRupiah = (value: number) => {
@@ -38,21 +53,6 @@ export function CatalogProductCard({ product }: CatalogProductCardProps) {
   // Set badges based on SKU / Category
   const isBestSeller = ['KL-MRC-06', 'KL-MRC-02', 'KL-BDL-BR-01', 'KL-BDL-YB-02'].includes(product.sku);
   const hasFreeShipping = ['KL-PRT-01', 'KL-STI-01', 'KL-STK-02', 'KL-BDL-YB-03'].includes(product.sku);
-
-  // SVG Icons
-  const StarIcon = () => (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="#F5A623" stroke="#F5A623" className={styles.starIcon}>
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-    </svg>
-  );
-
-  const FallbackIcon = () => (
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className={styles.fallbackIcon}>
-      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-      <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-      <line x1="12" y1="22.08" x2="12" y2="12" />
-    </svg>
-  );
 
   return (
     <div className={styles.card}>
