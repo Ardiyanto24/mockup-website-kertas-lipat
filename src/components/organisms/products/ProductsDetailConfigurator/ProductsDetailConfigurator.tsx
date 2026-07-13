@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { useCart } from '@/context/CartContext';
 import { Badge } from '@/components/atoms/Badge/Badge';
 import { Button } from '@/components/atoms/Button/Button';
 import styles from './ProductsDetailConfigurator.module.css';
@@ -13,6 +14,7 @@ interface ProductsDetailConfiguratorProps {
   basePrice: number;
   unit: string;
   minOrder: number;
+  imageUrl?: string;
 }
 
 export function ProductsDetailConfigurator({
@@ -23,15 +25,14 @@ export function ProductsDetailConfigurator({
   basePrice,
   unit,
   minOrder,
+  imageUrl = '/images/categories/cat_printing.png',
 }: ProductsDetailConfiguratorProps) {
+  const { addToCart } = useCart();
+
   // Configurator states
   const [quantity, setQuantity] = useState(minOrder);
   const [selectedVariant, setSelectedVariant] = useState('STANDARD');
-  const [needDesignService, setNeedDesignService] = useState(false);
-  
-  // File upload state
-  const [uploadedFile, setUploadedFile] = useState<{ name: string; size: string } | null>(null);
-  const [dragActive, setDragActive] = useState(false);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
 
   // Varian configuration mapping based on category/SKU
   const variantOptions = useMemo(() => {
@@ -66,7 +67,7 @@ export function ProductsDetailConfigurator({
 
   const activeVariantObj = variantOptions.find((v) => v.id === selectedVariant) || variantOptions[0];
 
-  // Dynamic pricing calculation logic
+  // Dynamic pricing calculation logic (excluding design fee from PDP)
   const pricingCalculation = useMemo(() => {
     // 1. Calculate base unit price with variant addon
     const unitPriceWithVariant = basePrice + activeVariantObj.addPrice;
@@ -89,11 +90,6 @@ export function ProductsDetailConfigurator({
     const discountedUnitPrice = Math.max(0, Math.round(unitPriceWithVariant * (1 - discountPct)));
     const itemsTotal = discountedUnitPrice * quantity;
 
-    // 3. Design fee addition
-    const designFee = needDesignService ? (scheme === 'Paket Bundling' ? 150000 : 50000) : 0;
-    
-    const finalTotal = itemsTotal + designFee;
-
     return {
       baseUnitPrice: basePrice,
       variantAddon: activeVariantObj.addPrice,
@@ -101,10 +97,8 @@ export function ProductsDetailConfigurator({
       discountPercentage: Math.round(discountPct * 100),
       unitPriceFinal: discountedUnitPrice,
       itemsTotal: itemsTotal,
-      designServiceFee: designFee,
-      totalPrice: finalTotal,
     };
-  }, [basePrice, activeVariantObj, quantity, scheme, needDesignService]);
+  }, [basePrice, activeVariantObj, quantity, scheme]);
 
   // Formatter helper
   const formatPrice = (price: number) => {
@@ -122,64 +116,28 @@ export function ProductsDetailConfigurator({
     }
   };
 
-  // Drag and drop handlers
-  const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
-  };
+  // Add to cart handler
+  const handleAddToCart = () => {
+    addToCart({
+      sku,
+      name,
+      category,
+      scheme,
+      basePrice,
+      unit,
+      minOrder,
+      imageUrl,
+      quantity,
+      variantId: selectedVariant,
+      variantName: activeVariantObj.name,
+      variantAddPrice: activeVariantObj.addPrice,
+    });
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const file = e.dataTransfer.files[0];
-      setUploadedFile({
-        name: file.name,
-        size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
-      });
-    }
-  };
-
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setUploadedFile({
-        name: file.name,
-        size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
-      });
-    }
-  };
-
-  // WhatsApp click checkout handler
-  const handleCheckout = () => {
-    const waBase = 'https://wa.me/6281234567890';
-    const text = `Halo Kertas Lipat! Saya ingin memesan produk kustom berikut:
-
-*Detail Pesanan:*
-- *Produk:* ${name} (${sku})
-- *Skema:* ${scheme}
-- *Kuantitas:* ${quantity} ${unit}
-- *Pilihan Varian:* ${activeVariantObj.name}
-- *Jasa Desain:* ${needDesignService ? 'Ya (Butuh Bantuan Desain)' : 'Tidak (Sudah Ada File)'}
-- *File Desain:* ${uploadedFile ? `${uploadedFile.name} (${uploadedFile.size})` : '-'}
-
-*Kalkulasi Harga:*
-- *Harga Unit:* ${formatPrice(pricingCalculation.unitPriceFinal)} / ${unit} ${pricingCalculation.discountPercentage > 0 ? `(Diskon ${pricingCalculation.discountPercentage}%)` : ''}
-- *Total Barang:* ${formatPrice(pricingCalculation.itemsTotal)}
-- *Biaya Desain:* ${formatPrice(pricingCalculation.designServiceFee)}
-- *Total Pembayaran:* *${formatPrice(pricingCalculation.totalPrice)}*
-
-Mohon bantuannya untuk memproses pesanan saya. Terima kasih.`;
-
-    const encodedText = encodeURIComponent(text);
-    window.open(`${waBase}?text=${encodedText}`, '_blank');
+    // Show temporary success banner
+    setShowSuccessToast(true);
+    setTimeout(() => {
+      setShowSuccessToast(false);
+    }, 3000);
   };
 
   return (
@@ -234,64 +192,7 @@ Mohon bantuannya untuk memproses pesanan saya. Terima kasih.`;
         </div>
       </div>
 
-      {/* Design Assistance Service */}
-      <div className={styles.configGroup}>
-        <label className={styles.designLabel}>
-          <input
-            type="checkbox"
-            className={styles.designCheckbox}
-            checked={needDesignService}
-            onChange={() => setNeedDesignService(!needDesignService)}
-          />
-          <div className={styles.designText}>
-            <span className={styles.designTitle}>Butuh Jasa Desain Kertas Lipat</span>
-            <span className={styles.designDesc}>
-              Belum punya file desain siap cetak? Kami bantu buatkan tata letak desain estetik. Tambahan biaya flat: {formatPrice(scheme === 'Paket Bundling' ? 150000 : 50000)}
-            </span>
-          </div>
-        </label>
-      </div>
-
-      {/* File Uploader drag and drop */}
-      <div className={styles.configGroup}>
-        <h3 className={styles.groupTitle}>Kirim Aset / File Desain</h3>
-        
-        {!uploadedFile ? (
-          <div
-            className={`${styles.dropzone} ${dragActive ? styles.dropzoneActive : ''}`}
-            onDragEnter={handleDrag}
-            onDragLeave={handleDrag}
-            onDragOver={handleDrag}
-            onDrop={handleDrop}
-          >
-            <input
-              type="file"
-              id="fileUpload"
-              className={styles.fileInput}
-              accept=".pdf,.zip,.png,.jpg,.jpeg,.ai"
-              onChange={handleFileInput}
-            />
-            <label htmlFor="fileUpload" className={styles.dropzoneLabel}>
-              <span className={styles.uploadIcon}>📁</span>
-              <span className={styles.uploadTextPrimary}>Seret & lepas file Anda di sini</span>
-              <span className={styles.uploadTextSecondary}>Atau klik untuk pilih file (PDF, ZIP, PNG, AI, maks 20MB)</span>
-            </label>
-          </div>
-        ) : (
-          <div className={styles.uploadedFileCard}>
-            <span className={styles.fileIcon}>📄</span>
-            <div className={styles.fileMeta}>
-              <span className={styles.fileName}>{uploadedFile.name}</span>
-              <span className={styles.fileSize}>{uploadedFile.size}</span>
-            </div>
-            <button className={styles.removeFileBtn} onClick={() => setUploadedFile(null)}>
-              ✕
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Price breakdown and checkout */}
+      {/* Price breakdown and Cart addition */}
       <div className={styles.pricingSummary}>
         <div className={styles.priceRow}>
           <span className={styles.priceLabel}>Harga Varian Unit</span>
@@ -305,25 +206,31 @@ Mohon bantuannya untuk memproses pesanan saya. Terima kasih.`;
           </div>
         )}
 
-        {needDesignService && (
-          <div className={styles.priceRow}>
-            <span className={styles.priceLabel}>Biaya Layanan Desain</span>
-            <span className={styles.priceValue}>{formatPrice(pricingCalculation.designServiceFee)}</span>
-          </div>
-        )}
-
         <div className={styles.totalRow}>
-          <span className={styles.totalLabel}>Total Pembayaran</span>
-          <span className={styles.totalValue}>{formatPrice(pricingCalculation.totalPrice)}</span>
+          <span className={styles.totalLabel}>Subtotal Barang</span>
+          <span className={styles.totalValue}>{formatPrice(pricingCalculation.itemsTotal)}</span>
         </div>
 
-        <Button variant="secondary" size="lg" className={styles.checkoutBtn} onClick={handleCheckout}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className={styles.checkoutWaIcon}>
-            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.733-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.625 1.451 5.403.002 9.803-4.381 9.805-9.768.002-2.607-1.012-5.059-2.859-6.908-1.847-1.848-4.301-2.865-6.913-2.867-5.407 0-9.809 4.385-9.811 9.773-.001 1.57.425 3.102 1.232 4.478l-.992 3.626 3.731-.977zm11.387-5.464c-.3-.149-1.774-.874-2.047-.973-.272-.1-.471-.149-.669.149-.198.3-.769.973-.943 1.171-.173.198-.347.223-.647.074-.3-.149-1.27-.469-2.42-1.494-.894-.797-1.498-1.782-1.673-2.08-.173-.3-.018-.462.13-.61.135-.133.3-.347.45-.52.149-.174.198-.298.298-.497.1-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.568-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.774-.726 2.022-1.429.247-.695.247-1.29.173-1.429-.073-.133-.272-.21-.572-.359z"/>
+        <Button variant="primary" size="lg" className={styles.checkoutBtn} onClick={handleAddToCart}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={styles.cartBtnIcon}>
+            <circle cx="9" cy="21" r="1" />
+            <circle cx="20" cy="21" r="1" />
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
           </svg>
-          Pesan via WhatsApp Admin
+          Tambah ke Keranjang
         </Button>
       </div>
+
+      {/* Success Notification Alert */}
+      {showSuccessToast && (
+        <div className={styles.toast}>
+          <span className={styles.toastIcon}>✓</span>
+          <div className={styles.toastText}>
+            <strong>Berhasil Ditambahkan!</strong>
+            <span>Produk masuk ke keranjang belanja Anda.</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
