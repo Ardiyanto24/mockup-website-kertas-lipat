@@ -22,7 +22,7 @@
 /* Left Screen - Visual Handover Photo */
 .leftScreen {
   position: relative;
-  height: 520px;
+  height: 420px;
   width: 100%;
 }
 
@@ -84,7 +84,7 @@
 
 /* Right Screen - Reviews Carousel */
 .rightScreen {
-  padding: 60px;
+  padding: 40px 50px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -182,12 +182,28 @@
 }
 
 .quote {
-  font-size: 1.05rem;
+  font-size: 1.15rem;
   font-weight: 600;
   color: var(--color-text-main);
-  line-height: 1.6;
+  line-height: 1.65;
   font-style: italic;
   font-family: var(--font-sans);
+  position: relative;
+  margin-top: 15px;
+  z-index: 2;
+}
+
+.quote::before {
+  content: "“";
+  position: absolute;
+  top: -45px;
+  left: -20px;
+  font-size: 8rem;
+  font-family: "Playfair Display", Georgia, serif;
+  color: rgba(38, 122, 236, 0.08);
+  line-height: 1;
+  z-index: -1;
+  pointer-events: none;
 }
 
 /* Modern Dots indicators */
