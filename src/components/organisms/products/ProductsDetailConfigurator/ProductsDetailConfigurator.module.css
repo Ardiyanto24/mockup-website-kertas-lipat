@@ -1,0 +1,368 @@
+.configurator {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.desktopMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.badgesRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.sku {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.contentDivider {
+  height: 1px;
+  background-color: var(--color-border);
+  width: 100%;
+}
+
+.configGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.groupTitle {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Variant selectors */
+.variantGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.variantOption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-border);
+  background-color: var(--color-bg-card);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: var(--font-sans);
+  text-align: left;
+}
+
+.variantOption:hover {
+  border-color: rgba(38, 122, 236, 0.4);
+  background-color: rgba(248, 250, 252, 0.5);
+}
+
+.variantSelected {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-light);
+  box-shadow: 0 0 0 3px rgba(38, 122, 236, 0.1);
+}
+
+.variantName {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.variantAddPrice {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+/* Qty row */
+.qtyRow {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.qtySelector {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--color-bg-card);
+}
+
+.qtyBtn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.qtyBtn:hover:not(:disabled) {
+  background-color: #f1f5f9;
+}
+
+.qtyBtn:disabled {
+  color: #cbd5e1;
+  cursor: not-allowed;
+}
+
+.qtyValue {
+  width: 50px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--color-text-main);
+}
+
+.qtyMinLabel {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+/* Design Service Assist Checkbox */
+.designLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background-color: #fcfdfe;
+  border: 1px dashed var(--color-border);
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.designLabel:hover {
+  background-color: rgba(38, 122, 236, 0.02);
+  border-color: rgba(38, 122, 236, 0.2);
+}
+
+.designCheckbox {
+  margin-top: 4px;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.designText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.designTitle {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+}
+
+.designDesc {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+/* Dropzone styling */
+.dropzone {
+  position: relative;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 28px 20px;
+  text-align: center;
+  background-color: #fafbfc;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+  cursor: pointer;
+}
+
+.dropzoneActive,
+.dropzone:hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-light);
+}
+
+.fileInput {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.dropzoneLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.uploadIcon {
+  font-size: 2.25rem;
+}
+
+.uploadTextPrimary {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.uploadTextSecondary {
+  font-size: 0.775rem;
+  color: var(--color-text-muted);
+}
+
+/* Uploaded Card */
+.uploadedFileCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background-color: var(--color-primary-light);
+  border: 1px solid rgba(38, 122, 236, 0.2);
+  border-radius: var(--radius-md);
+}
+
+.fileIcon {
+  font-size: 1.75rem;
+}
+
+.fileMeta {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 2px;
+  min-width: 0;
+}
+
+.fileName {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fileSize {
+  font-size: 0.775rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.removeFileBtn {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 6px;
+}
+
+.removeFileBtn:hover {
+  color: #ef4444;
+}
+
+/* Pricing Breakdown Area */
+.pricingSummary {
+  background-color: #f8fafc;
+  border-radius: var(--radius-md);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border: 1px solid var(--color-border);
+}
+
+.priceRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.discountColor {
+  color: #10b981;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--color-border);
+  padding-top: 16px;
+  margin-top: 4px;
+}
+
+.totalLabel {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+}
+
+.totalValue {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--color-primary);
+}
+
+.checkoutBtn {
+  width: 100%;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.checkoutWaIcon {
+  margin-right: 4px;
+}
+
+/* Responsiveness */
+@media (max-width: 992px) {
+  .desktopMeta {
+    display: none;
+  }
+  
+  .configurator {
+    padding: 30px;
+  }
+}
