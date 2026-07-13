@@ -80,7 +80,6 @@ export function ProductCard({
         {/* Scrim overlay for card header badges contrast */}
         <div className={styles.headerScrim}></div>
 
-        <span className={styles.sku}>{sku}</span>
         <Badge variant={scheme === 'Paket Bundling' ? 'secondary' : 'teal'} className={styles.schemeBadge}>
           {scheme}
         </Badge>
@@ -117,7 +116,7 @@ export function ProductCard({
             <span className={styles.priceUnit}>/{unit}</span>
           </div>
         </div>
-        <Button href={`/products/${sku.toLowerCase()}`} variant="outline" size="sm" className={styles.actionBtn}>
+        <Button href={`/products/${sku.toLowerCase()}`} variant="outline" size="md" className={styles.actionBtn}>
           Lihat Detail
         </Button>
       </div>
