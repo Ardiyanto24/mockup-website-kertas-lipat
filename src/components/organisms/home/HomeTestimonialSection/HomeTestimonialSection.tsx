@@ -12,7 +12,8 @@ interface Testimonial {
   avatar: string;
   quote: string;
   rating: number;
-  segment: 'Mahasiswa' | 'UMKM' | 'Sekolah' | 'Korporat';
+  segment: 'Mahasiswa' | 'UMKM' | 'Sekolah';
+  imageUrl: string;
 }
 
 const testimonials: Testimonial[] = [
@@ -24,6 +25,7 @@ const testimonials: Testimonial[] = [
     quote: 'Cari vendor kaos panitia yang ramah budget & mau terima order 25 pcs itu susah. Untung nemu Kertas Lipat! Sablon DTF nya lentur banget, ga pecah pas ditarik. Kipas promosi dan ID Card nya juga rapi. Event sukses besar!',
     rating: 5,
     segment: 'Mahasiswa',
+    imageUrl: '/images/showcase_handover.png',
   },
   {
     id: 2,
@@ -33,6 +35,7 @@ const testimonials: Testimonial[] = [
     quote: 'Paket Branding UMKM Starter sangat praktis! Saya dibantu dibuatkan desain stiker botol gratis oleh tim desainer. Bahan stiker vinyl-nya benar-benar tahan air, tidak terkelupas biarpun disimpan di kulkas. Usaha sambal saya jadi keliatan premium!',
     rating: 5,
     segment: 'UMKM',
+    imageUrl: '/images/showcase_handover_umkm.png',
   },
   {
     id: 3,
@@ -42,15 +45,7 @@ const testimonials: Testimonial[] = [
     quote: 'Kami memesan 150 Paket Buku Tahunan Sekolah Standard. Finishing Spot UV pada cover terlihat mewah dan rapi. Pihak sales sangat kooperatif menyusun penawaran harga formal untuk birokrasi sekolah kami. Sangat terpercaya.',
     rating: 5,
     segment: 'Sekolah',
-  },
-  {
-    id: 4,
-    name: 'Citra (25 th)',
-    role: 'HR Specialist Tech Startup',
-    avatar: '👩‍💼',
-    quote: 'Cetak seminar kit (notebook spiral custom, goodie bag, dan pen berlogo) sebanyak 100 set selesai hanya dalam 3 hari! Hasil cetak warna logonya presisi sesuai brand guidelines perusahaan. Delivery aman dengan proteksi tebal.',
-    rating: 5,
-    segment: 'Korporat',
+    imageUrl: '/images/showcase_handover_sekolah.png',
   },
 ];
 
@@ -73,19 +68,21 @@ export function HomeTestimonialSection() {
       <div className={`${styles.container} container`}>
         <div className={styles.splitLayout}>
           
-          {/* Left Screen: Customer Handover Photo */}
+          {/* Left Screen: Active Handover Photo corresponding to the review */}
           <div className={styles.leftScreen}>
             <div className={styles.imageOverlay}></div>
-            <Image
-              src="/images/showcase_handover.png"
-              alt="Penyerahan produk Kertas Lipat ke customer"
-              fill
-              className={styles.handoverImage}
-              priority
-            />
+            <div key={`img-${activeTestimonial.id}`} className={styles.imageWrapper}>
+              <Image
+                src={activeTestimonial.imageUrl}
+                alt={`Penyerahan produk Kertas Lipat ke ${activeTestimonial.name}`}
+                fill
+                className={styles.handoverImage}
+                priority
+              />
+            </div>
             <div className={styles.imageOverlayContent}>
               <span className={styles.customerTrustBadge}>✓ Mitra Terpercaya</span>
-              <p className={styles.overlayText}>Kertas Lipat mengutamakan senyuman & kepuasan di setiap pengerjaan kustom Anda.</p>
+              <p className={styles.overlayText}>Kertas Lipat mengutamakan kepuasan di setiap pengerjaan kustom Anda.</p>
             </div>
           </div>
 
@@ -101,7 +98,7 @@ export function HomeTestimonialSection() {
 
             {/* Slider Container */}
             <div className={styles.sliderContainer}>
-              <div key={activeTestimonial.id} className={styles.slideCard}>
+              <div key={`review-${activeTestimonial.id}`} className={styles.slideCard}>
                 
                 {/* Author Info */}
                 <div className={styles.cardHeader}>
@@ -116,9 +113,7 @@ export function HomeTestimonialSection() {
                         ? 'primary' 
                         : activeTestimonial.segment === 'UMKM' 
                         ? 'secondary' 
-                        : activeTestimonial.segment === 'Sekolah' 
-                        ? 'purple' 
-                        : 'success'
+                        : 'purple'
                     } 
                     className={styles.segmentBadge}
                   >
