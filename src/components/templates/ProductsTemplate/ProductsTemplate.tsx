@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Product } from '@/src/data/products';
+import { Product } from '@/data/products';
 import { Navbar } from '@/components/organisms/shared/public/Navbar/Navbar';
 import { Footer } from '@/components/organisms/shared/public/Footer/Footer';
 import { ProductsHeaderSection } from '@/components/organisms/products/ProductsHeaderSection/ProductsHeaderSection';

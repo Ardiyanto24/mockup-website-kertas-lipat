@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { products } from '@/src/data/products';
+import { products } from '@/data/products';
 import { ProductsTemplate } from '@/components/templates/ProductsTemplate/ProductsTemplate';
 
 export const metadata: Metadata = {

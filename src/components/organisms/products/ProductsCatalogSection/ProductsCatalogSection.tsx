@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Product } from '@/src/data/products';
+import { Product } from '@/data/products';
 import { ProductCard } from '@/components/molecules/shared/ProductCard/ProductCard';
 import { Button } from '@/components/atoms/Button/Button';
 import styles from './ProductsCatalogSection.module.css';
