@@ -9,31 +9,115 @@
 
 .main {
   flex-grow: 1;
-  padding: 120px 0 80px; /* Space for fixed navbar */
+  padding: 120px 0 80px; /* Navbar padding space */
 }
 
+/* Detail Columns Layout */
 .layout {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-columns: 1fr 1fr;
   gap: 50px;
   align-items: flex-start;
 }
 
 .leftCol {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.accordionSpacing {
-  margin-top: 30px;
   width: 100%;
 }
 
 .rightCol {
-  position: sticky;
-  top: 100px;
   width: 100%;
+}
+
+.tabsWrapper {
+  margin-top: 60px;
+  border-top: 1px solid var(--color-border);
+  padding-top: 20px;
+}
+
+/* Related Products Section */
+.relatedSection {
+  margin-top: 80px;
+  border-top: 1px solid var(--color-border);
+  padding-top: 60px;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sectionSubtitle {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--color-secondary-orange);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sectionTitle {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+  letter-spacing: -0.02em;
+}
+
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+/* Highlights Features Badges Row */
+.highlightsRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  margin-top: 80px;
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.02);
+}
+
+.highlightBadge {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.highlightIcon {
+  font-size: 2.5rem;
+  background-color: var(--color-primary-light);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.highlightText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.highlightTitle {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+  letter-spacing: -0.01em;
+}
+
+.highlightDesc {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  font-weight: 600;
 }
 
 /* Responsiveness */
@@ -44,15 +128,33 @@
   
   .layout {
     grid-template-columns: 1fr;
-    gap: 30px;
+    gap: 40px;
   }
   
-  .rightCol {
-    position: static;
+  .relatedGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
   }
   
-  .accordionSpacing {
-    margin-top: 24px;
-    order: 3; /* Render accordion after the configurator on mobile views */
+  .highlightsRow {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 30px;
+  }
+  
+  .sectionTitle {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .relatedGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .highlightBadge {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
   }
 }

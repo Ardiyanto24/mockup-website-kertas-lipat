@@ -1,10 +1,13 @@
-import React from 'react';
-import { Product } from '@/data/products';
+'use client';
+
+import React, { useMemo } from 'react';
+import { Product, products } from '@/data/products';
 import { Navbar } from '@/components/organisms/shared/public/Navbar/Navbar';
 import { Footer } from '@/components/organisms/shared/public/Footer/Footer';
 import { ProductsDetailHeader } from '@/components/organisms/products/ProductsDetailHeader/ProductsDetailHeader';
 import { ProductsDetailConfigurator } from '@/components/organisms/products/ProductsDetailConfigurator/ProductsDetailConfigurator';
 import { ProductsDetailAccordion } from '@/components/organisms/products/ProductsDetailAccordion/ProductsDetailAccordion';
+import { CatalogProductCard } from '@/components/molecules/shared/CatalogProductCard/CatalogProductCard';
 import styles from './ProductsDetailTemplate.module.css';
 
 interface ProductsDetailTemplateProps {
@@ -12,13 +15,26 @@ interface ProductsDetailTemplateProps {
 }
 
 export function ProductsDetailTemplate({ product }: ProductsDetailTemplateProps) {
+  // Find 3 related products in same category, falling back to other products if needed
+  const relatedProducts = useMemo(() => {
+    let list = products.filter((p) => p.category === product.category && p.sku !== product.sku);
+    if (list.length < 3) {
+      const additional = products.filter(
+        (p) => p.sku !== product.sku && !list.some((item) => item.sku === p.sku)
+      );
+      list = [...list, ...additional];
+    }
+    return list.slice(0, 3);
+  }, [product]);
+
   return (
     <div className={styles.wrapper}>
       <Navbar />
       
       <main className={`${styles.main} container`}>
+        {/* Main Grid detail layout */}
         <div className={styles.layout}>
-          {/* Left Column: Visual Gallery & Specs Accordion */}
+          {/* Left Column: Visual Gallery */}
           <div className={styles.leftCol}>
             <ProductsDetailHeader
               name={product.name}
@@ -27,16 +43,9 @@ export function ProductsDetailTemplate({ product }: ProductsDetailTemplateProps)
               scheme={product.scheme}
               imageUrl={product.imageUrl}
             />
-            <div className={styles.accordionSpacing}>
-              <ProductsDetailAccordion
-                description={product.description}
-                category={product.category}
-                sku={product.sku}
-              />
-            </div>
           </div>
 
-          {/* Right Column: Pricing Configurator */}
+          {/* Right Column: Pricing & Varian Selector */}
           <div className={styles.rightCol}>
             <ProductsDetailConfigurator
               sku={product.sku}
@@ -46,9 +55,58 @@ export function ProductsDetailTemplate({ product }: ProductsDetailTemplateProps)
               basePrice={product.basePrice}
               unit={product.unit}
               minOrder={product.minOrder}
+              imageUrl={product.imageUrl}
+              description={product.description}
             />
           </div>
         </div>
+
+        {/* Full-width Tabs Panel underneath */}
+        <div className={styles.tabsWrapper}>
+          <ProductsDetailAccordion
+            description={product.description}
+            category={product.category}
+          />
+        </div>
+
+        {/* Explore Related Products Row */}
+        <section className={styles.relatedSection}>
+          <div className={styles.sectionHeader}>
+            <span className={styles.sectionSubtitle}>Produk Relevan</span>
+            <h2 className={styles.sectionTitle}>Explore Related Products</h2>
+          </div>
+          
+          <div className={styles.relatedGrid}>
+            {relatedProducts.map((p) => (
+              <CatalogProductCard key={p.sku} product={p} />
+            ))}
+          </div>
+        </section>
+
+        {/* Highlights Features badges row at bottom */}
+        <section className={styles.highlightsRow}>
+          <div className={styles.highlightBadge}>
+            <span className={styles.highlightIcon}>🚚</span>
+            <div className={styles.highlightText}>
+              <h4 className={styles.highlightTitle}>Free Shipping</h4>
+              <p className={styles.highlightDesc}>Bebas ongkir untuk pesanan di atas Rp 100.000</p>
+            </div>
+          </div>
+          <div className={styles.highlightBadge}>
+            <span className={styles.highlightIcon}>💳</span>
+            <div className={styles.highlightText}>
+              <h4 className={styles.highlightTitle}>Flexible Payment</h4>
+              <p className={styles.highlightDesc}>Opsi bayar DP 50% untuk pesanan kustom besar</p>
+            </div>
+          </div>
+          <div className={styles.highlightBadge}>
+            <span className={styles.highlightIcon}>💬</span>
+            <div className={styles.highlightText}>
+              <h4 className={styles.highlightTitle}>24x7 Support</h4>
+              <p className={styles.highlightDesc}>Konsultasi gratis & respon cepat via WhatsApp</p>
+            </div>
+          </div>
+        </section>
       </main>
 
       <Footer />
