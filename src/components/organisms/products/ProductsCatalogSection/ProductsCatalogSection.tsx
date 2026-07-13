@@ -249,6 +249,7 @@ export function ProductsCatalogSection({
                       unit={product.unit}
                       features={product.features}
                       description={product.description}
+                      imageUrl={product.imageUrl}
                     />
                   </div>
                 ))}
