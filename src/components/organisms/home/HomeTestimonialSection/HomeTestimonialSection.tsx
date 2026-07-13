@@ -66,6 +66,14 @@ export function HomeTestimonialSection() {
   return (
     <section id="testimonials" className={styles.section}>
       <div className={`${styles.container} container`}>
+        <div className={styles.header}>
+          <Badge variant="success">Testimoni</Badge>
+          <h2 className={styles.title}>Dipercaya Lintas Generasi</h2>
+          <p className={styles.subtitle}>
+            Apa kata mereka yang telah mempercayakan branding, cetakan, dan merchandise kustom kepada Kertas Lipat?
+          </p>
+        </div>
+
         <div className={styles.splitLayout}>
           
           {/* Left Screen: Active Handover Photo corresponding to the review */}
@@ -88,14 +96,6 @@ export function HomeTestimonialSection() {
 
           {/* Right Screen: Auto-sliding Reviews Carousel */}
           <div className={styles.rightScreen}>
-            <div className={styles.header}>
-              <Badge variant="success">Testimoni</Badge>
-              <h2 className={styles.title}>Dipercaya Lintas Generasi</h2>
-              <p className={styles.subtitle}>
-                Apa kata mereka yang telah mempercayakan branding, cetakan, dan merchandise kustom kepada Kertas Lipat?
-              </p>
-            </div>
-
             {/* Slider Container */}
             <div className={styles.sliderContainer}>
               <div key={`review-${activeTestimonial.id}`} className={styles.slideCard}>
