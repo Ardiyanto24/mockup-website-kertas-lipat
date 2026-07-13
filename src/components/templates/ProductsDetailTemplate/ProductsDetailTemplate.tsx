@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useMemo } from 'react';
+import Link from 'next/link';
 import { Product, products } from '@/data/products';
 import { Navbar } from '@/components/organisms/shared/public/Navbar/Navbar';
 import { Footer } from '@/components/organisms/shared/public/Footer/Footer';
+import { ArrowLeft } from 'lucide-react';
 import { ProductsDetailHeader } from '@/components/organisms/products/ProductsDetailHeader/ProductsDetailHeader';
 import { ProductsDetailConfigurator } from '@/components/organisms/products/ProductsDetailConfigurator/ProductsDetailConfigurator';
 import { ProductsDetailAccordion } from '@/components/organisms/products/ProductsDetailAccordion/ProductsDetailAccordion';
@@ -32,6 +34,24 @@ export function ProductsDetailTemplate({ product }: ProductsDetailTemplateProps)
       <Navbar />
       
       <main className={`${styles.main} container`}>
+        {/* Top Breadcrumb and Back Navigation Panel */}
+        <div className={styles.topNavigation}>
+          <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
+            <ol className={styles.breadcrumbList}>
+              <li><Link href="/">Beranda</Link></li>
+              <li className={styles.breadcrumbSeparator}>/</li>
+              <li><Link href="/products">Katalog</Link></li>
+              <li className={styles.breadcrumbSeparator}>/</li>
+              <li className={styles.breadcrumbCurrent}>{product.name}</li>
+            </ol>
+          </nav>
+          
+          <Link href="/products" className={styles.backButton}>
+            <ArrowLeft size={16} />
+            <span>Kembali ke Katalog</span>
+          </Link>
+        </div>
+
         {/* Main Grid detail layout */}
         <div className={styles.layout}>
           {/* Left Column: Visual Gallery */}
