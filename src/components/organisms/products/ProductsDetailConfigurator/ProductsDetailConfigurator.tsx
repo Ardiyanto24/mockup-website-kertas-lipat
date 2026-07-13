@@ -35,6 +35,7 @@ export function ProductsDetailConfigurator({
   // Configurator states
   const [quantity, setQuantity] = useState(minOrder);
   const [selectedVariant, setSelectedVariant] = useState('STANDARD');
+  const [needDesign, setNeedDesign] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
@@ -139,6 +140,7 @@ export function ProductsDetailConfigurator({
       variantId: selectedVariant,
       variantName: activeVariantObj.name,
       variantAddPrice: activeVariantObj.addPrice,
+      needDesignService: needDesign,
     });
 
     // Show temporary success banner
@@ -163,6 +165,7 @@ export function ProductsDetailConfigurator({
       variantId: selectedVariant,
       variantName: activeVariantObj.name,
       variantAddPrice: activeVariantObj.addPrice,
+      needDesignService: needDesign,
     });
     router.push('/cart');
   };
@@ -220,6 +223,25 @@ export function ProductsDetailConfigurator({
             </button>
           ))}
         </div>
+      </div>
+
+      {/* 6b. Jasa Desain Option */}
+      <div className={styles.configGroup}>
+        <h3 className={styles.groupTitle}>Jasa Desain Tambahan</h3>
+        <label className={styles.designLabel}>
+          <input
+            type="checkbox"
+            className={styles.designCheckbox}
+            checked={needDesign}
+            onChange={() => setNeedDesign(!needDesign)}
+          />
+          <div className={styles.designText}>
+            <span className={styles.designTitle}>Butuh Jasa Desain Kertas Lipat</span>
+            <span className={styles.designDesc}>
+              Belum punya file siap cetak? Kami bantu layout desain estetik (+{formatPrice(scheme === 'Paket Bundling' ? 150000 : 50000)} flat).
+            </span>
+          </div>
+        </label>
       </div>
 
       {/* 7. Qty selector + Add to Cart + Wishlist side-by-side */}

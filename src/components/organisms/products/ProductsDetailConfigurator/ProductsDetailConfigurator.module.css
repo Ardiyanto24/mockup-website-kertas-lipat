@@ -367,3 +367,51 @@
     width: auto;
   }
 }
+
+/* Jasa Desain Option Styling */
+.designLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  border-radius: var(--radius-sm);
+  background-color: #fafbfc;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.designLabel:hover {
+  border-color: rgba(38, 122, 236, 0.25);
+  background-color: #f8fafc;
+}
+
+.designCheckbox {
+  margin-top: 4px;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.designText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.designTitle {
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+  letter-spacing: -0.01em;
+}
+
+.designDesc {
+  font-size: 0.775rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  font-weight: 600;
+}
+

@@ -8,9 +8,6 @@ import styles from './CartCheckoutPanel.module.css';
 export function CartCheckoutPanel() {
   const { cartItems, clearCart } = useCart();
 
-  // Design service state
-  const [needDesignService, setNeedDesignService] = useState(false);
-
   // File upload states
   const [uploadedFile, setUploadedFile] = useState<{ name: string; size: string } | null>(null);
   const [dragActive, setDragActive] = useState(false);
@@ -52,9 +49,13 @@ export function CartCheckoutPanel() {
       return acc + (finalPrice * item.quantity);
     }, 0);
 
-    // 2. Check design fee: if there is any "Paket Bundling" in the cart, flat Rp 150.000; else Rp 50.000
-    const hasBundles = cartItems.some((item) => item.scheme === 'Paket Bundling');
-    const designFee = needDesignService ? (hasBundles ? 150000 : 50000) : 0;
+    // 2. Sum up design fees for each item having needDesignService active
+    const designFee = cartItems.reduce((acc, item) => {
+      if (item.needDesignService) {
+        return acc + (item.scheme === 'Paket Bundling' ? 150000 : 50000);
+      }
+      return acc;
+    }, 0);
 
     // 3. Final total
     const finalTotal = itemsSubtotal + designFee;
@@ -64,7 +65,7 @@ export function CartCheckoutPanel() {
       designFee,
       finalTotal,
     };
-  }, [cartItems, needDesignService]);
+  }, [cartItems]);
 
   // Drag and drop handlers
   const handleDrag = (e: React.DragEvent) => {
@@ -112,9 +113,16 @@ export function CartCheckoutPanel() {
       return `${index + 1}. *${item.name}* (${item.sku})
    - Kuantitas: ${item.quantity} ${item.unit}
    - Varian: ${item.variantName}
+   - Jasa Desain: ${item.needDesignService ? 'Ya' : 'Tidak'}
    - Harga Unit: ${formatPrice(unitPrice)}
    - Subtotal: ${formatPrice(total)}`;
     }).join('\n\n');
+
+    const hasDesignService = cartItems.some((item) => item.needDesignService);
+    const designServiceList = cartItems
+      .filter((item) => item.needDesignService)
+      .map((item) => `   - ${item.name} (${item.variantName})`)
+      .join('\n');
 
     const text = `Halo Kertas Lipat! Saya ingin memesan produk kustom dari keranjang belanja saya:
 
@@ -122,7 +130,7 @@ export function CartCheckoutPanel() {
 ${itemsListBrief}
 
 *Pilihan Layanan & File:*
-- *Jasa Desain:* ${needDesignService ? 'Ya (Butuh Bantuan Desain)' : 'Tidak (Sudah Ada File)'}
+- *Jasa Desain:* ${hasDesignService ? `Ya, aktif pada:\n${designServiceList}` : 'Tidak (Sudah Ada File)'}
 - *File Desain:* ${uploadedFile ? `${uploadedFile.name} (${uploadedFile.size})` : '-'}
 
 *Kalkulasi Pembayaran:*
@@ -149,24 +157,6 @@ Mohon instruksi selanjutnya untuk pengiriman file final dan konfirmasi pembayara
       <h3 className={styles.title}>Ringkasan Pembayaran & Aset</h3>
       
       <div className={styles.divider}></div>
-
-      {/* Design Assistance Service */}
-      <div className={styles.panelGroup}>
-        <label className={styles.designLabel}>
-          <input
-            type="checkbox"
-            className={styles.designCheckbox}
-            checked={needDesignService}
-            onChange={() => setNeedDesignService(!needDesignService)}
-          />
-          <div className={styles.designText}>
-            <span className={styles.designTitle}>Butuh Jasa Desain Kertas Lipat</span>
-            <span className={styles.designDesc}>
-              Belum punya file desain siap cetak? Kami bantu buatkan layout desain estetik.
-            </span>
-          </div>
-        </label>
-      </div>
 
       {/* File Uploader drag and drop */}
       <div className={styles.panelGroup}>
@@ -215,7 +205,7 @@ Mohon instruksi selanjutnya untuk pengiriman file final dan konfirmasi pembayara
           <span className={styles.summaryValue}>{formatPrice(totals.itemsSubtotal)}</span>
         </div>
         
-        {needDesignService && (
+        {totals.designFee > 0 && (
           <div className={styles.summaryRow}>
             <span className={styles.summaryLabel}>Biaya Layanan Desain</span>
             <span className={styles.summaryValue}>{formatPrice(totals.designFee)}</span>

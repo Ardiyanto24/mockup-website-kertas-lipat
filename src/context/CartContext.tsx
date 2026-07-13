@@ -15,13 +15,14 @@ export interface CartItem {
   variantId: string;
   variantName: string;
   variantAddPrice: number;
+  needDesignService?: boolean;
 }
 
 interface CartContextType {
   cartItems: CartItem[];
   addToCart: (item: CartItem) => void;
-  removeFromCart: (sku: string, variantId: string) => void;
-  updateQty: (sku: string, variantId: string, quantity: number) => void;
+  removeFromCart: (sku: string, variantId: string, needDesignService?: boolean) => void;
+  updateQty: (sku: string, variantId: string, quantity: number, needDesignService?: boolean) => void;
   clearCart: () => void;
 }
 
@@ -59,7 +60,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const addToCart = (newItem: CartItem) => {
     setCartItems((prevItems) => {
       const existingItemIndex = prevItems.findIndex(
-        (item) => item.sku === newItem.sku && item.variantId === newItem.variantId
+        (item) => item.sku === newItem.sku && 
+                  item.variantId === newItem.variantId && 
+                  (item.needDesignService || false) === (newItem.needDesignService || false)
       );
 
       if (existingItemIndex > -1) {
@@ -72,16 +75,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const removeFromCart = (sku: string, variantId: string) => {
+  const removeFromCart = (sku: string, variantId: string, needDesignService?: boolean) => {
     setCartItems((prevItems) =>
-      prevItems.filter((item) => !(item.sku === sku && item.variantId === variantId))
+      prevItems.filter(
+        (item) => !(item.sku === sku && 
+                    item.variantId === variantId && 
+                    (item.needDesignService || false) === (needDesignService || false))
+      )
     );
   };
 
-  const updateQty = (sku: string, variantId: string, quantity: number) => {
+  const updateQty = (sku: string, variantId: string, quantity: number, needDesignService?: boolean) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.sku === sku && item.variantId === variantId ? { ...item, quantity } : item
+        item.sku === sku && 
+        item.variantId === variantId && 
+        (item.needDesignService || false) === (needDesignService || false)
+          ? { ...item, quantity } 
+          : item
       )
     );
   };

@@ -98,6 +98,12 @@
   color: var(--color-primary);
 }
 
+.designBadge {
+  background-color: var(--color-secondary-orange-light);
+  color: var(--color-secondary-orange);
+  border: 1px dashed var(--color-secondary-orange);
+}
+
 .unitPriceInfo {
   font-size: 0.85rem;
   color: var(--color-text-muted);

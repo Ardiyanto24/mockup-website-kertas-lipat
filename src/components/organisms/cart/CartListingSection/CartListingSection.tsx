@@ -19,7 +19,7 @@ export function CartListingSection() {
 
   const handleQtyChange = (item: CartItem, newQty: number) => {
     if (newQty >= item.minOrder) {
-      updateQty(item.sku, item.variantId, newQty);
+      updateQty(item.sku, item.variantId, newQty, item.needDesignService);
     }
   };
 
@@ -68,7 +68,7 @@ export function CartListingSection() {
           const itemTotal = finalUnitPrice * item.quantity;
 
           return (
-            <div key={`${item.sku}-${item.variantId}`} className={styles.itemRow}>
+            <div key={`${item.sku}-${item.variantId}-${item.needDesignService ? 'design' : 'nodesign'}`} className={styles.itemRow}>
               {/* Product Visual */}
               <div className={styles.visualColumn}>
                 <div className={styles.imageWrapper}>
@@ -92,6 +92,9 @@ export function CartListingSection() {
                 <div className={styles.badges}>
                   <span className={styles.badge}>{item.category}</span>
                   <span className={`${styles.badge} ${styles.variantBadge}`}>{item.variantName}</span>
+                  {item.needDesignService && (
+                    <span className={`${styles.badge} ${styles.designBadge}`}>+ Jasa Desain</span>
+                  )}
                 </div>
                 <div className={styles.unitPriceInfo}>
                   Harga unit: <strong>{formatPrice(finalUnitPrice)}</strong> /{item.unit}
@@ -124,7 +127,7 @@ export function CartListingSection() {
                 <div className={styles.totalPrice}>{formatPrice(itemTotal)}</div>
                 <button
                   className={styles.deleteBtn}
-                  onClick={() => removeFromCart(item.sku, item.variantId)}
+                  onClick={() => removeFromCart(item.sku, item.variantId, item.needDesignService)}
                   aria-label="Hapus Item"
                 >
                   Hapus 🗑️
