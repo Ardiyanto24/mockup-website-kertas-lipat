@@ -144,10 +144,10 @@
 }
 
 .pillSelected {
-  background-color: var(--color-text-main) !important;
-  border-color: var(--color-text-main) !important;
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 4px 10px rgba(38, 122, 236, 0.15);
 }
 
 /* Actions Row */
@@ -199,6 +199,35 @@
 
 .cartBtn {
   flex-grow: 1;
+}
+
+.buyNowBtn {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  padding: 0 24px;
+  background-color: var(--color-secondary-orange);
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  font-family: var(--font-sans);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 12px rgba(255, 107, 74, 0.2);
+}
+
+.buyNowBtn:hover {
+  background-color: #e05a39;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(255, 107, 74, 0.3);
+}
+
+.buyNowBtn:active {
+  transform: translateY(0);
 }
 
 .wishlistBtn {

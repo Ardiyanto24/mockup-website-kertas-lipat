@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/atoms/Button/Button';
 import styles from './ProductsDetailConfigurator.module.css';
@@ -29,6 +30,7 @@ export function ProductsDetailConfigurator({
   description,
 }: ProductsDetailConfiguratorProps) {
   const { addToCart } = useCart();
+  const router = useRouter();
 
   // Configurator states
   const [quantity, setQuantity] = useState(minOrder);
@@ -146,6 +148,25 @@ export function ProductsDetailConfigurator({
     }, 3000);
   };
 
+  // Buy Now handler
+  const handleBuyNow = () => {
+    addToCart({
+      sku,
+      name,
+      category,
+      scheme,
+      basePrice,
+      unit,
+      minOrder,
+      imageUrl,
+      quantity,
+      variantId: selectedVariant,
+      variantName: activeVariantObj.name,
+      variantAddPrice: activeVariantObj.addPrice,
+    });
+    router.push('/cart');
+  };
+
 
   return (
     <div className={styles.configurator}>
@@ -220,6 +241,11 @@ export function ProductsDetailConfigurator({
         <Button variant="primary" size="lg" className={styles.cartBtn} onClick={handleAddToCart}>
           Tambah ke Keranjang
         </Button>
+
+        {/* Buy Now button */}
+        <button className={styles.buyNowBtn} onClick={handleBuyNow}>
+          Beli Sekarang
+        </button>
 
         {/* Wishlist Heart button */}
         <button
