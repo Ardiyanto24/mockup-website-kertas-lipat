@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
@@ -9,6 +9,9 @@ import styles from './Navbar.module.css';
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  
   const pathname = usePathname();
   const { cartItems } = useCart();
 
@@ -18,11 +21,64 @@ export function Navbar() {
 
   const isHomeActive = pathname === '/';
   const isProductsActive = pathname === '/products' || pathname?.startsWith('/products/');
-
   const totalCartQty = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
+  // Auto-hide and reveal logic
+  useEffect(() => {
+    // 1. Mouse move listener for desktop (reveal navbar when cursor is at the top of the viewport)
+    const handleMouseMove = (e: MouseEvent) => {
+      if (window.innerWidth >= 992 && e.clientY < 50) {
+        setIsVisible(true);
+      }
+    };
+
+    // 2. Scroll listener for mobile (reveal on scroll up, hide on scroll down)
+    const handleScroll = () => {
+      if (window.innerWidth < 992) {
+        const currentScrollY = window.scrollY;
+        
+        // Don't hide if mobile menu dropdown is open
+        if (isMenuOpen) return;
+
+        if (currentScrollY > lastScrollY && currentScrollY > 80) {
+          // Scrolling down -> hide navbar
+          setIsVisible(false);
+        } else {
+          // Scrolling up -> show navbar
+          setIsVisible(true);
+        }
+        setLastScrollY(currentScrollY);
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [lastScrollY, isMenuOpen]);
+
+  // Handle mouse enter/leave on the navbar itself (desktop only)
+  const handleMouseEnter = () => {
+    if (window.innerWidth >= 992) {
+      setIsVisible(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (window.innerWidth >= 992) {
+      setIsVisible(false);
+    }
+  };
+
   return (
-    <header className={styles.header}>
+    <header 
+      className={`${styles.header} ${!isVisible ? styles.headerHidden : ''}`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <div className={`${styles.navContainer} container`}>
         {/* Logo */}
         <Link href="/" className={styles.logo}>
