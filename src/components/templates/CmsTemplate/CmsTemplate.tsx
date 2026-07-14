@@ -27,8 +27,10 @@ interface CmsTemplateProps {
   handleSave: (e: React.FormEvent) => void;
   handleCancel: () => void;
   submenus: SubmenuItem[];
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (open: boolean) => void;
 }
-
+ 
 export function CmsTemplate({
   isAuthenticated,
   isLoaded,
@@ -46,6 +48,8 @@ export function CmsTemplate({
   handleSave,
   handleCancel,
   submenus,
+  isSidebarOpen,
+  setIsSidebarOpen,
 }: CmsTemplateProps) {
   
   if (!isAuthenticated) {
@@ -93,14 +97,17 @@ export function CmsTemplate({
         setIsBerandaExpanded={setIsBerandaExpanded}
         handleLogout={handleLogout}
         submenus={submenus}
+        isOpen={isSidebarOpen}
       />
-
+ 
       {/* Main CMS Contents Workspace */}
-      <main className={styles.mainArea}>
+      <main className={`${styles.mainArea} ${isSidebarOpen ? '' : styles.mainAreaFull}`}>
         {/* Workspace Top Header Bar Organism */}
         <CmsHeader
           activeMainMenu={activeMainMenu}
           handleResetToDefault={handleResetToDefault}
+          toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+          isSidebarOpen={isSidebarOpen}
         />
 
         {/* Editor Form Sheet Organism / Catalog Manager */}
