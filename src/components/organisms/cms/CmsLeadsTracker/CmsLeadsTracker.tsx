@@ -312,7 +312,7 @@ export function CmsLeadsTracker() {
                     {lead.notes && (
                       <div>
                         <strong style={{ display: 'block', fontSize: '11px', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>Catatan Pengiriman</strong>
-                        <span style={{ fontSize: '13px', color: '#334155', fontStyle: 'italic' }}>"{lead.notes}"</span>
+                        <span style={{ fontSize: '13px', color: '#334155', fontStyle: 'italic' }}>{`"${lead.notes}"`}</span>
                       </div>
                     )}
                     {lead.uploadedFileName && (
