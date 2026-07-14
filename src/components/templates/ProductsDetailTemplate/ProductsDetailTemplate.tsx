@@ -96,6 +96,8 @@ export function ProductsDetailTemplate({ product: staticProduct }: ProductsDetai
               description={activeProduct.description}
               pricingType={activeProduct.pricingType}
               showReviews={activeProduct.showReviews}
+              ratingScore={activeProduct.ratingScore}
+              reviewCount={activeProduct.reviewCount}
               discountPrice={activeProduct.discountPrice}
               useDiscountPrice={activeProduct.useDiscountPrice}
               variants={activeProduct.variants}
