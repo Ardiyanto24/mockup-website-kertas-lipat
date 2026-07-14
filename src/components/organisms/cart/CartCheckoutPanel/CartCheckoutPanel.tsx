@@ -219,6 +219,27 @@ Mohon instruksi selanjutnya untuk pengiriman file final dan konfirmasi pembayara
 
     const encodedText = encodeURIComponent(text);
     
+    // Save checkout lead to localStorage history
+    try {
+      const storedLeads = localStorage.getItem('kertas_lipat_leads');
+      const leads = storedLeads ? JSON.parse(storedLeads) : [];
+      
+      const itemsSummary = cartItems.map(item => `${item.name} (${item.quantity} ${item.unit})`).join(', ');
+      
+      const newLead = {
+        id: `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        type: 'checkout',
+        timestamp: new Date().toISOString(),
+        name: customerName.trim(),
+        phone: customerPhone.trim(),
+        details: `Barang: ${itemsSummary} | Total: ${formatPrice(totals.finalTotal)} | Alamat: ${customerAddress.trim()}${customerNotes.trim() ? ` | Catatan: ${customerNotes.trim()}` : ''}`,
+      };
+      leads.unshift(newLead);
+      localStorage.setItem('kertas_lipat_leads', JSON.stringify(leads));
+    } catch (err) {
+      console.error('Failed to save checkout lead', err);
+    }
+
     // Clear cart locally after checkout redirection
     clearCart();
     

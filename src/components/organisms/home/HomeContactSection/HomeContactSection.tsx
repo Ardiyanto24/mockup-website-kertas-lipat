@@ -1,11 +1,47 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '@/components/atoms/Badge/Badge';
 import { Button } from '@/components/atoms/Button/Button';
+import { useHomepageContent, ContactFeature } from '@/hooks/useHomepageContent';
 import styles from './HomeContactSection.module.css';
 
+interface ContactData {
+  badge: string;
+  title: string;
+  desc1: string;
+  desc2: string;
+  features: ContactFeature[];
+  formTitle: string;
+  btnText: string;
+  waBase: string;
+}
+
+const STATIC_DATA: ContactData = {
+  badge: 'Konsultasi Kreatif',
+  title: 'Punya Kebutuhan Cetak Skala Besar atau Spesifikasi Kustom?',
+  desc1: 'Apakah Anda merencanakan pengadaan Buku Tahunan Sekolah, Seminar Kit kantor, atau butuh kustomisasi bahan khusus yang tidak ada di katalog?',
+  desc2: 'Hubungi Tim Desainer & Sales kami. Kami siap membantu dari tahap konsultasi konsep visual, pemilihan bahan cetak terbaik, hingga penawaran harga formal untuk administrasi Anda.',
+  features: [
+    { id: 1, icon: '💡', title: 'Bantuan Desain Profesional', text: 'Tim kreatif kami siap merapikan layout file Anda agar siap cetak.' },
+    { id: 2, icon: '📝', title: 'Penawaran Harga Formal', text: 'Kami sediakan invoice penawaran resmi untuk sekolah & perusahaan.' }
+  ],
+  formTitle: 'Formulir Konsultasi Cetak',
+  btnText: 'Kirim Permintaan Konsultasi',
+  waBase: 'https://wa.me/6281234567890',
+};
+
 export function HomeContactSection() {
+  const { content, isLoaded } = useHomepageContent();
+  const [activeData, setActiveData] = useState<ContactData>(STATIC_DATA);
+
+  useEffect(() => {
+    if (isLoaded && content?.contact) {
+      setActiveData(content.contact);
+    }
+  }, [isLoaded, content]);
+
   const [formData, setFormData] = useState({
     name: '',
     organization: '',
@@ -27,7 +63,7 @@ export function HomeContactSection() {
     e.preventDefault();
 
     // Compile WhatsApp Link text
-    const waBase = 'https://wa.me/6281234567890';
+    const waBase = activeData.waBase || 'https://wa.me/6281234567890';
     const text = `Halo Kertas Lipat! Saya ingin berkonsultasi mengenai kebutuhan cetak/branding.
 
 *Detail Permintaan:*
@@ -40,6 +76,24 @@ export function HomeContactSection() {
 
 Terima kasih.`;
 
+    // Save lead to localStorage history
+    try {
+      const storedLeads = localStorage.getItem('kertas_lipat_leads');
+      const leads = storedLeads ? JSON.parse(storedLeads) : [];
+      const newLead = {
+        id: `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        type: 'contact',
+        timestamp: new Date().toISOString(),
+        name: formData.name.trim(),
+        phone: formData.whatsapp.trim(),
+        details: `Kategori: ${formData.category} | Org: ${formData.organization || '-'} | Budget/Qty: ${formData.quantityAndBudget || '-'} | Pesan: ${formData.message}`,
+      };
+      leads.unshift(newLead);
+      localStorage.setItem('kertas_lipat_leads', JSON.stringify(leads));
+    } catch (err) {
+      console.error('Failed to save contact lead', err);
+    }
+
     const encodedText = encodeURIComponent(text);
     setWaLink(`${waBase}?text=${encodedText}`);
     setIsSubmitted(true);
@@ -51,30 +105,21 @@ Terima kasih.`;
         <div className={styles.grid}>
           {/* Creative Column / Sidebar */}
           <div className={styles.visualCol}>
-            <Badge variant="primary" className={styles.visualBadge}>Konsultasi Kreatif</Badge>
-            <h2 className={styles.visualTitle}>Punya Kebutuhan Cetak Skala Besar atau Spesifikasi Kustom?</h2>
-            <p className={styles.visualDesc}>
-              Apakah Anda merencanakan pengadaan Buku Tahunan Sekolah, Seminar Kit kantor, atau butuh kustomisasi bahan khusus yang tidak ada di katalog?
-            </p>
-            <p className={styles.visualDesc}>
-              Hubungi Tim Desainer & Sales kami. Kami siap membantu dari tahap konsultasi konsep visual, pemilihan bahan cetak terbaik, hingga penawaran harga formal untuk administrasi Anda.
-            </p>
+            <Badge variant="primary" className={styles.visualBadge}>{activeData.badge}</Badge>
+            <h2 className={styles.visualTitle}>{activeData.title}</h2>
+            <p className={styles.visualDesc}>{activeData.desc1}</p>
+            <p className={styles.visualDesc}>{activeData.desc2}</p>
 
             <div className={styles.features}>
-              <div className={styles.featureItem}>
-                <span className={styles.featureIcon}>💡</span>
-                <div>
-                  <h4 className={styles.featureTitle}>Bantuan Desain Profesional</h4>
-                  <p className={styles.featureText}>Tim kreatif kami siap merapikan layout file Anda agar siap cetak.</p>
+              {activeData.features.map((feat) => (
+                <div key={feat.id} className={styles.featureItem}>
+                  <span className={styles.featureIcon}>{feat.icon}</span>
+                  <div>
+                    <h4 className={styles.featureTitle}>{feat.title}</h4>
+                    <p className={styles.featureText}>{feat.text}</p>
+                  </div>
                 </div>
-              </div>
-              <div className={styles.featureItem}>
-                <span className={styles.featureIcon}>📝</span>
-                <div>
-                  <h4 className={styles.featureTitle}>Penawaran Harga Formal</h4>
-                  <p className={styles.featureText}>Kami sediakan invoice penawaran resmi untuk sekolah & perusahaan.</p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
@@ -82,7 +127,7 @@ Terima kasih.`;
           <div className={styles.formCol}>
             {!isSubmitted ? (
               <form onSubmit={handleSubmit} className={styles.form}>
-                <h3 className={styles.formTitle}>Formulir Konsultasi Cetak</h3>
+                <h3 className={styles.formTitle}>{activeData.formTitle}</h3>
                 
                 <div className={styles.formGroup}>
                   <label htmlFor="name" className={styles.label}>Nama Lengkap *</label>
@@ -170,7 +215,7 @@ Terima kasih.`;
                 </div>
 
                 <Button type="submit" variant="primary" className={styles.submitBtn}>
-                  Kirim Permintaan Konsultasi
+                  {activeData.btnText}
                 </Button>
               </form>
             ) : (
