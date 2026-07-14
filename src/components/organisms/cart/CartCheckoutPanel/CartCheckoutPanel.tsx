@@ -23,6 +23,7 @@ export function CartCheckoutPanel() {
 
   // Helper: calculate unit price with variant addon and volume discount
   const getItemFinalUnitPrice = (item: CartItem) => {
+    const unitPriceWithVariant = item.basePrice + item.variantAddPrice;
     let addonsUnitFee = 0;
     if (item.selectedAddons && item.selectedAddons.length > 0) {
       item.selectedAddons.forEach((a) => {
