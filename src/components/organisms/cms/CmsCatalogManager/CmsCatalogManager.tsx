@@ -65,16 +65,44 @@ export function CmsCatalogManager() {
       basePrice: 0,
       unit: 'pcs',
       minOrder: 1,
-      features: ['Fitur 1', 'Fitur 2', 'Fitur 3'],
       description: '',
       imageUrl: '/images/categories/cat_printing.png',
+      images: ['/images/categories/cat_printing.png', '', '', '', '', '', '', ''],
+      displayImageCount: 8,
+      showReviews: true,
+      useDiscountPrice: false,
+      discountPrice: 0,
+      variants: [],
+      addons: [],
+      tags: [],
     });
     setIsNewProduct(true);
     setIsEditing(true);
   };
 
   const handleOpenEdit = (product: Product) => {
-    setEditProduct(JSON.parse(JSON.stringify(product)));
+    const normalized = JSON.parse(JSON.stringify(product));
+    
+    // Normalize images (length 8)
+    if (!normalized.images || normalized.images.length === 0) {
+      normalized.images = [normalized.imageUrl || '/images/categories/cat_printing.png', '', '', '', '', '', '', ''];
+    } else {
+      const imgArray = [...normalized.images];
+      while (imgArray.length < 8) {
+        imgArray.push('');
+      }
+      normalized.images = imgArray;
+    }
+    
+    if (normalized.displayImageCount === undefined) normalized.displayImageCount = 8;
+    if (normalized.showReviews === undefined) normalized.showReviews = true;
+    if (normalized.useDiscountPrice === undefined) normalized.useDiscountPrice = false;
+    if (normalized.discountPrice === undefined) normalized.discountPrice = 0;
+    if (!normalized.variants) normalized.variants = [];
+    if (!normalized.addons) normalized.addons = [];
+    if (!normalized.tags) normalized.tags = [];
+
+    setEditProduct(normalized);
     setIsNewProduct(false);
     setIsEditing(true);
   };
@@ -91,7 +119,7 @@ export function CmsCatalogManager() {
     }
   };
 
-  const handleImageUpload = (file: File) => {
+  const handleSlotImageUpload = (file: File, slotIndex: number) => {
     const MAX_SIZE = 2 * 1024 * 1024; // 2MB
     if (file.size > MAX_SIZE) {
       alert('Ukuran berkas terlalu besar. Maksimal ukuran berkas adalah 2MB.');
@@ -101,15 +129,85 @@ export function CmsCatalogManager() {
     const reader = new FileReader();
     reader.onloadend = () => {
       if (typeof reader.result === 'string' && editProduct) {
-        setEditProduct({ ...editProduct, imageUrl: reader.result });
+        const nextImages = [...(editProduct.images || [])];
+        nextImages[slotIndex] = reader.result;
+        
+        // Slot 1 (index 0) updates imageUrl too for backward compatibility
+        const updateObj: Partial<Product> = { images: nextImages };
+        if (slotIndex === 0) {
+          updateObj.imageUrl = reader.result;
+        }
+        
+        setEditProduct({ ...editProduct, ...updateObj });
       }
     };
     reader.readAsDataURL(file);
   };
 
+  const handleClearSlotImage = (slotIndex: number) => {
+    if (slotIndex === 0) {
+      alert('Slot 1 (Foto Utama) wajib diisi.');
+      return;
+    }
+    if (editProduct) {
+      const nextImages = [...(editProduct.images || [])];
+      nextImages[slotIndex] = '';
+      setEditProduct({ ...editProduct, images: nextImages });
+    }
+  };
+
+  const handleAddVariant = () => {
+    if (editProduct) {
+      const nextVariants = [...(editProduct.variants || []), { name: 'Varian Baru', addPrice: 0 }];
+      setEditProduct({ ...editProduct, variants: nextVariants });
+    }
+  };
+
+  const handleEditVariant = (index: number, key: 'name' | 'addPrice', value: any) => {
+    if (editProduct) {
+      const nextVariants = [...(editProduct.variants || [])];
+      nextVariants[index] = { ...nextVariants[index], [key]: value };
+      setEditProduct({ ...editProduct, variants: nextVariants });
+    }
+  };
+
+  const handleRemoveVariant = (index: number) => {
+    if (editProduct) {
+      const nextVariants = (editProduct.variants || []).filter((_, idx) => idx !== index);
+      setEditProduct({ ...editProduct, variants: nextVariants });
+    }
+  };
+
+  const handleAddAddon = () => {
+    if (editProduct) {
+      const nextAddons = [...(editProduct.addons || []), { name: 'Add-on Baru', price: 0, description: '' }];
+      setEditProduct({ ...editProduct, addons: nextAddons });
+    }
+  };
+
+  const handleEditAddon = (index: number, key: 'name' | 'price' | 'description', value: any) => {
+    if (editProduct) {
+      const nextAddons = [...(editProduct.addons || [])];
+      nextAddons[index] = { ...nextAddons[index], [key]: value };
+      setEditProduct({ ...editProduct, addons: nextAddons });
+    }
+  };
+
+  const handleRemoveAddon = (index: number) => {
+    if (editProduct) {
+      const nextAddons = (editProduct.addons || []).filter((_, idx) => idx !== index);
+      setEditProduct({ ...editProduct, addons: nextAddons });
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editProduct) return;
+
+    if (!editProduct.images || !editProduct.images[0]) {
+      alert('Slot 1 (Foto Utama) wajib diunggah.');
+      return;
+    }
 
     if (isNewProduct) {
       // Check for duplicate SKU
@@ -417,26 +515,178 @@ export function CmsCatalogManager() {
                     />
                   </div>
 
-                  {/* Image upload */}
-                  <div className={`${styles.formGroup} ${styles.formGroupFull}`}>
-                    <label className={styles.label}>Foto Produk *</label>
-                    <div className={styles.fileInputContainer}>
-                      {editProduct.imageUrl && (
-                        <img
-                          src={editProduct.imageUrl}
-                          alt="Pratinjau Unggahan"
-                          className={styles.imagePreview}
-                        />
-                      )}
+                   {/* Tampilkan Review Toggle */}
+                  <div className={styles.formGroup} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <input
+                      type="checkbox"
+                      id="showReviews"
+                      checked={editProduct.showReviews}
+                      onChange={(e) => setEditProduct({ ...editProduct, showReviews: e.target.checked })}
+                      style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                    />
+                    <label htmlFor="showReviews" className={styles.label} style={{ margin: 0, cursor: 'pointer' }}>
+                      Tampilkan Ulasan/Review Produk
+                    </label>
+                  </div>
+
+                  {/* Harga Diskon Toggle */}
+                  <div className={styles.formGroup} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <input
+                      type="checkbox"
+                      id="useDiscountPrice"
+                      checked={editProduct.useDiscountPrice}
+                      onChange={(e) => setEditProduct({ ...editProduct, useDiscountPrice: e.target.checked })}
+                      style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                    />
+                    <label htmlFor="useDiscountPrice" className={styles.label} style={{ margin: 0, cursor: 'pointer' }}>
+                      Aktifkan Harga Diskon
+                    </label>
+                  </div>
+
+                  {/* Input Harga Diskon */}
+                  {editProduct.useDiscountPrice && (
+                    <div className={styles.formGroup}>
+                      <label className={styles.label}>Harga Diskon (Rupiah) *</label>
                       <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) handleImageUpload(file);
-                        }}
-                        className={styles.fileInput}
+                        type="number"
+                        value={editProduct.discountPrice}
+                        onChange={(e) =>
+                          setEditProduct({ ...editProduct, discountPrice: parseInt(e.target.value) || 0 })
+                        }
+                        className={styles.input}
+                        required
+                        min="0"
                       />
+                    </div>
+                  )}
+
+                  {/* Selector Jumlah Foto */}
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Jumlah Foto Ditampilkan di Slider (1-8) *</label>
+                    <select
+                      value={editProduct.displayImageCount}
+                      onChange={(e) =>
+                        setEditProduct({ ...editProduct, displayImageCount: parseInt(e.target.value) || 8 })
+                      }
+                      className={styles.select}
+                    >
+                      {[1,2,3,4,5,6,7,8].map((n) => (
+                        <option key={n} value={n}>{n} Foto</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Tags Input */}
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Tag Produk (pisahkan dengan koma)</label>
+                    <input
+                      type="text"
+                      value={editProduct.tags ? editProduct.tags.join(', ') : ''}
+                      onChange={(e) => {
+                        const nextTags = e.target.value.split(',').map((t) => t.trim()).filter(Boolean);
+                        setEditProduct({ ...editProduct, tags: nextTags });
+                      }}
+                      className={styles.input}
+                      placeholder="Contoh: Brosur, Cetak, Marketing, Promosi"
+                    />
+                  </div>
+
+                  {/* 8-slots Image Upload Grid */}
+                  <div className={`${styles.formGroup} ${styles.formGroupFull}`}>
+                    <label className={styles.label} style={{ marginBottom: '12px', fontWeight: 'bold' }}>
+                      Foto Galeri Produk (Maksimal 8 Slot. Slot 1 Wajib Diisi)
+                    </label>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '16px' }}>
+                      {[0, 1, 2, 3, 4, 5, 6, 7].map((slotIdx) => {
+                        const imageUrl = editProduct.images?.[slotIdx] || '';
+                        const isSlotRequired = slotIdx === 0;
+                        return (
+                          <div
+                            key={slotIdx}
+                            style={{
+                              border: '1px dashed #cbd5e1',
+                              borderRadius: '8px',
+                              padding: '8px',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              background: '#f8fafc',
+                              minHeight: '160px',
+                              position: 'relative'
+                            }}
+                          >
+                            <span style={{ fontSize: '10px', fontWeight: 600, color: '#64748b', marginBottom: '6px' }}>
+                              Slot {slotIdx + 1} {isSlotRequired ? '(Utama *)' : '(Opsional)'}
+                            </span>
+                            
+                            {imageUrl ? (
+                              <div style={{ position: 'relative', width: '80px', height: '80px', marginBottom: '8px' }}>
+                                <img
+                                  src={imageUrl}
+                                  alt={`Slot ${slotIdx + 1}`}
+                                  style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }}
+                                />
+                                {!isSlotRequired && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleClearSlotImage(slotIdx)}
+                                    style={{
+                                      position: 'absolute',
+                                      top: '-6px',
+                                      right: '-6px',
+                                      background: '#ef4444',
+                                      color: '#ffffff',
+                                      border: 'none',
+                                      borderRadius: '50%',
+                                      width: '18px',
+                                      height: '18px',
+                                      cursor: 'pointer',
+                                      fontSize: '10px',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      fontWeight: 'bold'
+                                    }}
+                                    title="Hapus gambar"
+                                  >
+                                    ✕
+                                  </button>
+                                )}
+                              </div>
+                            ) : (
+                              <div style={{ fontSize: '24px', color: '#cbd5e1', marginBottom: '8px' }}>📷</div>
+                            )}
+
+                            <input
+                              type="file"
+                              accept="image/png, image/jpeg, image/jpg"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleSlotImageUpload(file, slotIdx);
+                              }}
+                              style={{ display: 'none' }}
+                              id={`file-slot-${slotIdx}`}
+                              required={isSlotRequired && !imageUrl}
+                            />
+                            
+                            <label
+                              htmlFor={`file-slot-${slotIdx}`}
+                              className={styles.btnSecondary}
+                              style={{
+                                padding: '4px 8px',
+                                fontSize: '11px',
+                                cursor: 'pointer',
+                                textAlign: 'center',
+                                width: '100%',
+                                display: 'block'
+                              }}
+                            >
+                              {imageUrl ? 'Ganti Foto' : 'Unggah Foto'}
+                            </label>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -452,49 +702,133 @@ export function CmsCatalogManager() {
                     />
                   </div>
 
-                  {/* Fitur list bullet points */}
-                  <div className={`${styles.formGroup} ${styles.formGroupFull}`}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                      <label className={styles.label}>Daftar Ringkasan Fitur / Poin (Bullet List)</label>
+                  {/* Varian Builder */}
+                  <div className={`${styles.formGroup} ${styles.formGroupFull}`} style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px', marginTop: '8px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                      <label className={styles.label} style={{ margin: 0, fontWeight: 'bold' }}>Kelola Varian Produk</label>
                       <button
                         type="button"
-                        onClick={() => {
-                          const nextFeatures = [...editProduct.features, 'Fitur Baru'];
-                          setEditProduct({ ...editProduct, features: nextFeatures });
-                        }}
+                        onClick={handleAddVariant}
                         className={styles.btnSecondary}
-                        style={{ padding: '4px 10px', fontSize: '11px' }}
+                        style={{ padding: '6px 12px', fontSize: '12px' }}
                       >
-                        <Plus size={12} style={{ marginRight: '4px' }} />
-                        <span>Tambah Poin</span>
+                        <Plus size={14} style={{ marginRight: '4px' }} />
+                        <span>Tambah Varian Baru</span>
                       </button>
                     </div>
-                    
-                    {editProduct.features.map((feat, index) => (
-                      <div key={index} style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-                        <input
-                          type="text"
-                          value={feat}
-                          onChange={(e) => {
-                            const nextFeatures = [...editProduct.features];
-                            nextFeatures[index] = e.target.value;
-                            setEditProduct({ ...editProduct, features: nextFeatures });
-                          }}
-                          className={styles.input}
-                          required
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const nextFeatures = editProduct.features.filter((_, idx) => idx !== index);
-                            setEditProduct({ ...editProduct, features: nextFeatures });
-                          }}
-                          className={styles.btnDanger}
-                        >
-                          <Trash2 size={12} />
-                        </button>
+
+                    {(editProduct.variants && editProduct.variants.length > 0) ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
+                        {editProduct.variants.map((v, index) => (
+                          <div key={index} style={{ display: 'flex', gap: '12px', alignItems: 'center', background: '#f8fafc', padding: '10px', borderRadius: '6px', width: '100%' }}>
+                            <div style={{ flex: 2 }}>
+                              <input
+                                type="text"
+                                value={v.name}
+                                onChange={(e) => handleEditVariant(index, 'name', e.target.value)}
+                                className={styles.input}
+                                placeholder="Nama varian (contoh: Jilid Spiral)"
+                                required
+                              />
+                            </div>
+                            <div style={{ flex: 1 }}>
+                              <input
+                                type="number"
+                                value={v.addPrice}
+                                onChange={(e) => handleEditVariant(index, 'addPrice', parseInt(e.target.value) || 0)}
+                                className={styles.input}
+                                placeholder="+ Harga (Rupiah)"
+                                required
+                                min="0"
+                              />
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveVariant(index)}
+                              className={styles.btnDanger}
+                              style={{ padding: '8px' }}
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    ) : (
+                      <div style={{ fontSize: '13px', color: '#64748b', fontStyle: 'italic', background: '#f1f5f9', padding: '12px', borderRadius: '6px', textAlign: 'center', width: '100%' }}>
+                        Belum ada varian custom yang ditambahkan. Menggunakan varian bawaan kategori secara otomatis.
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Add-ons Builder */}
+                  <div className={`${styles.formGroup} ${styles.formGroupFull}`} style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px', marginTop: '16px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                      <label className={styles.label} style={{ margin: 0, fontWeight: 'bold' }}>Kelola Layanan Add-on (Maksimal 3)</label>
+                      <button
+                        type="button"
+                        onClick={handleAddAddon}
+                        disabled={editProduct.addons && editProduct.addons.length >= 3}
+                        className={styles.btnSecondary}
+                        style={{ padding: '6px 12px', fontSize: '12px' }}
+                      >
+                        <Plus size={14} style={{ marginRight: '4px' }} />
+                        <span>Tambah Add-on Baru</span>
+                      </button>
+                    </div>
+
+                    {(editProduct.addons && editProduct.addons.length > 0) ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
+                        {editProduct.addons.map((a, index) => (
+                          <div key={index} style={{ display: 'flex', flexDirection: 'column', gap: '8px', background: '#f8fafc', padding: '12px', borderRadius: '6px', width: '100%' }}>
+                            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', width: '100%' }}>
+                              <div style={{ flex: 2 }}>
+                                <input
+                                  type="text"
+                                  value={a.name}
+                                  onChange={(e) => handleEditAddon(index, 'name', e.target.value)}
+                                  className={styles.input}
+                                  placeholder="Nama Add-on (contoh: Laminasi Glossy)"
+                                  required
+                                />
+                              </div>
+                              <div style={{ flex: 1 }}>
+                                <input
+                                  type="number"
+                                  value={a.price}
+                                  onChange={(e) => handleEditAddon(index, 'price', parseInt(e.target.value) || 0)}
+                                  className={styles.input}
+                                  placeholder="Harga (Rupiah)"
+                                  required
+                                  min="0"
+                                />
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveAddon(index)}
+                                className={styles.btnDanger}
+                                style={{ padding: '8px' }}
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
+                            <div>
+                              <input
+                                type="text"
+                                value={a.description}
+                                onChange={(e) => handleEditAddon(index, 'description', e.target.value)}
+                                className={styles.input}
+                                placeholder="Deskripsi singkat add-on"
+                                required
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: '13px', color: '#64748b', fontStyle: 'italic', background: '#f1f5f9', padding: '12px', borderRadius: '6px', textAlign: 'center', width: '100%' }}>
+                        Belum ada add-on custom yang ditambahkan. Menggunakan add-on bawaan (Laminasi, Box, Express) secara otomatis.
+                      </div>
+                    )}
                   </div>
 
                 </div>
