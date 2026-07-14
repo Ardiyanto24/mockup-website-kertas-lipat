@@ -31,7 +31,7 @@ export default function CMSPage() {
 
   // Authenticate session on client mount
   useEffect(() => {
-    const adminSession = sessionStorage.getItem('admin_logged_in');
+    const adminSession = sessionStorage.getItem('kertas_lipat_admin_session');
     if (adminSession === 'true') {
       setIsAuthenticated(true);
     } else {
@@ -54,7 +54,7 @@ export default function CMSPage() {
 
   // Logout session handler
   const handleLogout = () => {
-    sessionStorage.removeItem('admin_logged_in');
+    sessionStorage.removeItem('kertas_lipat_admin_session');
     router.push('/login');
   };
 
