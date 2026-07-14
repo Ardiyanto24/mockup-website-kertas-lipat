@@ -179,3 +179,64 @@
   font-size: 0.8rem !important;
   padding: 0.4rem 0.8rem !important;
 }
+
+@media (max-width: 600px) {
+  .info {
+    padding: 12px;
+  }
+  
+  .metaRow {
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+  
+  .styleTag {
+    font-size: 0.7rem;
+    padding: 0.1rem 0.4rem;
+  }
+  
+  .rating {
+    gap: 2px;
+  }
+  
+  .ratingScore {
+    font-size: 0.75rem;
+  }
+  
+  .reviewCount {
+    font-size: 0.7rem;
+  }
+  
+  .title {
+    font-size: 0.9rem;
+    height: 2.4rem;
+    margin-bottom: 4px;
+  }
+  
+  .capacity {
+    font-size: 0.75rem;
+    margin-bottom: 8px;
+  }
+  
+  .footerRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding-top: 8px;
+  }
+  
+  .priceContainer {
+    align-items: flex-start;
+  }
+  
+  .price {
+    font-size: 1rem;
+  }
+  
+  .detailsBtn {
+    width: 100%;
+    text-align: center;
+    padding: 6px 0 !important;
+  }
+}
