@@ -24,6 +24,24 @@ export function CmsEditorForm({
   handleCancel,
   submenus,
 }: CmsEditorFormProps) {
+  const handleImageUpload = (
+    file: File,
+    onSuccess: (base64: string) => void
+  ) => {
+    const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+    if (file.size > MAX_SIZE) {
+      alert('Ukuran berkas gambar terlalu besar. Maksimal ukuran berkas adalah 2MB agar dapat disimpan dengan aman.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (typeof reader.result === 'string') {
+        onSuccess(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
   return (
     <div className={styles.editorWorkspace}>
       <div className={styles.editorCard}>
@@ -100,18 +118,31 @@ export function CmsEditorForm({
                         />
                       </div>
                       <div className={styles.formGroup}>
-                        <label className={styles.label}>Gambar Latar Belakang (URL Mockup)</label>
-                        <input
-                          type="text"
-                          value={slide.image}
-                          onChange={(e) => {
-                            const next = { ...draftContent };
-                            next.hero.slides[sIdx].image = e.target.value;
-                            setDraftContent(next);
-                          }}
-                          className={styles.input}
-                          required
-                        />
+                        <label className={styles.label}>Gambar Latar Belakang (Upload Gambar)</label>
+                        <div className={styles.fileInputContainer}>
+                          {slide.image && (
+                            <img
+                              src={slide.image}
+                              alt={`Preview Slide ${slide.id}`}
+                              className={styles.imagePreview}
+                            />
+                          )}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                handleImageUpload(file, (base64) => {
+                                  const next = { ...draftContent };
+                                  next.hero.slides[sIdx].image = base64;
+                                  setDraftContent(next);
+                                });
+                              }
+                            }}
+                            className={styles.fileInput}
+                          />
+                        </div>
                       </div>
                       <div className={styles.formGroup} style={{ display: 'none' }}></div>
                       
@@ -732,18 +763,31 @@ export function CmsEditorForm({
                           />
                         </div>
                         <div className={`${styles.formGroup} ${styles.formGroupFull}`}>
-                          <label className={styles.label}>Gambar Demo Kualitas (URL)</label>
-                          <input
-                            type="text"
-                            value={tab.image}
-                            onChange={(e) => {
-                              const next = { ...draftContent };
-                              next.quality.tabs[tIdx].image = e.target.value;
-                              setDraftContent(next);
-                            }}
-                            className={styles.input}
-                            required
-                          />
+                          <label className={styles.label}>Gambar Demo Kualitas (Upload Gambar)</label>
+                          <div className={styles.fileInputContainer}>
+                            {tab.image && (
+                              <img
+                                src={tab.image}
+                                alt={`Preview Tab ${tab.id}`}
+                                className={styles.imagePreview}
+                              />
+                            )}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  handleImageUpload(file, (base64) => {
+                                    const next = { ...draftContent };
+                                    next.quality.tabs[tIdx].image = base64;
+                                    setDraftContent(next);
+                                  });
+                                }
+                              }}
+                              className={styles.fileInput}
+                            />
+                          </div>
                         </div>
                         <div className={`${styles.formGroup} ${styles.formGroupFull}`}>
                           <label className={styles.label}>Penjelasan Detail Karakteristik</label>
@@ -1049,19 +1093,31 @@ export function CmsEditorForm({
                                 placeholder="Avatar Emoji"
                                 required
                               />
-                              <input
-                                type="text"
-                                value={item.imageUrl}
-                                onChange={(e) => {
-                                  const next = { ...draftContent };
-                                  next.testimonials.items[index].imageUrl = e.target.value;
-                                  setDraftContent(next);
-                                }}
-                                className={styles.input}
-                                style={{ fontSize: '10px', padding: '6px' }}
-                                placeholder="URL Foto Handover"
-                                required
-                              />
+                              <div className={styles.fileInputContainer}>
+                                {item.imageUrl && (
+                                  <img
+                                    src={item.imageUrl}
+                                    alt={`Preview Handover ${item.name}`}
+                                    className={styles.imagePreview}
+                                    style={{ width: '32px', height: '32px' }}
+                                  />
+                                )}
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                      handleImageUpload(file, (base64) => {
+                                        const next = { ...draftContent };
+                                        next.testimonials.items[index].imageUrl = base64;
+                                        setDraftContent(next);
+                                      });
+                                    }
+                                  }}
+                                  className={styles.fileInput}
+                                />
+                              </div>
                             </td>
                             <td>
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
