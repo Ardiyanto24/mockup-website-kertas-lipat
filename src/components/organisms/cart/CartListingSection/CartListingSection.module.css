@@ -282,31 +282,35 @@
 
 @media (max-width: 576px) {
   .itemRow {
-    grid-template-columns: 1fr;
-    gap: 14px;
-    text-align: center;
+    grid-template-columns: 70px 1fr 110px;
+    gap: 12px;
+    padding: 12px;
   }
   
   .imageWrapper {
-    margin: 0 auto;
+    width: 70px;
+    height: 52px;
   }
   
-  .productHeader {
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
+  .productName {
+    font-size: 0.85rem;
   }
   
-  .badges {
-    justify-content: center;
+  .sku {
+    font-size: 0.7rem;
   }
   
-  .qtyColumn {
-    align-items: center;
+  .qtyBtn {
+    width: 32px;
+    height: 32px;
   }
   
-  .totalColumn {
-    margin-top: 4px;
+  .qtyValue {
+    width: 30px;
+    font-size: 0.85rem;
+  }
+  
+  .totalPrice {
+    font-size: 1.05rem;
   }
 }
