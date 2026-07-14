@@ -18,6 +18,8 @@ interface ProductsDetailConfiguratorProps {
   description: string;
   pricingType?: string;
   showReviews?: boolean;
+  ratingScore?: number;
+  reviewCount?: number;
   discountPrice?: number;
   useDiscountPrice?: boolean;
   variants?: { name: string; addPrice: number }[];
@@ -37,6 +39,8 @@ export function ProductsDetailConfigurator({
   description,
   pricingType = 'Per Unit',
   showReviews = true,
+  ratingScore,
+  reviewCount,
   discountPrice = 0,
   useDiscountPrice = false,
   variants = [],
@@ -51,15 +55,13 @@ export function ProductsDetailConfigurator({
   const [selectedVariant, setSelectedVariant] = useState('STANDARD');
   const [needDesign, setNeedDesign] = useState(false);
   const [isDescExpanded, setIsDescExpanded] = useState(false);
-  const [addOnLamination, setAddOnLamination] = useState(false);
-  const [addOnGiftBox, setAddOnGiftBox] = useState(false);
-  const [addOnExpress, setAddOnExpress] = useState(false);
+  const [selectedAddonNames, setSelectedAddonNames] = useState<string[]>([]);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
   // Ratings
-  const ratingScore = 4.8;
-  const reviewCount = 245;
+  const ratingScoreVal = ratingScore !== undefined ? ratingScore : 4.8;
+  const reviewCountVal = reviewCount !== undefined ? reviewCount : 245;
 
   // Varian configuration mapping based on category/SKU/CMS variants input
   const variantOptions = useMemo(() => {
@@ -102,17 +104,34 @@ export function ProductsDetailConfigurator({
 
   const activeVariantObj = variantOptions.find((v) => v.id === selectedVariant) || variantOptions[0];
 
+  // Dynamic list of product addons (custom up to 10 or default 3)
+  const productAddons = useMemo(() => {
+    if (addons && addons.length > 0) return addons;
+    return [
+      { name: 'Laminasi Protektif Premium', price: 1500, description: 'Lapisan doff/glossy pelindung anti air' },
+      { name: 'Kemasan Dus Kado Eksklusif', price: 5000, description: 'Boks kemasan premium tebal & siap saji souvenir' },
+      { name: 'Proses Prioritas Kilat (Express)', price: 25000, description: 'Prioritas antrean cetak utama, selesai dalam 1-2 hari kerja' },
+    ];
+  }, [addons]);
+
   // Dynamic pricing calculations (regular vs original crossed-out)
   const pricing = useMemo(() => {
     const currentBasePrice = (useDiscountPrice && discountPrice !== undefined) ? discountPrice : basePrice;
     const rawUnitPrice = currentBasePrice + activeVariantObj.addPrice;
     
-    // Add-on Unit Fees (support dynamic addons from CMS)
-    const activeAddons = addons && addons.length > 0 ? addons.slice(0, 3) : [];
+    // Separate unit-based addons fee vs flat addons fee
+    let unitAddonsFee = 0;
+    let flatAddonsFee = 0;
     
-    const laminationFee = addOnLamination && activeAddons[0] ? activeAddons[0].price : (addOnLamination && !addons ? 1500 : 0);
-    const giftBoxFee = addOnGiftBox && activeAddons[1] ? activeAddons[1].price : (addOnGiftBox && !addons ? 5000 : 0);
-    const expressFee = addOnExpress && activeAddons[2] ? activeAddons[2].price : (addOnExpress && !addons ? 25000 : 0);
+    productAddons.forEach((a) => {
+      if (selectedAddonNames.includes(a.name)) {
+        if (a.name.toLowerCase().includes('express') || a.name.toLowerCase().includes('kilat') || a.description.toLowerCase().includes('flat')) {
+          flatAddonsFee += a.price;
+        } else {
+          unitAddonsFee += a.price;
+        }
+      }
+    });
 
     // Crossed-out original price (only shown if discount is active)
     const originalUnitPrice = useDiscountPrice ? (basePrice + activeVariantObj.addPrice) : 0;
@@ -132,8 +151,8 @@ export function ProductsDetailConfigurator({
     }
 
     const discountedBasePrice = Math.max(0, Math.round(rawUnitPrice * (1 - discountPct)));
-    const discountedUnitPriceWithAddons = discountedBasePrice + laminationFee + giftBoxFee;
-    const itemsTotal = (discountedUnitPriceWithAddons * quantity) + expressFee;
+    const discountedUnitPriceWithAddons = discountedBasePrice + unitAddonsFee;
+    const itemsTotal = (discountedUnitPriceWithAddons * quantity) + flatAddonsFee;
 
     const discountTagPct = useDiscountPrice && basePrice > 0 ? Math.round(((basePrice - currentBasePrice) / basePrice) * 100) : Math.round(discountPct * 100);
 
@@ -143,7 +162,7 @@ export function ProductsDetailConfigurator({
       itemsTotal: itemsTotal,
       discountPct: discountTagPct,
     };
-  }, [basePrice, discountPrice, useDiscountPrice, activeVariantObj, quantity, scheme, addons, addOnLamination, addOnGiftBox, addOnExpress]);
+  }, [basePrice, discountPrice, useDiscountPrice, activeVariantObj, quantity, scheme, productAddons, selectedAddonNames]);
 
   // Formatter helper
   const formatPrice = (price: number) => {
@@ -164,7 +183,7 @@ export function ProductsDetailConfigurator({
 
   // Add to cart handler
   const handleAddToCart = () => {
-    const activeAddons = addons && addons.length > 0 ? addons.slice(0, 3) : [];
+    const activeSelectedAddons = productAddons.filter((a) => selectedAddonNames.includes(a.name));
     addToCart({
       sku,
       name,
@@ -179,15 +198,17 @@ export function ProductsDetailConfigurator({
       variantName: activeVariantObj.name,
       variantAddPrice: activeVariantObj.addPrice,
       needDesignService: needDesign,
-      addOnLamination: addOnLamination,
-      addOnGiftBox: addOnGiftBox,
-      addOnExpress: addOnExpress,
-      addOnLaminationName: activeAddons[0]?.name,
-      addOnLaminationPrice: activeAddons[0]?.price,
-      addOnGiftBoxName: activeAddons[1]?.name,
-      addOnGiftBoxPrice: activeAddons[1]?.price,
-      addOnExpressName: activeAddons[2]?.name,
-      addOnExpressPrice: activeAddons[2]?.price,
+      // legacy fields for compatibility:
+      addOnLamination: selectedAddonNames.includes(productAddons[0]?.name),
+      addOnLaminationName: productAddons[0]?.name,
+      addOnLaminationPrice: productAddons[0]?.price,
+      addOnGiftBox: selectedAddonNames.includes(productAddons[1]?.name),
+      addOnGiftBoxName: productAddons[1]?.name,
+      addOnGiftBoxPrice: productAddons[1]?.price,
+      addOnExpress: selectedAddonNames.includes(productAddons[2]?.name),
+      addOnExpressName: productAddons[2]?.name,
+      addOnExpressPrice: productAddons[2]?.price,
+      selectedAddons: activeSelectedAddons,
     });
 
     // Show temporary success banner
@@ -199,7 +220,7 @@ export function ProductsDetailConfigurator({
 
   // Buy Now handler
   const handleBuyNow = () => {
-    const activeAddons = addons && addons.length > 0 ? addons.slice(0, 3) : [];
+    const activeSelectedAddons = productAddons.filter((a) => selectedAddonNames.includes(a.name));
     addToCart({
       sku,
       name,
@@ -214,15 +235,17 @@ export function ProductsDetailConfigurator({
       variantName: activeVariantObj.name,
       variantAddPrice: activeVariantObj.addPrice,
       needDesignService: needDesign,
-      addOnLamination: addOnLamination,
-      addOnGiftBox: addOnGiftBox,
-      addOnExpress: addOnExpress,
-      addOnLaminationName: activeAddons[0]?.name,
-      addOnLaminationPrice: activeAddons[0]?.price,
-      addOnGiftBoxName: activeAddons[1]?.name,
-      addOnGiftBoxPrice: activeAddons[1]?.price,
-      addOnExpressName: activeAddons[2]?.name,
-      addOnExpressPrice: activeAddons[2]?.price,
+      // legacy fields for compatibility:
+      addOnLamination: selectedAddonNames.includes(productAddons[0]?.name),
+      addOnLaminationName: productAddons[0]?.name,
+      addOnLaminationPrice: productAddons[0]?.price,
+      addOnGiftBox: selectedAddonNames.includes(productAddons[1]?.name),
+      addOnGiftBoxName: productAddons[1]?.name,
+      addOnGiftBoxPrice: productAddons[1]?.price,
+      addOnExpress: selectedAddonNames.includes(productAddons[2]?.name),
+      addOnExpressName: productAddons[2]?.name,
+      addOnExpressPrice: productAddons[2]?.price,
+      selectedAddons: activeSelectedAddons,
     });
     router.push('/cart');
   };
@@ -249,8 +272,8 @@ export function ProductsDetailConfigurator({
             <StarIcon />
             <StarIcon />
           </div>
-          <span className={styles.ratingScore}>{ratingScore}</span>
-          <span className={styles.reviewCount}>({reviewCount} Review)</span>
+          <span className={styles.ratingScore}>{ratingScoreVal.toFixed(1)}</span>
+          <span className={styles.reviewCount}>({reviewCountVal} Review)</span>
         </div>
       )}
 
@@ -324,71 +347,33 @@ export function ProductsDetailConfigurator({
             </div>
           </label>
 
-          {/* Add-on 1 */}
-          {((addons && addons.length > 0 && addons[0]) || (!addons || addons.length === 0)) && (
-            <label className={styles.addOnLabel}>
-              <input
-                type="checkbox"
-                className={styles.addOnCheckbox}
-                checked={addOnLamination}
-                onChange={() => setAddOnLamination(!addOnLamination)}
-              />
-              <div className={styles.addOnText}>
-                <span className={styles.addOnTitle}>
-                  {addons && addons[0] ? addons[0].name : 'Laminasi Protektif Premium'}
-                </span>
-                <span className={styles.addOnDesc}>
-                  {addons && addons[0]
-                    ? `${addons[0].description} (+${formatPrice(addons[0].price)} / ${unit})`
-                    : `Lapisan doff/glossy pelindung anti air (+${formatPrice(1500)} / ${unit})`}
-                </span>
-              </div>
-            </label>
-          )}
-
-          {/* Add-on 2 */}
-          {((addons && addons.length > 1 && addons[1]) || (!addons || addons.length === 0)) && (
-            <label className={styles.addOnLabel}>
-              <input
-                type="checkbox"
-                className={styles.addOnCheckbox}
-                checked={addOnGiftBox}
-                onChange={() => setAddOnGiftBox(!addOnGiftBox)}
-              />
-              <div className={styles.addOnText}>
-                <span className={styles.addOnTitle}>
-                  {addons && addons[1] ? addons[1].name : 'Kemasan Dus Kado Eksklusif'}
-                </span>
-                <span className={styles.addOnDesc}>
-                  {addons && addons[1]
-                    ? `${addons[1].description} (+${formatPrice(addons[1].price)} / ${unit})`
-                    : `Boks kemasan premium tebal & siap saji souvenir (+${formatPrice(5000)} / ${unit})`}
-                </span>
-              </div>
-            </label>
-          )}
-
-          {/* Add-on 3 */}
-          {((addons && addons.length > 2 && addons[2]) || (!addons || addons.length === 0)) && (
-            <label className={styles.addOnLabel}>
-              <input
-                type="checkbox"
-                className={styles.addOnCheckbox}
-                checked={addOnExpress}
-                onChange={() => setAddOnExpress(!addOnExpress)}
-              />
-              <div className={styles.addOnText}>
-                <span className={styles.addOnTitle}>
-                  {addons && addons[2] ? addons[2].name : 'Proses Prioritas Kilat (Express)'}
-                </span>
-                <span className={styles.addOnDesc}>
-                  {addons && addons[2]
-                    ? `${addons[2].description} (+${formatPrice(addons[2].price)} flat)`
-                    : `Prioritas antrean cetak utama, selesai dalam 1-2 hari kerja (+${formatPrice(25000)} flat)`}
-                </span>
-              </div>
-            </label>
-          )}
+          {/* Dynamic Add-ons List (Up to 10) */}
+          {productAddons.map((addon, index) => {
+            const isChecked = selectedAddonNames.includes(addon.name);
+            const isFlat = addon.name.toLowerCase().includes('express') || addon.name.toLowerCase().includes('kilat') || addon.description.toLowerCase().includes('flat');
+            return (
+              <label key={index} className={styles.addOnLabel}>
+                <input
+                  type="checkbox"
+                  className={styles.addOnCheckbox}
+                  checked={isChecked}
+                  onChange={() => {
+                    setSelectedAddonNames((prev) =>
+                      prev.includes(addon.name)
+                        ? prev.filter((n) => n !== addon.name)
+                        : [...prev, addon.name]
+                    );
+                  }}
+                />
+                <div className={styles.addOnText}>
+                  <span className={styles.addOnTitle}>{addon.name}</span>
+                  <span className={styles.addOnDesc}>
+                    {addon.description} (+{formatPrice(addon.price)} {isFlat ? 'flat' : `/ ${unit}`})
+                  </span>
+                </div>
+              </label>
+            );
+          })}
 
         </div>
       </div>
