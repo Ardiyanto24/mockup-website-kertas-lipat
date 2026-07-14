@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { LogOut, FileText, ShoppingBag, ChevronDown } from 'lucide-react';
+import { LogOut, FileText, ShoppingBag, ChevronDown, ClipboardList } from 'lucide-react';
 import styles from './CmsSidebar.module.css';
 
 export interface SubmenuItem {
@@ -11,8 +11,8 @@ export interface SubmenuItem {
 }
 
 interface CmsSidebarProps {
-  activeMainMenu: 'BERANDA' | 'KATALOG';
-  setActiveMainMenu: (menu: 'BERANDA' | 'KATALOG') => void;
+  activeMainMenu: 'BERANDA' | 'KATALOG' | 'RIWAYAT';
+  setActiveMainMenu: (menu: 'BERANDA' | 'KATALOG' | 'RIWAYAT') => void;
   activeSubMenu: string;
   setActiveSubMenu: (id: string) => void;
   isBerandaExpanded: boolean;
@@ -92,6 +92,18 @@ export function CmsSidebar({
           >
             <ShoppingBag size={16} />
             <span>Kelola Katalog</span>
+          </button>
+        </div>
+
+        {/* Main Menu 3: Riwayat & Leads */}
+        <div className={styles.menuGroup}>
+          <button
+            onClick={() => setActiveMainMenu('RIWAYAT')}
+            className={`${styles.menuHeader} ${activeMainMenu === 'RIWAYAT' ? styles.menuHeaderActive : ''}`}
+            style={{ width: '100%', textAlign: 'left', display: 'flex', alignItems: 'center', cursor: 'pointer', background: 'none', border: 'none' }}
+          >
+            <ClipboardList size={16} />
+            <span>Riwayat & Leads</span>
           </button>
         </div>
       </nav>
