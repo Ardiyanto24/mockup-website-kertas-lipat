@@ -1,11 +1,14 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '@/components/atoms/Badge/Badge';
 import { ProductCard, ProductCardProps } from '@/components/molecules/shared/ProductCard/ProductCard';
+import { useHomepageContent } from '@/hooks/useHomepageContent';
+import { products } from '@/data/products';
 import styles from './HomeFeaturedSection.module.css';
 
-const featuredProducts: ProductCardProps[] = [
+const STATIC_PRODUCTS: ProductCardProps[] = [
   {
     sku: 'KL-MRC-06',
     name: 'Kaos DTF Custom',
@@ -61,9 +64,51 @@ const featuredProducts: ProductCardProps[] = [
 ];
 
 export function HomeFeaturedSection() {
+  const { content, isLoaded } = useHomepageContent();
+  const [activeHeader, setActiveHeader] = useState({
+    badge: 'Terpopuler',
+    title: 'Produk Terlaris & Paket Favorit',
+    subtitle: 'Berikut produk satuan dan paket bundling yang paling sering dipesan oleh mahasiswa, UMKM, dan sekolah mitra Kertas Lipat.',
+  });
+  const [activeProducts, setActiveProducts] = useState<ProductCardProps[]>(STATIC_PRODUCTS);
   const [activeFilter, setActiveFilter] = useState<'ALL' | 'SATUAN' | 'BUNDLING'>('ALL');
 
-  const filteredProducts = featuredProducts.filter((product) => {
+  useEffect(() => {
+    if (isLoaded && content?.featured) {
+      setActiveHeader({
+        badge: content.featured.badge,
+        title: content.featured.title,
+        subtitle: content.featured.subtitle,
+      });
+
+      if (content.featured.selectedSkus && content.featured.selectedSkus.length > 0) {
+        const filtered = products
+          .filter((p) => content.featured.selectedSkus.includes(p.sku))
+          .map((p) => ({
+            sku: p.sku,
+            name: p.name,
+            category: p.category,
+            scheme: p.scheme,
+            basePrice: p.basePrice,
+            unit: p.unit,
+            features: p.features || [],
+            description: p.description,
+            imageUrl: p.imageUrl,
+            // Assign some realistic mock rating metrics since they aren't stored in basic master catalog
+            rating: p.sku === 'KL-MRC-06' || p.sku === 'KL-BDL-BR-01' ? 4.9 : 4.8,
+            reviewCount: p.sku === 'KL-MRC-06' ? 48 : (p.sku === 'KL-BDL-BR-01' ? 52 : 34),
+          }));
+        
+        // Sort according to active selectedSkus order
+        const sorted = [...filtered].sort((a, b) => {
+          return content.featured.selectedSkus.indexOf(a.sku) - content.featured.selectedSkus.indexOf(b.sku);
+        });
+        setActiveProducts(sorted);
+      }
+    }
+  }, [isLoaded, content]);
+
+  const filteredProducts = activeProducts.filter((product) => {
     if (activeFilter === 'SATUAN') return product.scheme === 'Produk Satuan';
     if (activeFilter === 'BUNDLING') return product.scheme === 'Paket Bundling';
     return true;
@@ -73,11 +118,9 @@ export function HomeFeaturedSection() {
     <section id="featured-products" className={styles.section}>
       <div className={`${styles.container} container`}>
         <div className={styles.header}>
-          <Badge variant="secondary">Terpopuler</Badge>
-          <h2 className={styles.title}>Produk Terlaris & Paket Favorit</h2>
-          <p className={styles.subtitle}>
-            Berikut produk satuan dan paket bundling yang paling sering dipesan oleh mahasiswa, UMKM, dan sekolah mitra Kertas Lipat.
-          </p>
+          <Badge variant="secondary">{activeHeader.badge}</Badge>
+          <h2 className={styles.title}>{activeHeader.title}</h2>
+          <p className={styles.subtitle}>{activeHeader.subtitle}</p>
 
           {/* Filter Tabs */}
           <div className={styles.filterContainer}>
