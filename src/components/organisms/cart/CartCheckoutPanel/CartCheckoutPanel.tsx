@@ -17,6 +17,12 @@ export function CartCheckoutPanel() {
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerAddress, setCustomerAddress] = useState('');
   const [customerNotes, setCustomerNotes] = useState('');
+  
+  // Custom Alert Modal State
+  const [errorModal, setErrorModal] = useState<{ isOpen: boolean; message: string }>({
+    isOpen: false,
+    message: '',
+  });
 
   // Formatting currency helper
   const formatPrice = (price: number) => {
@@ -138,15 +144,24 @@ export function CartCheckoutPanel() {
   // Combined WhatsApp Checkout compiler
   const handleWhatsAppCheckout = () => {
     if (!customerName.trim()) {
-      alert('Silakan isi Nama Lengkap Anda terlebih dahulu.');
+      setErrorModal({
+        isOpen: true,
+        message: 'Silakan isi Nama Lengkap Anda terlebih dahulu untuk memproses pesanan.',
+      });
       return;
     }
     if (!customerPhone.trim()) {
-      alert('Silakan isi Nomor WhatsApp Anda terlebih dahulu.');
+      setErrorModal({
+        isOpen: true,
+        message: 'Silakan isi Nomor WhatsApp Anda terlebih dahulu agar kami dapat menghubungi Anda.',
+      });
       return;
     }
     if (!customerAddress.trim()) {
-      alert('Silakan isi Alamat Pengiriman Lengkap Anda terlebih dahulu.');
+      setErrorModal({
+        isOpen: true,
+        message: 'Silakan isi Alamat Pengiriman Lengkap Anda terlebih dahulu untuk tujuan pengiriman barang.',
+      });
       return;
     }
 
@@ -414,6 +429,30 @@ Mohon instruksi selanjutnya untuk pengiriman file final dan konfirmasi pembayara
           Pesan via WhatsApp Admin
         </Button>
       </div>
+
+      {/* Premium Custom Alert Modal */}
+      {errorModal.isOpen && (
+        <div className={styles.modalOverlay} onClick={() => setErrorModal({ isOpen: false, message: '' })}>
+          <div className={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <span className={styles.modalWarningIcon}>!</span>
+              <h3 className={styles.modalTitle}>Informasi Belum Lengkap</h3>
+            </div>
+            <div className={styles.modalBody}>
+              <p>{errorModal.message}</p>
+            </div>
+            <div className={styles.modalFooter}>
+              <button 
+                type="button" 
+                className={styles.modalOkBtn} 
+                onClick={() => setErrorModal({ isOpen: false, message: '' })}
+              >
+                Oke, Saya Lengkapi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
