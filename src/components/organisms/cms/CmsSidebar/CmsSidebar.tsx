@@ -11,6 +11,8 @@ export interface SubmenuItem {
 }
 
 interface CmsSidebarProps {
+  activeMainMenu: 'BERANDA' | 'KATALOG';
+  setActiveMainMenu: (menu: 'BERANDA' | 'KATALOG') => void;
   activeSubMenu: string;
   setActiveSubMenu: (id: string) => void;
   isBerandaExpanded: boolean;
@@ -20,6 +22,8 @@ interface CmsSidebarProps {
 }
 
 export function CmsSidebar({
+  activeMainMenu,
+  setActiveMainMenu,
   activeSubMenu,
   setActiveSubMenu,
   isBerandaExpanded,
@@ -37,12 +41,15 @@ export function CmsSidebar({
       </div>
 
       <nav className={styles.sidebarNav}>
-        {/* Main Menu 1: Kelola Beranda (Active with Submenus) */}
+        {/* Main Menu 1: Kelola Beranda */}
         <div className={styles.menuGroup}>
           <button
-            onClick={() => setIsBerandaExpanded(!isBerandaExpanded)}
-            className={`${styles.menuHeader} ${styles.menuHeaderActive}`}
-            style={{ width: '100%', textAlign: 'left', display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+            onClick={() => {
+              setActiveMainMenu('BERANDA');
+              setIsBerandaExpanded(!isBerandaExpanded);
+            }}
+            className={`${styles.menuHeader} ${activeMainMenu === 'BERANDA' ? styles.menuHeaderActive : ''}`}
+            style={{ width: '100%', textAlign: 'left', display: 'flex', alignItems: 'center', cursor: 'pointer', background: 'none', border: 'none' }}
           >
             <FileText size={16} />
             <span>Kelola Beranda</span>
@@ -62,8 +69,11 @@ export function CmsSidebar({
               {submenus.map((sub) => (
                 <button
                   key={sub.id}
-                  onClick={() => setActiveSubMenu(sub.id)}
-                  className={`${styles.subNavItem} ${activeSubMenu === sub.id ? styles.subNavItemActive : ''}`}
+                  onClick={() => {
+                    setActiveMainMenu('BERANDA');
+                    setActiveSubMenu(sub.id);
+                  }}
+                  className={`${styles.subNavItem} ${activeMainMenu === 'BERANDA' && activeSubMenu === sub.id ? styles.subNavItemActive : ''}`}
                 >
                   {sub.icon}
                   <span>{sub.name}</span>
@@ -73,13 +83,16 @@ export function CmsSidebar({
           )}
         </div>
 
-        {/* Main Menu 2: Kelola Katalog (Disabled/Locked) */}
+        {/* Main Menu 2: Kelola Katalog */}
         <div className={styles.menuGroup}>
-          <div className={`${styles.menuHeader} ${styles.menuHeaderDisabled}`} title="Menu Kelola Katalog sedang dikonstruksi">
+          <button
+            onClick={() => setActiveMainMenu('KATALOG')}
+            className={`${styles.menuHeader} ${activeMainMenu === 'KATALOG' ? styles.menuHeaderActive : ''}`}
+            style={{ width: '100%', textAlign: 'left', display: 'flex', alignItems: 'center', cursor: 'pointer', background: 'none', border: 'none' }}
+          >
             <ShoppingBag size={16} />
             <span>Kelola Katalog</span>
-            <span className={styles.badgeLocked}>Dev</span>
-          </div>
+          </button>
         </div>
       </nav>
 

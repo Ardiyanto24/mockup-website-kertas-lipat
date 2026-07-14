@@ -82,6 +82,10 @@
   color: white;
 }
 
+.menuHeader:hover:not(.menuHeaderActive) {
+  color: white;
+}
+
 .menuHeaderDisabled {
   opacity: 0.4;
 }
