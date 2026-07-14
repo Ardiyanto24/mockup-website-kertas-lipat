@@ -8,7 +8,6 @@ import { Footer } from '@/components/organisms/shared/public/Footer/Footer';
 import { ArrowLeft } from 'lucide-react';
 import { ProductsDetailHeader } from '@/components/organisms/products/ProductsDetailHeader/ProductsDetailHeader';
 import { ProductsDetailConfigurator } from '@/components/organisms/products/ProductsDetailConfigurator/ProductsDetailConfigurator';
-import { ProductsDetailAccordion } from '@/components/organisms/products/ProductsDetailAccordion/ProductsDetailAccordion';
 import { CatalogProductCard } from '@/components/molecules/shared/CatalogProductCard/CatalogProductCard';
 import styles from './ProductsDetailTemplate.module.css';
 
@@ -81,13 +80,7 @@ export function ProductsDetailTemplate({ product }: ProductsDetailTemplateProps)
           </div>
         </div>
 
-        {/* Full-width Tabs Panel underneath */}
-        <div className={styles.tabsWrapper}>
-          <ProductsDetailAccordion
-            description={product.description}
-            category={product.category}
-          />
-        </div>
+
 
         {/* Explore Related Products Row */}
         <section className={styles.relatedSection}>
