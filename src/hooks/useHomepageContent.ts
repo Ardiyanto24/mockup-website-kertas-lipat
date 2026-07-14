@@ -325,14 +325,6 @@ const DEFAULT_CONTENT: HomepageContent = {
         icon: '✨',
         image: '/images/quality_spot_uv.png',
       },
-      {
-        id: 3,
-        label: 'Ketahanan Air Stiker',
-        title: 'Stiker Vinyl 100% Anti Air (Waterproof)',
-        description: 'Menggunakan material stiker vinyl tahan air yang direkatkan dengan lem rekat kuat. Sangat cocok untuk label kemasan botol sambal frozen, minuman dingin berembun, maupun produk kosmetik higienis.',
-        icon: '💧',
-        image: '/images/quality_waterproof_sticker.png',
-      },
     ],
   },
   showcase: {
