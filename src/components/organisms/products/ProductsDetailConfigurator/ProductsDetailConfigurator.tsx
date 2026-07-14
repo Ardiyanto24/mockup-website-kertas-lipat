@@ -16,6 +16,8 @@ interface ProductsDetailConfiguratorProps {
   minOrder: number;
   imageUrl?: string;
   description: string;
+  features?: string[];
+  pricingType?: string;
 }
 
 export function ProductsDetailConfigurator({
@@ -28,6 +30,8 @@ export function ProductsDetailConfigurator({
   minOrder,
   imageUrl = '/images/categories/cat_printing.png',
   description,
+  features = [],
+  pricingType = 'Per Unit',
 }: ProductsDetailConfiguratorProps) {
   const { addToCart } = useCart();
   const router = useRouter();
@@ -239,6 +243,18 @@ export function ProductsDetailConfigurator({
         </p>
       </div>
 
+      {/* Features Bullet List */}
+      {features && features.length > 0 && (
+        <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-text-main)' }}>Fitur Utama:</span>
+          <ul style={{ margin: 0, paddingLeft: '20px', listStyleType: 'disc', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            {features.map((feat, idx) => (
+              <li key={idx} style={{ fontSize: '12px', color: '#475569', lineHeight: '1.5' }}>{feat}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div className={styles.divider}></div>
 
       {/* 6. Variant Pills side-by-side */}
@@ -369,6 +385,10 @@ export function ProductsDetailConfigurator({
         <div className={styles.metaLine}>
           <span className={styles.metaLabel}>SKU:</span>
           <span className={styles.metaValue}>{sku}</span>
+        </div>
+        <div className={styles.metaLine}>
+          <span className={styles.metaLabel}>Skema Harga:</span>
+          <span className={styles.metaValue}>{pricingType}</span>
         </div>
         <div className={styles.metaLine}>
           <span className={styles.metaLabel}>Minimal Order:</span>
