@@ -209,3 +209,7 @@
   background-color: rgba(239, 68, 68, 0.15);
   color: #f87171;
 }
+
+.sidebarClosed {
+  transform: translateX(-100%);
+}
