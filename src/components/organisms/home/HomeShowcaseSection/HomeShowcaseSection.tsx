@@ -1,115 +1,43 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { X, ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { Badge } from '@/components/atoms/Badge/Badge';
+import { HotspotTooltip } from '@/components/molecules/shared/HotspotTooltip/HotspotTooltip';
+import { useHomepageContent, ShowcaseHotspot } from '@/hooks/useHomepageContent';
+import { products } from '@/data/products';
 import styles from './HomeShowcaseSection.module.css';
 
-interface GalleryItem {
-  id: number;
-  title: string;
-  description: string;
-  imageUrl: string;
-  gridClass: string;
-}
-
-const galleryItems: GalleryItem[] = [
-  {
-    id: 1,
-    title: 'High-Quality Printing',
-    description: 'Brosur, kartu nama, dan flayer cetak dengan akurasi warna tinggi.',
-    imageUrl: '/images/categories/cat_printing.png',
-    gridClass: styles.gridLarge,
-  },
-  {
-    id: 2,
-    title: 'Custom Sticker & Label',
-    description: 'Stiker die-cut vinyl anti air untuk kemasan produk premium.',
-    imageUrl: '/images/categories/cat_stickers.png',
-    gridClass: styles.gridSquare,
-  },
-  {
-    id: 3,
-    title: 'Exclusive Stationery',
-    description: 'Notebook, amplop, kop surat, dan kelengkapan identitas kantor.',
-    imageUrl: '/images/categories/cat_stationery.png',
-    gridClass: styles.gridTall,
-  },
-  {
-    id: 4,
-    title: 'Media Promosi',
-    description: 'Roll banner, tripod stand, dan brosur promosi event kilat.',
-    imageUrl: '/images/categories/cat_promotion.png',
-    gridClass: styles.gridSquare,
-  },
-  {
-    id: 5,
-    title: 'UMKM Branding Package',
-    description: 'Paket bundling branding hemat dari box, stiker, hingga kartu ucapan.',
-    imageUrl: '/images/categories/cat_branding_pack.png',
-    gridClass: styles.gridWide,
-  },
-  {
-    id: 6,
-    title: 'Custom Merchandise',
-    description: 'Mug custom, tumbler stainles steel, gantungan kunci, dan pin.',
-    imageUrl: '/images/categories/cat_merchandise.png',
-    gridClass: styles.gridSquare,
-  },
-  {
-    id: 7,
-    title: 'Buku Tahunan Sekolah',
-    description: 'Cetak school yearbook cetak Spot UV hardcover jilid lux.',
-    imageUrl: '/images/categories/cat_yearbook.png',
-    gridClass: styles.gridSquare,
-  },
-  {
-    id: 8,
-    title: 'Flatlay Creative Design',
-    description: 'Aplikasi branding terintegrasi untuk bisnis F&B, Cafe, dan korporasi.',
-    imageUrl: '/images/showcase_flatlay.png',
-    gridClass: styles.gridBanner,
-  },
+const STATIC_HOTSPOTS: ShowcaseHotspot[] = [
+  { id: 1, name: 'Stiker Vinyl Label', x: 23, y: 38, targetSku: 'KL-STI-01' },
+  { id: 2, name: 'Celemek Custom Logo', x: 50, y: 73, targetSku: 'KL-MRC-09' },
+  { id: 3, name: 'Menu Laminasi Anti Air', x: 74, y: 28, targetSku: 'KL-PRM-06' }
 ];
 
 export function HomeShowcaseSection() {
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const router = useRouter();
+  const { content, isLoaded } = useHomepageContent();
+  const [activeHeader, setActiveHeader] = useState({
+    badge: 'Shop The Look',
+    title: 'Galeri Hasil Cetak Kertas Lipat',
+    subtitle: 'Inspirasi branding nyata dari ribuan produk yang kami produksi dengan presisi tinggi untuk UMKM, Event, Sekolah, dan Korporasi.',
+  });
+  const [activeHotspots, setActiveHotspots] = useState<ShowcaseHotspot[]>(STATIC_HOTSPOTS);
 
-  // Close lightbox on Escape key press
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (lightboxIndex === null) return;
-      if (e.key === 'Escape') {
-        setLightboxIndex(null);
-      } else if (e.key === 'ArrowRight') {
-        setLightboxIndex((prev) => 
-          prev === null ? null : prev === galleryItems.length - 1 ? 0 : prev + 1
-        );
-      } else if (e.key === 'ArrowLeft') {
-        setLightboxIndex((prev) => 
-          prev === null ? null : prev === 0 ? galleryItems.length - 1 : prev - 1
-        );
+    if (isLoaded && content?.showcase) {
+      setActiveHeader({
+        badge: content.showcase.badge,
+        title: content.showcase.title,
+        subtitle: content.showcase.subtitle,
+      });
+      if (content.showcase.hotspots) {
+        setActiveHotspots(content.showcase.hotspots);
       }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [lightboxIndex]);
-
-  const handleNext = () => {
-    setLightboxIndex((prev) => 
-      prev === null ? null : prev === galleryItems.length - 1 ? 0 : prev + 1
-    );
-  };
-
-  const handlePrev = () => {
-    setLightboxIndex((prev) => 
-      prev === null ? null : prev === 0 ? galleryItems.length - 1 : prev - 1
-    );
-  };
-
-  const activeItem = lightboxIndex !== null ? galleryItems[lightboxIndex] : null;
+    }
+  }, [isLoaded, content]);
 
   return (
     <section id="showcase" className={styles.section}>
@@ -120,102 +48,56 @@ export function HomeShowcaseSection() {
       <div className={`${styles.container} container`}>
         {/* Section Header */}
         <div className={styles.header}>
-          <Badge variant="teal" className={styles.sectionBadge}>Shop The Look</Badge>
-          <h2 className={styles.title}>Galeri Hasil Cetak Kertas Lipat</h2>
-          <p className={styles.subtitle}>
-            Inspirasi branding nyata dari ribuan produk yang kami produksi dengan presisi tinggi untuk UMKM, Event, Sekolah, dan Korporasi.
-          </p>
+          <Badge variant="teal" className={styles.sectionBadge}>{activeHeader.badge}</Badge>
+          <h2 className={styles.title}>{activeHeader.title}</h2>
+          <p className={styles.subtitle}>{activeHeader.subtitle}</p>
         </div>
 
-        {/* Asymmetric Masonry Grid */}
-        <div className={styles.grid}>
-          {galleryItems.map((item, index) => (
-            <div 
-              key={item.id} 
-              className={`${styles.gridItem} ${item.gridClass}`}
-              onClick={() => setLightboxIndex(index)}
-              title={`Klik untuk memperbesar ${item.title}`}
-            >
-              <Image
-                src={item.imageUrl}
-                alt={item.title}
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className={styles.galleryImage}
+        {/* Hotspots Interactive Showcase Container */}
+        <div 
+          className={styles.flatlayWrapper} 
+          style={{ 
+            position: 'relative', 
+            width: '100%', 
+            borderRadius: '24px', 
+            overflow: 'hidden', 
+            border: '1px solid rgba(15, 23, 42, 0.08)', 
+            boxShadow: '0 20px 40px rgba(15, 23, 42, 0.06)' 
+          }}
+        >
+          {/* Main flatlay theme image */}
+          <Image
+            src="/images/showcase_flatlay.png"
+            alt="Kertas Lipat Creative Flatlay Showcase"
+            width={1200}
+            height={600}
+            style={{ width: '100%', height: 'auto', display: 'block' }}
+            priority
+          />
+          
+          {/* Map interactive hotspot pulse icons */}
+          {activeHotspots.map((spot) => {
+            const spotProduct = products.find(p => p.sku === spot.targetSku);
+            const title = spotProduct ? spotProduct.name : spot.name;
+            const price = spotProduct ? `Mulai Rp ${spotProduct.basePrice.toLocaleString('id-ID')}` : 'Hubungi Kami';
+            
+            // Adjust tooltip box side position based on hotspot screen location
+            const tooltipPos = spot.x > 75 ? 'left' : (spot.x < 25 ? 'right' : 'top');
+
+            return (
+              <HotspotTooltip
+                key={spot.id}
+                x={spot.x}
+                y={spot.y}
+                title={title}
+                price={price}
+                tooltipPosition={tooltipPos}
+                onClick={() => router.push(`/products/${spot.targetSku.toLowerCase()}`)}
               />
-              {/* Hover overlay panel */}
-              <div className={styles.hoverOverlay}>
-                <div className={styles.zoomButton}>
-                  <ZoomIn size={20} />
-                </div>
-                <div className={styles.hoverContent}>
-                  <h3 className={styles.itemTitle}>{item.title}</h3>
-                  <p className={styles.itemDesc}>{item.description}</p>
-                </div>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
-
-      {/* Lightbox Fullscreen Modal */}
-      {lightboxIndex !== null && activeItem && (
-        <div className={styles.lightbox} onClick={() => setLightboxIndex(null)}>
-          {/* Scrim click block */}
-          <div className={styles.lightboxContent} onClick={(e) => e.stopPropagation()}>
-            
-            {/* Close button */}
-            <button 
-              className={styles.closeBtn} 
-              onClick={() => setLightboxIndex(null)}
-              aria-label="Tutup Galeri"
-            >
-              <X size={28} />
-            </button>
-
-            {/* Left Nav Arrow */}
-            <button 
-              className={styles.navArrow} 
-              onClick={handlePrev}
-              aria-label="Foto sebelumnya"
-            >
-              <ChevronLeft size={36} />
-            </button>
-
-            {/* Image display */}
-            <div className={styles.imageDisplayContainer}>
-              <div className={styles.lightboxImageWrapper}>
-                <Image
-                  src={activeItem.imageUrl}
-                  alt={activeItem.title}
-                  fill
-                  className={styles.lightboxImage}
-                  priority
-                />
-              </div>
-              
-              {/* Bottom Caption panel */}
-              <div className={styles.captionPanel}>
-                <span className={styles.indexCounter}>
-                  {lightboxIndex + 1} / {galleryItems.length}
-                </span>
-                <h3 className={styles.lightboxTitle}>{activeItem.title}</h3>
-                <p className={styles.lightboxDesc}>{activeItem.description}</p>
-              </div>
-            </div>
-
-            {/* Right Nav Arrow */}
-            <button 
-              className={styles.navArrow} 
-              onClick={handleNext}
-              aria-label="Foto berikutnya"
-            >
-              <ChevronRight size={36} />
-            </button>
-
-          </div>
-        </div>
-      )}
     </section>
   );
 }

@@ -1,13 +1,14 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-
 import { Button } from '@/components/atoms/Button/Button';
+import { useHomepageContent, parseTitleSegments } from '@/hooks/useHomepageContent';
 import styles from './HomeHeroSection.module.css';
 
 interface Slide {
   id: number;
-  titleSegments: { text: string; highlight?: boolean; orange?: boolean }[];
+  title: string;
   subText: string;
   image: string;
   ctaText: string;
@@ -16,15 +17,10 @@ interface Slide {
   secondaryCtaHref: string;
 }
 
-const slides: Slide[] = [
+const STATIC_SLIDES: Slide[] = [
   {
     id: 1,
-    titleSegments: [
-      { text: 'Cetak ' },
-      { text: 'Ide Kreatifmu', highlight: true },
-      { text: ', Hidupkan ' },
-      { text: 'Brand-mu.', orange: true },
-    ],
+    title: 'Cetak {Ide Kreatifmu}, Hidupkan [Brand-mu.]',
     subText: 'Solusi cetak, merchandise custom, dan kebutuhan branding terlengkap. Tanpa batas minimal order kaku, pengerjaan cepat, dan jaminan kualitas premium untuk UMKM, kampus, hingga korporasi.',
     image: '/images/hero_branding_mockup.png',
     ctaText: 'Jelajahi Produk',
@@ -34,12 +30,7 @@ const slides: Slide[] = [
   },
   {
     id: 2,
-    titleSegments: [
-      { text: 'Sukseskan ' },
-      { text: 'Event Kampusmu', highlight: true },
-      { text: ' Tanpa Beban ' },
-      { text: 'Minimum Order.', orange: true },
-    ],
+    title: 'Sukseskan {Event Kampusmu} Tanpa Beban [Minimum Order.]',
     subText: 'Bikin kaos panitia, ID card, banner promosi, kipas tangan, hingga pin custom dengan fleksibilitas order satuan. Hemat anggaran, pengerjaan cepat, hasil dijamin memuaskan!',
     image: '/images/hero_campus_mockup.png',
     ctaText: 'Lihat Produk Kampus',
@@ -49,12 +40,7 @@ const slides: Slide[] = [
   },
   {
     id: 3,
-    titleSegments: [
-      { text: 'Abadikan ' },
-      { text: 'Momen Kelulusan', highlight: true },
-      { text: ' & Tingkatkan ' },
-      { text: 'Citra Profesional.', orange: true },
-    ],
+    title: 'Abadikan {Momen Kelulusan} & Tingkatkan [Citra Profesional.]',
     subText: 'Penyedia satu atap untuk Buku Tahunan Sekolah premium, souvenir kelulusan, dan seminar kit eksklusif perusahaan. Dilengkapi bantuan desain profesional dan contoh fisik nyata.',
     image: '/images/hero_school_mockup.png',
     ctaText: 'Lihat Paket Kelulusan',
@@ -65,14 +51,22 @@ const slides: Slide[] = [
 ];
 
 export function HomeHeroSection() {
+  const { content, isLoaded } = useHomepageContent();
+  const [activeSlides, setActiveSlides] = useState<Slide[]>(STATIC_SLIDES);
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  useEffect(() => {
+    if (isLoaded && content?.hero?.slides) {
+      setActiveSlides(content.hero.slides);
+    }
+  }, [isLoaded, content]);
+
   const nextSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  }, []);
+    setCurrentSlide((prev) => (prev + 1) % activeSlides.length);
+  }, [activeSlides]);
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+    setCurrentSlide((prev) => (prev - 1 + activeSlides.length) % activeSlides.length);
   };
 
   useEffect(() => {
@@ -83,8 +77,9 @@ export function HomeHeroSection() {
   return (
     <section className={styles.heroSection}>
       {/* Slides */}
-      {slides.map((slide, index) => {
+      {activeSlides.map((slide, index) => {
         const isCurrent = index === currentSlide;
+        const segments = parseTitleSegments(slide.title);
         return (
           <div
             key={slide.id}
@@ -97,7 +92,7 @@ export function HomeHeroSection() {
             <div className={`${styles.contentContainer} container`}>
               <div className={styles.textOverlay}>
                 <h1 className={styles.title}>
-                  {slide.titleSegments.map((seg, sIdx) => (
+                  {segments.map((seg, sIdx) => (
                     <span
                       key={sIdx}
                       className={seg.highlight ? styles.highlightText : (seg.orange ? styles.orangeText : '')}
@@ -136,7 +131,7 @@ export function HomeHeroSection() {
 
       {/* Dot Indicators */}
       <div className={styles.dotContainer}>
-        {slides.map((_, index) => (
+        {activeSlides.map((_, index) => (
           <button
             key={index}
             className={`${styles.dot} ${index === currentSlide ? styles.dotActive : ''}`}

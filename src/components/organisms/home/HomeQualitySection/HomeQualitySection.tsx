@@ -1,20 +1,13 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Badge } from '@/components/atoms/Badge/Badge';
+import { useHomepageContent, QualityTab } from '@/hooks/useHomepageContent';
 import styles from './HomeQualitySection.module.css';
 
-interface QualityDetail {
-  id: number;
-  label: string;
-  title: string;
-  description: string;
-  icon: string;
-  image: string;
-}
-
-const qualityDetails: QualityDetail[] = [
+const STATIC_TABS: QualityTab[] = [
   {
     id: 1,
     label: 'Elastisitas Sablon DTF',
@@ -42,8 +35,27 @@ const qualityDetails: QualityDetail[] = [
 ];
 
 export function HomeQualitySection() {
-  const [activeTab, setActiveTab] = useState(1);
-  const activeDetail = qualityDetails.find((d) => d.id === activeTab) || qualityDetails[0];
+  const { content, isLoaded } = useHomepageContent();
+  const [activeHeader, setActiveHeader] = useState({
+    badge: 'Bukti Kualitas',
+    title: 'Bukan Sekadar Cetak Generik. Kami Hidupkan Detail Desain Anda.',
+    subtitle: 'Kami memahami bahwa cetakan adalah representasi brand Anda. Kertas Lipat berinvestasi pada mesin cetak mutakhir dan bahan premium untuk hasil fisik cetak terbaik.',
+  });
+  const [activeTabs, setActiveTabs] = useState<QualityTab[]>(STATIC_TABS);
+  const [activeTabId, setActiveTabId] = useState(1);
+
+  useEffect(() => {
+    if (isLoaded && content?.quality?.tabs) {
+      setActiveHeader({
+        badge: content.quality.badge,
+        title: content.quality.title,
+        subtitle: content.quality.subtitle,
+      });
+      setActiveTabs(content.quality.tabs);
+    }
+  }, [isLoaded, content]);
+
+  const activeDetail = activeTabs.find((d) => d.id === activeTabId) || activeTabs[0] || STATIC_TABS[0];
 
   return (
     <section className={styles.section}>
@@ -70,19 +82,17 @@ export function HomeQualitySection() {
 
           {/* Info Column */}
           <div className={styles.infoCol}>
-            <Badge variant="secondary" className={styles.badge}>Bukti Kualitas</Badge>
-            <h2 className={styles.title}>Bukan Sekadar Cetak Generik. Kami Hidupkan Detail Desain Anda.</h2>
-            <p className={styles.subtitle}>
-              Kami memahami bahwa cetakan adalah representasi brand Anda. Kertas Lipat berinvestasi pada mesin cetak mutakhir dan bahan premium untuk hasil fisik cetak terbaik.
-            </p>
+            <Badge variant="secondary" className={styles.badge}>{activeHeader.badge}</Badge>
+            <h2 className={styles.title}>{activeHeader.title}</h2>
+            <p className={styles.subtitle}>{activeHeader.subtitle}</p>
 
             {/* Quality Details Switcher Tabs */}
             <div className={styles.tabsContainer}>
-              {qualityDetails.map((detail) => (
+              {activeTabs.map((detail) => (
                 <button
                   key={detail.id}
-                  className={`${styles.tabBtn} ${activeTab === detail.id ? styles.tabBtnActive : ''}`}
-                  onClick={() => setActiveTab(detail.id)}
+                  className={`${styles.tabBtn} ${activeTabId === detail.id ? styles.tabBtnActive : ''}`}
+                  onClick={() => setActiveTabId(detail.id)}
                 >
                   <span className={styles.tabIcon}>{detail.icon}</span>
                   <div className={styles.tabText}>

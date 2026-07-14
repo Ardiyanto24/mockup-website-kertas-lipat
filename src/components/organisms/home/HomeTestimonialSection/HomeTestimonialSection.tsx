@@ -1,22 +1,13 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Quote } from 'lucide-react';
+import { useHomepageContent, TestimonialItem } from '@/hooks/useHomepageContent';
 import styles from './HomeTestimonialSection.module.css';
 
-interface Testimonial {
-  id: number;
-  name: string;
-  role: string;
-  avatar: string;
-  quote: string;
-  rating: number;
-  segment: 'Mahasiswa' | 'UMKM' | 'Sekolah';
-  imageUrl: string;
-}
-
-const testimonials: Testimonial[] = [
+const STATIC_TESTIMONIALS: TestimonialItem[] = [
   {
     id: 1,
     name: 'Rian (20 th)',
@@ -50,21 +41,43 @@ const testimonials: Testimonial[] = [
 ];
 
 export function HomeTestimonialSection() {
+  const { content, isLoaded } = useHomepageContent();
+  const [activeHeader, setActiveHeader] = useState({
+    badge: 'Our Testimonials',
+    title: 'Customer Say About Our Services',
+    subtitle: 'Apa kata mereka yang telah mempercayakan branding, cetakan, dan merchandise kustom mereka kepada Kertas Lipat?',
+  });
+  const [activeTestimonials, setActiveTestimonials] = useState<TestimonialItem[]>(STATIC_TESTIMONIALS);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    if (isLoaded && content?.testimonials?.items) {
+      setActiveHeader({
+        badge: content.testimonials.badge,
+        title: content.testimonials.title,
+        subtitle: content.testimonials.subtitle,
+      });
+      if (content.testimonials.items.length > 0) {
+        setActiveTestimonials(content.testimonials.items);
+      }
+    }
+  }, [isLoaded, content]);
 
   // Auto-slide carousel effect
   useEffect(() => {
+    if (activeTestimonials.length <= 1) return;
     const timer = setInterval(() => {
-      setActiveIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
+      setActiveIndex((prev) => (prev === activeTestimonials.length - 1 ? 0 : prev + 1));
     }, 5000); // Slide every 5 seconds
 
     return () => clearInterval(timer);
-  }, []);
+  }, [activeTestimonials]);
 
-  const activeTestimonial = testimonials[activeIndex];
+  const activeTestimonial = activeTestimonials[activeIndex] || activeTestimonials[0] || STATIC_TESTIMONIALS[0];
 
   const handleImageClick = () => {
-    setActiveIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
+    if (activeTestimonials.length <= 1) return;
+    setActiveIndex((prev) => (prev === activeTestimonials.length - 1 ? 0 : prev + 1));
   };
 
   return (
@@ -76,11 +89,9 @@ export function HomeTestimonialSection() {
       <div className={`${styles.container} container`}>
         {/* Section Header */}
         <div className={styles.header}>
-          <span className={styles.sectionBadge}>Our Testimonials</span>
-          <h2 className={styles.title}>Customer Say About Our Services</h2>
-          <p className={styles.subtitle}>
-            Apa kata mereka yang telah mempercayakan branding, cetakan, dan merchandise kustom mereka kepada Kertas Lipat?
-          </p>
+          <span className={styles.sectionBadge}>{activeHeader.badge}</span>
+          <h2 className={styles.title}>{activeHeader.title}</h2>
+          <p className={styles.subtitle}>{activeHeader.subtitle}</p>
         </div>
 
         {/* Layout Cards Grid */}
@@ -134,10 +145,12 @@ export function HomeTestimonialSection() {
               <div className={styles.trustedBadge}>
                 <span className={styles.badgeText}>Trusted Clients</span>
                 <div className={styles.avatarGroup}>
-                  <span className={styles.miniAvatar}>👨‍🎓</span>
-                  <span className={styles.miniAvatar}>👩‍🍳</span>
-                  <span className={styles.miniAvatar}>👨‍🏫</span>
-                  <span className={styles.miniAvatarPlus}>+</span>
+                  {activeTestimonials.slice(0, 3).map((item) => (
+                    <span key={item.id} className={styles.miniAvatar}>{item.avatar}</span>
+                  ))}
+                  {activeTestimonials.length > 3 && (
+                    <span className={styles.miniAvatarPlus}>+</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -178,7 +191,7 @@ export function HomeTestimonialSection() {
 
         {/* Navigation Dot Indicators */}
         <div className={styles.paginationDots}>
-          {testimonials.map((_, index) => (
+          {activeTestimonials.map((_, index) => (
             <button
               key={index}
               className={`${styles.dot} ${index === activeIndex ? styles.dotActive : ''}`}
