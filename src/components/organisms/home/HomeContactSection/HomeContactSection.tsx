@@ -86,7 +86,10 @@ Terima kasih.`;
         timestamp: new Date().toISOString(),
         name: formData.name.trim(),
         phone: formData.whatsapp.trim(),
-        details: `Kategori: ${formData.category} | Org: ${formData.organization || '-'} | Budget/Qty: ${formData.quantityAndBudget || '-'} | Pesan: ${formData.message}`,
+        organization: formData.organization.trim(),
+        category: formData.category,
+        quantityAndBudget: formData.quantityAndBudget.trim(),
+        message: formData.message.trim(),
       };
       leads.unshift(newLead);
       localStorage.setItem('kertas_lipat_leads', JSON.stringify(leads));

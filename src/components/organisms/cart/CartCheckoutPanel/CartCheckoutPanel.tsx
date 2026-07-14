@@ -224,15 +224,55 @@ Mohon instruksi selanjutnya untuk pengiriman file final dan konfirmasi pembayara
       const storedLeads = localStorage.getItem('kertas_lipat_leads');
       const leads = storedLeads ? JSON.parse(storedLeads) : [];
       
-      const itemsSummary = cartItems.map(item => `${item.name} (${item.quantity} ${item.unit})`).join(', ');
-      
       const newLead = {
         id: `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         type: 'checkout',
         timestamp: new Date().toISOString(),
         name: customerName.trim(),
         phone: customerPhone.trim(),
-        details: `Barang: ${itemsSummary} | Total: ${formatPrice(totals.finalTotal)} | Alamat: ${customerAddress.trim()}${customerNotes.trim() ? ` | Catatan: ${customerNotes.trim()}` : ''}`,
+        address: customerAddress.trim(),
+        notes: customerNotes.trim(),
+        items: cartItems.map(item => {
+          const unitPrice = getItemFinalUnitPrice(item);
+          let addonsFlatFee = 0;
+          const selectedAddonsArray = item.selectedAddons || [];
+          
+          if (selectedAddonsArray.length > 0) {
+            selectedAddonsArray.forEach((a) => {
+              const isFlat = a.name.toLowerCase().includes('express') || a.name.toLowerCase().includes('kilat') || (a.description || '').toLowerCase().includes('flat');
+              if (isFlat) {
+                addonsFlatFee += a.price;
+              }
+            });
+          } else {
+            if (item.addOnExpress) addonsFlatFee += item.addOnExpressPrice ?? 25000;
+          }
+          
+          const total = (unitPrice * item.quantity) + addonsFlatFee;
+          
+          let mappedAddons: { name: string; price: number }[] = [];
+          if (selectedAddonsArray.length > 0) {
+            mappedAddons = selectedAddonsArray.map(a => ({ name: a.name, price: a.price }));
+          } else {
+            if (item.addOnLamination) mappedAddons.push({ name: item.addOnLaminationName ?? 'Laminasi', price: item.addOnLaminationPrice ?? 1500 });
+            if (item.addOnGiftBox) mappedAddons.push({ name: item.addOnGiftBoxName ?? 'Dus Kado', price: item.addOnGiftBoxPrice ?? 5000 });
+            if (item.addOnExpress) mappedAddons.push({ name: item.addOnExpressName ?? 'Kilat', price: item.addOnExpressPrice ?? 25000 });
+          }
+
+          return {
+            name: item.name,
+            sku: item.sku,
+            quantity: item.quantity,
+            unit: item.unit,
+            variantName: item.variantName,
+            needDesignService: !!item.needDesignService,
+            addons: mappedAddons,
+            total: total,
+          };
+        }),
+        totalPrice: totals.finalTotal,
+        uploadedFileName: uploadedFile ? uploadedFile.name : undefined,
+        uploadedFileSize: uploadedFile ? uploadedFile.size : undefined,
       };
       leads.unshift(newLead);
       localStorage.setItem('kertas_lipat_leads', JSON.stringify(leads));
