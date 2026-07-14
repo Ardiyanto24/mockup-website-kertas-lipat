@@ -90,3 +90,29 @@
   color: #64748b;
   line-height: 1.2;
 }
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hamburgerBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  background-color: transparent;
+  transition: all var(--transition-fast);
+  border: 1px solid var(--color-border);
+}
+
+.hamburgerBtn:hover {
+  background-color: #f1f5f9;
+  color: var(--color-primary);
+  border-color: rgba(38, 122, 236, 0.2);
+}
