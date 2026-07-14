@@ -25,6 +25,7 @@ export interface CartItem {
   addOnGiftBoxPrice?: number;
   addOnExpressName?: string;
   addOnExpressPrice?: number;
+  selectedAddons?: { name: string; price: number; description: string }[];
 }
 
 interface CartContextType {
@@ -58,12 +59,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   // Helper: compare items including all unique options
   const areItemsEqual = (a: CartItem, b: Partial<CartItem>) => {
+    const addonNamesA = a.selectedAddons ? a.selectedAddons.map(x => x.name).sort().join('|') : '';
+    const addonNamesB = b.selectedAddons ? b.selectedAddons.map(x => x.name).sort().join('|') : '';
     return a.sku === b.sku &&
            a.variantId === b.variantId &&
            (a.needDesignService || false) === (b.needDesignService || false) &&
            (a.addOnLamination || false) === (b.addOnLamination || false) &&
            (a.addOnGiftBox || false) === (b.addOnGiftBox || false) &&
-           (a.addOnExpress || false) === (b.addOnExpress || false);
+           (a.addOnExpress || false) === (b.addOnExpress || false) &&
+           addonNamesA === addonNamesB;
   };
 
   // Load cart from localStorage on mount
