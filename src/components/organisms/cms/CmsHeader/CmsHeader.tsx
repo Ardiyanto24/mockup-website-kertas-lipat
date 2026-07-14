@@ -5,29 +5,33 @@ import { ShieldCheck, RefreshCw } from 'lucide-react';
 import styles from './CmsHeader.module.css';
 
 interface CmsHeaderProps {
-  activeMainMenu: 'BERANDA' | 'KATALOG';
+  activeMainMenu: 'BERANDA' | 'KATALOG' | 'RIWAYAT';
   handleResetToDefault: () => void;
 }
 
 export function CmsHeader({ activeMainMenu, handleResetToDefault }: CmsHeaderProps) {
-  const isKatalog = activeMainMenu === 'KATALOG';
+  const getHeaderTitle = () => {
+    if (activeMainMenu === 'KATALOG') return 'CMS Pengaturan Katalog';
+    if (activeMainMenu === 'RIWAYAT') return 'Riwayat Transaksi & Leads';
+    return 'CMS Pengaturan Konten';
+  };
+
+  const getHeaderSubtitle = () => {
+    if (activeMainMenu === 'KATALOG') return 'Pusat kustomisasi daftar produk satuan, paket bundling, harga dasar, dan deskripsi produk';
+    if (activeMainMenu === 'RIWAYAT') return 'Daftar riwayat data checkout pemesanan WhatsApp dan kontak formulir';
+    return 'Pusat kustomisasi isi visual seksi halaman depan Beranda Kertas Lipat';
+  };
 
   return (
     <header className={styles.header}>
       <div>
-        <h1 className={styles.title}>
-          {isKatalog ? 'CMS Pengaturan Katalog' : 'CMS Pengaturan Konten'}
-        </h1>
-        <p className={styles.subtitle}>
-          {isKatalog
-            ? 'Pusat kustomisasi daftar produk satuan, paket bundling, harga dasar, dan deskripsi produk'
-            : 'Pusat kustomisasi isi visual seksi halaman depan Beranda Kertas Lipat'}
-        </p>
+        <h1 className={styles.title}>{getHeaderTitle()}</h1>
+        <p className={styles.subtitle}>{getHeaderSubtitle()}</p>
       </div>
 
       {/* User Profile Pill Indicator */}
       <div className={styles.headerActions}>
-        {!isKatalog && (
+        {activeMainMenu === 'BERANDA' && (
           <button
             onClick={handleResetToDefault}
             className={styles.btnOutline}
