@@ -18,14 +18,14 @@ interface GalleryItem {
 }
 
 const STATIC_GALLERY: GalleryItem[] = [
-  { id: 1, name: 'Stiker Vinyl Custom', category: 'Stiker & Label', image: '/images/gallery/gallery_sticker.png', sku: 'KL-STI-01', sizeClass: 'medium' },
-  { id: 2, name: 'Kaos Cotton Combat Sablon', category: 'Pakaian & Merchandise', image: '/images/gallery/gallery_shirt.png', sku: 'KL-MRC-01', sizeClass: 'large' },
-  { id: 3, name: 'Buku Tahunan Sekolah Premium', category: 'Buku & Jilid', image: '/images/gallery/gallery_yearbook.png', sku: 'KL-BDL-YB-01', sizeClass: 'wide' },
-  { id: 4, name: 'Tote Bag Kanvas Custom', category: 'Pakaian & Merchandise', image: '/images/gallery/gallery_tote.png', sku: 'KL-MRC-06', sizeClass: 'medium' },
-  { id: 5, name: 'Kartu Nama Premium Doff', category: 'Cetak Dokumen', image: '/images/gallery/gallery_card.png', sku: 'KL-PRT-03', sizeClass: 'tall' },
+  { id: 1, name: 'Stiker Vinyl Custom', category: 'Stiker & Label', image: '/images/gallery/gallery_sticker.png', sku: 'KL-STI-01', sizeClass: 'wide' },
+  { id: 2, name: 'Kaos Cotton Combat Sablon', category: 'Pakaian & Merchandise', image: '/images/gallery/gallery_shirt.png', sku: 'KL-MRC-01', sizeClass: 'medium' },
+  { id: 3, name: 'Buku Tahunan Sekolah Premium', category: 'Buku & Jilid', image: '/images/gallery/gallery_yearbook.png', sku: 'KL-BDL-YB-01', sizeClass: 'tall' },
+  { id: 4, name: 'Tote Bag Kanvas Custom', category: 'Pakaian & Merchandise', image: '/images/gallery/gallery_tote.png', sku: 'KL-MRC-06', sizeClass: 'wide' },
+  { id: 5, name: 'Kartu Nama Premium Doff', category: 'Cetak Dokumen', image: '/images/gallery/gallery_card.png', sku: 'KL-PRT-03', sizeClass: 'medium' },
   { id: 6, name: 'Menu Resto Anti Air', category: 'Cetak Dokumen', image: '/images/gallery/gallery_menu.png', sku: 'KL-PRM-06', sizeClass: 'medium' },
-  { id: 7, name: 'X-Banner Promosi Toko', category: 'Promosi & Banner', image: '/images/gallery/gallery_banner.png', sku: 'KL-PRT-02', sizeClass: 'tall' },
-  { id: 8, name: 'Celemek Barista Custom', category: 'Pakaian & Merchandise', image: '/images/gallery/gallery_apron.png', sku: 'KL-MRC-09', sizeClass: 'medium' },
+  { id: 7, name: 'X-Banner Promosi Toko', category: 'Promosi & Banner', image: '/images/gallery/gallery_banner.png', sku: 'KL-PRT-02', sizeClass: 'medium' },
+  { id: 8, name: 'Celemek Barista Custom', category: 'Pakaian & Merchandise', image: '/images/gallery/gallery_apron.png', sku: 'KL-MRC-09', sizeClass: 'wide' },
 ];
 
 export function HomeShowcaseSection() {
