@@ -240,24 +240,30 @@ export function ProductsDetailConfigurator({
       </div>
 
       {/* 3. Ratings score & review count */}
-      <div className={styles.ratingRow}>
-        <div className={styles.stars}>
-          <StarIcon />
-          <StarIcon />
-          <StarIcon />
-          <StarIcon />
-          <StarIcon />
+      {showReviews && (
+        <div className={styles.ratingRow}>
+          <div className={styles.stars}>
+            <StarIcon />
+            <StarIcon />
+            <StarIcon />
+            <StarIcon />
+            <StarIcon />
+          </div>
+          <span className={styles.ratingScore}>{ratingScore}</span>
+          <span className={styles.reviewCount}>({reviewCount} Review)</span>
         </div>
-        <span className={styles.ratingScore}>{ratingScore}</span>
-        <span className={styles.reviewCount}>({reviewCount} Review)</span>
-      </div>
+      )}
 
       {/* 4. Crossed-out Original vs Discount Price */}
       <div className={styles.priceRow}>
         <span className={styles.finalPrice}>{formatPrice(pricing.unitPriceFinal)}</span>
-        <span className={styles.originalPrice}>{formatPrice(pricing.unitPriceOriginal)}</span>
-        {pricing.discountPct > 0 && (
-          <span className={styles.discountBadge}>Hemat {pricing.discountPct}%</span>
+        {useDiscountPrice && pricing.unitPriceOriginal > 0 && (
+          <>
+            <span className={styles.originalPrice}>{formatPrice(pricing.unitPriceOriginal)}</span>
+            {pricing.discountPct > 0 && (
+              <span className={styles.discountBadge}>Hemat {pricing.discountPct}%</span>
+            )}
+          </>
         )}
       </div>
 
