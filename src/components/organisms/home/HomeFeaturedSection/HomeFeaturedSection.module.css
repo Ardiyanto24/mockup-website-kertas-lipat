@@ -90,7 +90,7 @@
 /* Responsiveness */
 @media (max-width: 1200px) {
   .grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 24px;
   }
 }
@@ -102,18 +102,26 @@
   
   .filterContainer {
     width: 100%;
-    flex-direction: column;
-    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: var(--radius-full);
+    padding: 4px;
+    gap: 4px;
   }
   
   .filterBtn {
-    width: 100%;
+    flex: 1;
     text-align: center;
-    border-radius: var(--radius-md);
+    padding: 8px 6px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    border-radius: var(--radius-full);
   }
   
   .grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
   }
 }
