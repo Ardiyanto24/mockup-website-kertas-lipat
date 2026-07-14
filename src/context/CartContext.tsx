@@ -16,13 +16,31 @@ export interface CartItem {
   variantName: string;
   variantAddPrice: number;
   needDesignService?: boolean;
+  addOnLamination?: boolean;
+  addOnGiftBox?: boolean;
+  addOnExpress?: boolean;
 }
 
 interface CartContextType {
   cartItems: CartItem[];
   addToCart: (item: CartItem) => void;
-  removeFromCart: (sku: string, variantId: string, needDesignService?: boolean) => void;
-  updateQty: (sku: string, variantId: string, quantity: number, needDesignService?: boolean) => void;
+  removeFromCart: (
+    sku: string,
+    variantId: string,
+    needDesignService?: boolean,
+    addOnLamination?: boolean,
+    addOnGiftBox?: boolean,
+    addOnExpress?: boolean
+  ) => void;
+  updateQty: (
+    sku: string,
+    variantId: string,
+    quantity: number,
+    needDesignService?: boolean,
+    addOnLamination?: boolean,
+    addOnGiftBox?: boolean,
+    addOnExpress?: boolean
+  ) => void;
   clearCart: () => void;
 }
 
@@ -31,6 +49,16 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  // Helper: compare items including all unique options
+  const areItemsEqual = (a: CartItem, b: Partial<CartItem>) => {
+    return a.sku === b.sku &&
+           a.variantId === b.variantId &&
+           (a.needDesignService || false) === (b.needDesignService || false) &&
+           (a.addOnLamination || false) === (b.addOnLamination || false) &&
+           (a.addOnGiftBox || false) === (b.addOnGiftBox || false) &&
+           (a.addOnExpress || false) === (b.addOnExpress || false);
+  };
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -60,9 +88,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const addToCart = (newItem: CartItem) => {
     setCartItems((prevItems) => {
       const existingItemIndex = prevItems.findIndex(
-        (item) => item.sku === newItem.sku && 
-                  item.variantId === newItem.variantId && 
-                  (item.needDesignService || false) === (newItem.needDesignService || false)
+        (item) => areItemsEqual(item, newItem)
       );
 
       if (existingItemIndex > -1) {
@@ -75,24 +101,33 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const removeFromCart = (sku: string, variantId: string, needDesignService?: boolean) => {
+  const removeFromCart = (
+    sku: string,
+    variantId: string,
+    needDesignService?: boolean,
+    addOnLamination?: boolean,
+    addOnGiftBox?: boolean,
+    addOnExpress?: boolean
+  ) => {
+    const match = { sku, variantId, needDesignService, addOnLamination, addOnGiftBox, addOnExpress };
     setCartItems((prevItems) =>
-      prevItems.filter(
-        (item) => !(item.sku === sku && 
-                    item.variantId === variantId && 
-                    (item.needDesignService || false) === (needDesignService || false))
-      )
+      prevItems.filter((item) => !areItemsEqual(item, match))
     );
   };
 
-  const updateQty = (sku: string, variantId: string, quantity: number, needDesignService?: boolean) => {
+  const updateQty = (
+    sku: string,
+    variantId: string,
+    quantity: number,
+    needDesignService?: boolean,
+    addOnLamination?: boolean,
+    addOnGiftBox?: boolean,
+    addOnExpress?: boolean
+  ) => {
+    const match = { sku, variantId, needDesignService, addOnLamination, addOnGiftBox, addOnExpress };
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.sku === sku && 
-        item.variantId === variantId && 
-        (item.needDesignService || false) === (needDesignService || false)
-          ? { ...item, quantity } 
-          : item
+        areItemsEqual(item, match) ? { ...item, quantity } : item
       )
     );
   };

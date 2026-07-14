@@ -24,6 +24,9 @@ export function CartCheckoutPanel() {
   // Helper: calculate unit price with variant addon and volume discount
   const getItemFinalUnitPrice = (item: CartItem) => {
     const unitPriceWithVariant = item.basePrice + item.variantAddPrice;
+    const laminationFee = item.addOnLamination ? 1500 : 0;
+    const giftBoxFee = item.addOnGiftBox ? 5000 : 0;
+    
     let discountPct = 0;
     
     if (item.scheme === 'Produk Satuan') {
@@ -38,7 +41,8 @@ export function CartCheckoutPanel() {
       }
     }
 
-    return Math.max(0, Math.round(unitPriceWithVariant * (1 - discountPct)));
+    const discountedBase = Math.max(0, Math.round(unitPriceWithVariant * (1 - discountPct)));
+    return discountedBase + laminationFee + giftBoxFee;
   };
 
   // Combined price calculations
@@ -46,7 +50,8 @@ export function CartCheckoutPanel() {
     // 1. Items subtotal
     const itemsSubtotal = cartItems.reduce((acc, item) => {
       const finalPrice = getItemFinalUnitPrice(item);
-      return acc + (finalPrice * item.quantity);
+      const expressFee = item.addOnExpress ? 25000 : 0;
+      return acc + (finalPrice * item.quantity) + expressFee;
     }, 0);
 
     // 2. Sum up design fees for each item having needDesignService active
@@ -109,12 +114,21 @@ export function CartCheckoutPanel() {
     // Compile items list string
     const itemsListBrief = cartItems.map((item, index) => {
       const unitPrice = getItemFinalUnitPrice(item);
-      const total = unitPrice * item.quantity;
+      const expressFee = item.addOnExpress ? 25000 : 0;
+      const total = (unitPrice * item.quantity) + expressFee;
+      
+      const addOnsList = [
+        item.addOnLamination && 'Laminasi Protektif (+Rp 1.500)',
+        item.addOnGiftBox && 'Dus Kado Eksklusif (+Rp 5.000)',
+        item.addOnExpress && 'Prioritas Express (+Rp 25.000)',
+      ].filter(Boolean).join(', ');
+
       return `${index + 1}. *${item.name}* (${item.sku})
    - Kuantitas: ${item.quantity} ${item.unit}
    - Varian: ${item.variantName}
    - Jasa Desain: ${item.needDesignService ? 'Ya' : 'Tidak'}
-   - Harga Unit: ${formatPrice(unitPrice)}
+   - Add-ons: ${addOnsList || '-'}
+   - Harga Unit (Inc. Addons): ${formatPrice(unitPrice)}
    - Subtotal: ${formatPrice(total)}`;
     }).join('\n\n');
 

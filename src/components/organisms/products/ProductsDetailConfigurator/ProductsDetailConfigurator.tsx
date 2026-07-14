@@ -37,6 +37,9 @@ export function ProductsDetailConfigurator({
   const [selectedVariant, setSelectedVariant] = useState('STANDARD');
   const [needDesign, setNeedDesign] = useState(false);
   const [isDescExpanded, setIsDescExpanded] = useState(false);
+  const [addOnLamination, setAddOnLamination] = useState(false);
+  const [addOnGiftBox, setAddOnGiftBox] = useState(false);
+  const [addOnExpress, setAddOnExpress] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
@@ -81,8 +84,13 @@ export function ProductsDetailConfigurator({
   const pricing = useMemo(() => {
     const rawUnitPrice = basePrice + activeVariantObj.addPrice;
     
+    // Add-on Unit Fees
+    const laminationFee = addOnLamination ? 1500 : 0;
+    const giftBoxFee = addOnGiftBox ? 5000 : 0;
+    const expressFee = addOnExpress ? 25000 : 0;
+
     // Original price is mapped to a 25% markup to show discount
-    const originalUnitPrice = Math.round(rawUnitPrice * 1.25);
+    const originalUnitPrice = Math.round((rawUnitPrice + laminationFee + giftBoxFee) * 1.25);
 
     // Volume Discount Tiers
     let discountPct = 0;
@@ -98,16 +106,17 @@ export function ProductsDetailConfigurator({
       }
     }
 
-    const discountedUnitPrice = Math.max(0, Math.round(rawUnitPrice * (1 - discountPct)));
-    const itemsTotal = discountedUnitPrice * quantity;
+    const discountedBasePrice = Math.max(0, Math.round(rawUnitPrice * (1 - discountPct)));
+    const discountedUnitPriceWithAddons = discountedBasePrice + laminationFee + giftBoxFee;
+    const itemsTotal = (discountedUnitPriceWithAddons * quantity) + expressFee;
 
     return {
       unitPriceOriginal: originalUnitPrice,
-      unitPriceFinal: discountedUnitPrice,
+      unitPriceFinal: discountedUnitPriceWithAddons,
       itemsTotal: itemsTotal,
       discountPct: Math.round(discountPct * 100),
     };
-  }, [basePrice, activeVariantObj, quantity, scheme]);
+  }, [basePrice, activeVariantObj, quantity, scheme, addOnLamination, addOnGiftBox, addOnExpress]);
 
   // Formatter helper
   const formatPrice = (price: number) => {
@@ -142,6 +151,9 @@ export function ProductsDetailConfigurator({
       variantName: activeVariantObj.name,
       variantAddPrice: activeVariantObj.addPrice,
       needDesignService: needDesign,
+      addOnLamination: addOnLamination,
+      addOnGiftBox: addOnGiftBox,
+      addOnExpress: addOnExpress,
     });
 
     // Show temporary success banner
@@ -167,6 +179,9 @@ export function ProductsDetailConfigurator({
       variantName: activeVariantObj.name,
       variantAddPrice: activeVariantObj.addPrice,
       needDesignService: needDesign,
+      addOnLamination: addOnLamination,
+      addOnGiftBox: addOnGiftBox,
+      addOnExpress: addOnExpress,
     });
     router.push('/cart');
   };
@@ -259,6 +274,59 @@ export function ProductsDetailConfigurator({
             </span>
           </div>
         </label>
+      </div>
+
+      {/* 6c. Layanan Add-on Tambahan */}
+      <div className={styles.configGroup}>
+        <h3 className={styles.groupTitle}>Layanan Add-on Tambahan</h3>
+        <div className={styles.addOnList}>
+          
+          <label className={styles.addOnLabel}>
+            <input
+              type="checkbox"
+              className={styles.addOnCheckbox}
+              checked={addOnLamination}
+              onChange={() => setAddOnLamination(!addOnLamination)}
+            />
+            <div className={styles.addOnText}>
+              <span className={styles.addOnTitle}>Laminasi Protektif Premium</span>
+              <span className={styles.addOnDesc}>
+                Lapisan doff/glossy pelindung anti air (+{formatPrice(1500)} / {unit}).
+              </span>
+            </div>
+          </label>
+
+          <label className={styles.addOnLabel}>
+            <input
+              type="checkbox"
+              className={styles.addOnCheckbox}
+              checked={addOnGiftBox}
+              onChange={() => setAddOnGiftBox(!addOnGiftBox)}
+            />
+            <div className={styles.addOnText}>
+              <span className={styles.addOnTitle}>Kemasan Dus Kado Eksklusif</span>
+              <span className={styles.addOnDesc}>
+                Boks kemasan premium tebal & siap saji souvenir (+{formatPrice(5000)} / {unit}).
+              </span>
+            </div>
+          </label>
+
+          <label className={styles.addOnLabel}>
+            <input
+              type="checkbox"
+              className={styles.addOnCheckbox}
+              checked={addOnExpress}
+              onChange={() => setAddOnExpress(!addOnExpress)}
+            />
+            <div className={styles.addOnText}>
+              <span className={styles.addOnTitle}>Proses Prioritas Kilat (Express)</span>
+              <span className={styles.addOnDesc}>
+                Prioritas antrean cetak utama, selesai dalam 1-2 hari kerja (+{formatPrice(25000)} flat).
+              </span>
+            </div>
+          </label>
+
+        </div>
       </div>
 
       {/* 7. Qty selector + Add to Cart + Wishlist side-by-side */}

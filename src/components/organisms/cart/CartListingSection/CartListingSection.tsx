@@ -19,7 +19,15 @@ export function CartListingSection() {
 
   const handleQtyChange = (item: CartItem, newQty: number) => {
     if (newQty >= item.minOrder) {
-      updateQty(item.sku, item.variantId, newQty, item.needDesignService);
+      updateQty(
+        item.sku, 
+        item.variantId, 
+        newQty, 
+        item.needDesignService,
+        item.addOnLamination,
+        item.addOnGiftBox,
+        item.addOnExpress
+      );
     }
   };
 
@@ -41,8 +49,10 @@ export function CartListingSection() {
   // Calculate item unit price with variant addon and volume discount
   const getItemFinalUnitPrice = (item: CartItem) => {
     const unitPriceWithVariant = item.basePrice + item.variantAddPrice;
-    let discountPct = 0;
+    const laminationFee = item.addOnLamination ? 1500 : 0;
+    const giftBoxFee = item.addOnGiftBox ? 5000 : 0;
     
+    let discountPct = 0;
     if (item.scheme === 'Produk Satuan') {
       if (item.quantity >= 10 && item.quantity < 50) {
         discountPct = 0.10;
@@ -55,7 +65,8 @@ export function CartListingSection() {
       }
     }
 
-    return Math.max(0, Math.round(unitPriceWithVariant * (1 - discountPct)));
+    const discountedBase = Math.max(0, Math.round(unitPriceWithVariant * (1 - discountPct)));
+    return discountedBase + laminationFee + giftBoxFee;
   };
 
   return (
@@ -65,10 +76,13 @@ export function CartListingSection() {
       <div className={styles.list}>
         {cartItems.map((item) => {
           const finalUnitPrice = getItemFinalUnitPrice(item);
-          const itemTotal = finalUnitPrice * item.quantity;
+          const expressFee = item.addOnExpress ? 25000 : 0;
+          const itemTotal = (finalUnitPrice * item.quantity) + expressFee;
+          
+          const uniqueKey = `${item.sku}-${item.variantId}-${item.needDesignService ? 'design' : 'nodesign'}-${item.addOnLamination ? 'lam' : 'nolam'}-${item.addOnGiftBox ? 'box' : 'nobox'}-${item.addOnExpress ? 'exp' : 'noexp'}`;
 
           return (
-            <div key={`${item.sku}-${item.variantId}-${item.needDesignService ? 'design' : 'nodesign'}`} className={styles.itemRow}>
+            <div key={uniqueKey} className={styles.itemRow}>
               {/* Product Visual */}
               <div className={styles.visualColumn}>
                 <div className={styles.imageWrapper}>
@@ -94,6 +108,15 @@ export function CartListingSection() {
                   <span className={`${styles.badge} ${styles.variantBadge}`}>{item.variantName}</span>
                   {item.needDesignService && (
                     <span className={`${styles.badge} ${styles.designBadge}`}>+ Jasa Desain</span>
+                  )}
+                  {item.addOnLamination && (
+                    <span className={`${styles.badge} ${styles.addOnBadge}`}>+ Laminasi</span>
+                  )}
+                  {item.addOnGiftBox && (
+                    <span className={`${styles.badge} ${styles.addOnBadge}`}>+ Dus Kado</span>
+                  )}
+                  {item.addOnExpress && (
+                    <span className={`${styles.badge} ${styles.addOnBadge}`}>+ Kilat</span>
                   )}
                 </div>
                 <div className={styles.unitPriceInfo}>
@@ -127,7 +150,14 @@ export function CartListingSection() {
                 <div className={styles.totalPrice}>{formatPrice(itemTotal)}</div>
                 <button
                   className={styles.deleteBtn}
-                  onClick={() => removeFromCart(item.sku, item.variantId, item.needDesignService)}
+                  onClick={() => removeFromCart(
+                    item.sku,
+                    item.variantId,
+                    item.needDesignService,
+                    item.addOnLamination,
+                    item.addOnGiftBox,
+                    item.addOnExpress
+                  )}
                   aria-label="Hapus Item"
                 >
                   Hapus 🗑️

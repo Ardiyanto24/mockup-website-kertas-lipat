@@ -104,6 +104,12 @@
   border: 1px dashed var(--color-secondary-orange);
 }
 
+.addOnBadge {
+  background-color: var(--color-secondary-teal-light);
+  color: #00a8a9; /* slightly darker teal for optimal accessibility contrast */
+  border: 1px dashed #00c2c3;
+}
+
 .unitPriceInfo {
   font-size: 0.85rem;
   color: var(--color-text-muted);
