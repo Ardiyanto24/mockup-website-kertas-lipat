@@ -1,32 +1,44 @@
 'use client';
-
+ 
 import React from 'react';
-import { ShieldCheck, RefreshCw } from 'lucide-react';
+import { ShieldCheck, RefreshCw, Menu } from 'lucide-react';
 import styles from './CmsHeader.module.css';
-
+ 
 interface CmsHeaderProps {
   activeMainMenu: 'BERANDA' | 'KATALOG' | 'RIWAYAT';
   handleResetToDefault: () => void;
+  toggleSidebar: () => void;
+  isSidebarOpen: boolean;
 }
-
-export function CmsHeader({ activeMainMenu, handleResetToDefault }: CmsHeaderProps) {
+ 
+export function CmsHeader({ activeMainMenu, handleResetToDefault, toggleSidebar, isSidebarOpen }: CmsHeaderProps) {
   const getHeaderTitle = () => {
     if (activeMainMenu === 'KATALOG') return 'CMS Pengaturan Katalog';
     if (activeMainMenu === 'RIWAYAT') return 'Riwayat Transaksi & Leads';
     return 'CMS Pengaturan Konten';
   };
-
+ 
   const getHeaderSubtitle = () => {
     if (activeMainMenu === 'KATALOG') return 'Pusat kustomisasi daftar produk satuan, paket bundling, harga dasar, dan deskripsi produk';
     if (activeMainMenu === 'RIWAYAT') return 'Daftar riwayat data checkout pemesanan WhatsApp dan kontak formulir';
     return 'Pusat kustomisasi isi visual seksi halaman depan Beranda Kertas Lipat';
   };
-
+ 
   return (
     <header className={styles.header}>
-      <div>
-        <h1 className={styles.title}>{getHeaderTitle()}</h1>
-        <p className={styles.subtitle}>{getHeaderSubtitle()}</p>
+      <div className={styles.headerLeft}>
+        <button
+          onClick={toggleSidebar}
+          className={styles.hamburgerBtn}
+          aria-label="Toggle Sidebar"
+          title={isSidebarOpen ? "Tutup Sidebar" : "Buka Sidebar"}
+        >
+          <Menu size={18} />
+        </button>
+        <div>
+          <h1 className={styles.title}>{getHeaderTitle()}</h1>
+          <p className={styles.subtitle}>{getHeaderSubtitle()}</p>
+        </div>
       </div>
 
       {/* User Profile Pill Indicator */}
