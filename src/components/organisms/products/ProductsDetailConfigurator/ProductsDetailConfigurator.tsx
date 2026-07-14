@@ -36,6 +36,7 @@ export function ProductsDetailConfigurator({
   const [quantity, setQuantity] = useState(minOrder);
   const [selectedVariant, setSelectedVariant] = useState('STANDARD');
   const [needDesign, setNeedDesign] = useState(false);
+  const [isDescExpanded, setIsDescExpanded] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
@@ -204,8 +205,24 @@ export function ProductsDetailConfigurator({
         )}
       </div>
 
-      {/* 5. Description snippet */}
-      <p className={styles.briefDescription}>{description.slice(0, 160)}...</p>
+      {/* 5. Description snippet with View More toggle */}
+      <div className={styles.descriptionContainer}>
+        <p className={styles.briefDescription}>
+          {description.length > 160 
+            ? (isDescExpanded ? description : `${description.slice(0, 160)}...`)
+            : description
+          }
+          {description.length > 160 && (
+            <button 
+              type="button" 
+              className={styles.viewMoreBtn} 
+              onClick={() => setIsDescExpanded(!isDescExpanded)}
+            >
+              {isDescExpanded ? 'View Less' : 'View More'}
+            </button>
+          )}
+        </p>
+      </div>
 
       <div className={styles.divider}></div>
 
