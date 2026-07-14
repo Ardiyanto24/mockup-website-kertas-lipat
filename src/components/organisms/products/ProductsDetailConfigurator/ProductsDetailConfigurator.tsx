@@ -257,29 +257,25 @@ export function ProductsDetailConfigurator({
         </div>
       </div>
 
-      {/* 6b. Jasa Desain Option */}
-      <div className={styles.configGroup}>
-        <h3 className={styles.groupTitle}>Jasa Desain Tambahan</h3>
-        <label className={styles.designLabel}>
-          <input
-            type="checkbox"
-            className={styles.designCheckbox}
-            checked={needDesign}
-            onChange={() => setNeedDesign(!needDesign)}
-          />
-          <div className={styles.designText}>
-            <span className={styles.designTitle}>Butuh Jasa Desain Kertas Lipat</span>
-            <span className={styles.designDesc}>
-              Belum punya file siap cetak? Kami bantu layout desain estetik (+{formatPrice(scheme === 'Paket Bundling' ? 150000 : 50000)} flat).
-            </span>
-          </div>
-        </label>
-      </div>
-
-      {/* 6c. Layanan Add-on Tambahan */}
+      {/* 6c. Layanan Add-on & Jasa Desain Tambahan */}
       <div className={styles.configGroup}>
         <h3 className={styles.groupTitle}>Layanan Add-on Tambahan</h3>
         <div className={styles.addOnList}>
+
+          <label className={styles.designLabel}>
+            <input
+              type="checkbox"
+              className={styles.designCheckbox}
+              checked={needDesign}
+              onChange={() => setNeedDesign(!needDesign)}
+            />
+            <div className={styles.designText}>
+              <span className={styles.designTitle}>Butuh Jasa Desain Kertas Lipat</span>
+              <span className={styles.designDesc}>
+                Belum punya file siap cetak? Kami bantu layout desain estetik (+{formatPrice(scheme === 'Paket Bundling' ? 150000 : 50000)} flat).
+              </span>
+            </div>
+          </label>
           
           <label className={styles.addOnLabel}>
             <input
