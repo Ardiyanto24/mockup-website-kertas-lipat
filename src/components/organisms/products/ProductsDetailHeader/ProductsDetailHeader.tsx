@@ -10,35 +10,52 @@ interface ProductsDetailHeaderProps {
   sku: string;
   scheme: 'Produk Satuan' | 'Paket Bundling';
   imageUrl: string;
+  images?: string[];
+  displayImageCount?: number;
 }
 
 export function ProductsDetailHeader({
   name,
   imageUrl,
+  images = [],
+  displayImageCount = 8,
 }: ProductsDetailHeaderProps) {
-  // Generate 8 diverse visual perspectives based on the main category mockup image
-  const galleryItems = [
-    { id: 1, type: 'image', url: imageUrl, label: 'Mockup Utama' },
-    { id: 2, type: 'gradient', url: 'linear-gradient(135deg, var(--color-primary-light) 0%, #cbd5e1 100%)', label: 'Tekstur Bahan' },
-    { id: 3, type: 'gradient', url: 'linear-gradient(135deg, var(--color-secondary-orange-light) 0%, #ffedd5 100%)', label: 'Kemasan Box' },
-    { id: 4, type: 'gradient', url: 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)', label: 'Hasil Cetak' },
-    { id: 5, type: 'gradient', url: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)', label: 'Dimensi Ukuran' },
-    { id: 6, type: 'gradient', url: 'linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)', label: 'Pilihan Warna' },
-    { id: 7, type: 'gradient', url: 'linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%)', label: 'Sisi Belakang' },
-    { id: 8, type: 'gradient', url: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', label: 'Kualitas QC' },
-  ];
+  const galleryItems = React.useMemo(() => {
+    if (images && images.length > 0) {
+      const count = Math.min(displayImageCount, images.length);
+      const visibleImages = images.slice(0, count);
+      return visibleImages.map((url, index) => ({
+        id: index + 1,
+        type: 'image',
+        url: url,
+        label: index === 0 ? 'Foto Utama' : `Foto Tambahan ${index}`,
+      }));
+    }
+
+    return [
+      { id: 1, type: 'image', url: imageUrl, label: 'Mockup Utama' },
+      { id: 2, type: 'gradient', url: 'linear-gradient(135deg, var(--color-primary-light) 0%, #cbd5e1 100%)', label: 'Tekstur Bahan' },
+      { id: 3, type: 'gradient', url: 'linear-gradient(135deg, var(--color-secondary-orange-light) 0%, #ffedd5 100%)', label: 'Kemasan Box' },
+      { id: 4, type: 'gradient', url: 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)', label: 'Hasil Cetak' },
+      { id: 5, type: 'gradient', url: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)', label: 'Dimensi Ukuran' },
+      { id: 6, type: 'gradient', url: 'linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)', label: 'Pilihan Warna' },
+      { id: 7, type: 'gradient', url: 'linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%)', label: 'Sisi Belakang' },
+      { id: 8, type: 'gradient', url: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', label: 'Kualitas QC' },
+    ];
+  }, [images, displayImageCount, imageUrl]);
 
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handlePrev = () => {
-    setActiveIndex((prev) => (prev === 0 ? galleryItems.length - 1 : prev - 1));
+    setActiveIndex((prev) => (prev <= 0 ? galleryItems.length - 1 : prev - 1));
   };
 
   const handleNext = () => {
-    setActiveIndex((prev) => (prev === galleryItems.length - 1 ? 0 : prev + 1));
+    setActiveIndex((prev) => (prev >= galleryItems.length - 1 ? 0 : prev + 1));
   };
 
-  const activeItem = galleryItems[activeIndex];
+  const currentIndex = Math.min(activeIndex, galleryItems.length - 1);
+  const activeItem = galleryItems[currentIndex] || galleryItems[0];
 
   return (
     <div className={styles.galleryContainer}>
