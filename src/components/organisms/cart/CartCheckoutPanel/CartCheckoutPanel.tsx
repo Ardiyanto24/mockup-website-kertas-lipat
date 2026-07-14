@@ -12,6 +12,12 @@ export function CartCheckoutPanel() {
   const [uploadedFile, setUploadedFile] = useState<{ name: string; size: string } | null>(null);
   const [dragActive, setDragActive] = useState(false);
 
+  // Customer Biodata states
+  const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
+  const [customerAddress, setCustomerAddress] = useState('');
+  const [customerNotes, setCustomerNotes] = useState('');
+
   // Formatting currency helper
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -131,6 +137,19 @@ export function CartCheckoutPanel() {
 
   // Combined WhatsApp Checkout compiler
   const handleWhatsAppCheckout = () => {
+    if (!customerName.trim()) {
+      alert('Silakan isi Nama Lengkap Anda terlebih dahulu.');
+      return;
+    }
+    if (!customerPhone.trim()) {
+      alert('Silakan isi Nomor WhatsApp Anda terlebih dahulu.');
+      return;
+    }
+    if (!customerAddress.trim()) {
+      alert('Silakan isi Alamat Pengiriman Lengkap Anda terlebih dahulu.');
+      return;
+    }
+
     const waBase = 'https://wa.me/6281234567890';
     
     // Compile items list string
@@ -179,6 +198,11 @@ export function CartCheckoutPanel() {
 
     const text = `Halo Kertas Lipat! Saya ingin memesan produk kustom dari keranjang belanja saya:
 
+*Biodata Pemesan:*
+- *Nama:* ${customerName.trim()}
+- *No. WhatsApp:* ${customerPhone.trim()}
+- *Alamat Pengiriman:* ${customerAddress.trim()}
+${customerNotes.trim() ? `- *Catatan:* ${customerNotes.trim()}\n` : ''}
 *Rincian Barang Cetak:*
 ${itemsListBrief}
 
@@ -247,6 +271,58 @@ Mohon instruksi selanjutnya untuk pengiriman file final dan konfirmasi pembayara
             </button>
           </div>
         )}
+      </div>
+
+      <div className={styles.divider}></div>
+
+      {/* Biodata Pemesan */}
+      <div className={styles.panelGroup}>
+        <h4 className={styles.groupTitle}>Biodata Pemesan</h4>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div className={styles.inputGroup}>
+            <label className={styles.inputLabel}>Nama Lengkap *</label>
+            <input
+              type="text"
+              className={styles.textInput}
+              placeholder="Contoh: Budi Santoso"
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
+              required
+            />
+          </div>
+          <div className={styles.inputGroup}>
+            <label className={styles.inputLabel}>Nomor WhatsApp *</label>
+            <input
+              type="tel"
+              className={styles.textInput}
+              placeholder="Contoh: 081234567890"
+              value={customerPhone}
+              onChange={(e) => setCustomerPhone(e.target.value)}
+              required
+            />
+          </div>
+          <div className={styles.inputGroup}>
+            <label className={styles.inputLabel}>Alamat Pengiriman Lengkap *</label>
+            <textarea
+              className={styles.textareaInput}
+              placeholder="Masukkan alamat lengkap (jalan, nomor rumah, RT/RW, kecamatan, kota/kabupaten, kode pos)"
+              value={customerAddress}
+              onChange={(e) => setCustomerAddress(e.target.value)}
+              required
+              rows={3}
+            />
+          </div>
+          <div className={styles.inputGroup}>
+            <label className={styles.inputLabel}>Catatan Tambahan (Opsional)</label>
+            <input
+              type="text"
+              className={styles.textInput}
+              placeholder="Contoh: Minta dikirim siang hari"
+              value={customerNotes}
+              onChange={(e) => setCustomerNotes(e.target.value)}
+            />
+          </div>
+        </div>
       </div>
 
       <div className={styles.divider}></div>
