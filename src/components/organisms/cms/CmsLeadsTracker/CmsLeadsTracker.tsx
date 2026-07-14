@@ -16,7 +16,15 @@ export function CmsLeadsTracker() {
     try {
       const stored = localStorage.getItem('kertas_lipat_leads');
       if (stored) {
-        setLeads(JSON.parse(stored));
+        const parsed: Lead[] = JSON.parse(stored);
+        // Self-healing check: if any checkout lead lacks structured fields, force reload dummyLeads
+        const hasOldData = parsed.some(l => l.type === 'checkout' && !l.address);
+        if (hasOldData) {
+          localStorage.setItem('kertas_lipat_leads', JSON.stringify(dummyLeads));
+          setLeads(dummyLeads);
+        } else {
+          setLeads(parsed);
+        }
       } else {
         localStorage.setItem('kertas_lipat_leads', JSON.stringify(dummyLeads));
         setLeads(dummyLeads);
