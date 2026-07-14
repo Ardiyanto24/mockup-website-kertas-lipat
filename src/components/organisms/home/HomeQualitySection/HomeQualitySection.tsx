@@ -11,6 +11,7 @@ interface QualityDetail {
   title: string;
   description: string;
   icon: string;
+  image: string;
 }
 
 const qualityDetails: QualityDetail[] = [
@@ -20,6 +21,7 @@ const qualityDetails: QualityDetail[] = [
     title: 'Sablon DTF Sangat Lentur & Kuat',
     description: 'Sablon DTF kami memiliki kelenturan maksimal. Saat kaos ditarik atau diregangkan, sablon ikut merenggang secara elastis tanpa pecah, retak, atau mengelupas. Tahan cuci mesin cuci berkali-kali.',
     icon: '👕',
+    image: '/images/quality_dtf.png',
   },
   {
     id: 2,
@@ -27,6 +29,7 @@ const qualityDetails: QualityDetail[] = [
     title: 'Sentuhan Spot UV & Hard Cover Mewah',
     description: 'Memberikan efek kilap glossy yang presisi hanya pada area teks atau logo tertentu di atas cover buku tahunan sekolah (Yearbook) bersampul tebal (Hard Cover). Timbul, reflektif, dan terasa sangat premium.',
     icon: '✨',
+    image: '/images/quality_spot_uv.png',
   },
   {
     id: 3,
@@ -34,6 +37,7 @@ const qualityDetails: QualityDetail[] = [
     title: 'Stiker Vinyl 100% Anti Air (Waterproof)',
     description: 'Menggunakan material stiker vinyl tahan air yang direkatkan dengan lem rekat kuat. Sangat cocok untuk label kemasan botol sambal frozen, minuman dingin berembun, maupun produk kosmetik higienis.',
     icon: '💧',
+    image: '/images/quality_waterproof_sticker.png',
   },
 ];
 
@@ -49,8 +53,8 @@ export function HomeQualitySection() {
           <div className={styles.visualCol}>
             <div className={styles.imageWrapper}>
               <Image
-                src="/images/quality_production.png"
-                alt="Proses Produksi Percetakan Presisi Kertas Lipat"
+                src={activeDetail.image}
+                alt={activeDetail.title}
                 fill
                 className={styles.image}
                 priority
