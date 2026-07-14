@@ -9,24 +9,39 @@ import { ArrowLeft } from 'lucide-react';
 import { ProductsDetailHeader } from '@/components/organisms/products/ProductsDetailHeader/ProductsDetailHeader';
 import { ProductsDetailConfigurator } from '@/components/organisms/products/ProductsDetailConfigurator/ProductsDetailConfigurator';
 import { CatalogProductCard } from '@/components/molecules/shared/CatalogProductCard/CatalogProductCard';
+import { useProductCatalog } from '@/hooks/useProductCatalog';
 import styles from './ProductsDetailTemplate.module.css';
 
 interface ProductsDetailTemplateProps {
   product: Product;
 }
 
-export function ProductsDetailTemplate({ product }: ProductsDetailTemplateProps) {
+export function ProductsDetailTemplate({ product: staticProduct }: ProductsDetailTemplateProps) {
+  const { catalog, isLoaded } = useProductCatalog();
+  const [activeProduct, setActiveProduct] = React.useState<Product>(staticProduct);
+  const [allProducts, setAllProducts] = React.useState<Product[]>(products);
+
+  React.useEffect(() => {
+    if (isLoaded && catalog) {
+      setAllProducts(catalog);
+      const match = catalog.find((p) => p.sku.toLowerCase() === staticProduct.sku.toLowerCase());
+      if (match) {
+        setActiveProduct(match);
+      }
+    }
+  }, [isLoaded, catalog, staticProduct.sku]);
+
   // Find 3 related products in same category, falling back to other products if needed
   const relatedProducts = useMemo(() => {
-    let list = products.filter((p) => p.category === product.category && p.sku !== product.sku);
+    let list = allProducts.filter((p) => p.category === activeProduct.category && p.sku !== activeProduct.sku);
     if (list.length < 3) {
-      const additional = products.filter(
-        (p) => p.sku !== product.sku && !list.some((item) => item.sku === p.sku)
+      const additional = allProducts.filter(
+        (p) => p.sku !== activeProduct.sku && !list.some((item) => item.sku === p.sku)
       );
       list = [...list, ...additional];
     }
     return list.slice(0, 3);
-  }, [product]);
+  }, [activeProduct, allProducts]);
 
   return (
     <div className={styles.wrapper}>
@@ -41,7 +56,7 @@ export function ProductsDetailTemplate({ product }: ProductsDetailTemplateProps)
               <li className={styles.breadcrumbSeparator}>/</li>
               <li><Link href="/products">Katalog</Link></li>
               <li className={styles.breadcrumbSeparator}>/</li>
-              <li className={styles.breadcrumbCurrent}>{product.name}</li>
+              <li className={styles.breadcrumbCurrent}>{activeProduct.name}</li>
             </ol>
           </nav>
           
@@ -56,26 +71,26 @@ export function ProductsDetailTemplate({ product }: ProductsDetailTemplateProps)
           {/* Left Column: Visual Gallery */}
           <div className={styles.leftCol}>
             <ProductsDetailHeader
-              name={product.name}
-              category={product.category}
-              sku={product.sku}
-              scheme={product.scheme}
-              imageUrl={product.imageUrl}
+              name={activeProduct.name}
+              category={activeProduct.category}
+              sku={activeProduct.sku}
+              scheme={activeProduct.scheme}
+              imageUrl={activeProduct.imageUrl}
             />
           </div>
 
           {/* Right Column: Pricing & Varian Selector */}
           <div className={styles.rightCol}>
             <ProductsDetailConfigurator
-              sku={product.sku}
-              name={product.name}
-              category={product.category}
-              scheme={product.scheme}
-              basePrice={product.basePrice}
-              unit={product.unit}
-              minOrder={product.minOrder}
-              imageUrl={product.imageUrl}
-              description={product.description}
+              sku={activeProduct.sku}
+              name={activeProduct.name}
+              category={activeProduct.category}
+              scheme={activeProduct.scheme}
+              basePrice={activeProduct.basePrice}
+              unit={activeProduct.unit}
+              minOrder={activeProduct.minOrder}
+              imageUrl={activeProduct.imageUrl}
+              description={activeProduct.description}
             />
           </div>
         </div>
