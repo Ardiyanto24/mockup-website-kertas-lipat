@@ -89,6 +89,18 @@ ul {
   padding-left: 24px;
 }
 
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1400px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .container {
+    max-width: 1600px;
+  }
+}
+
 @media (max-width: 768px) {
   .container {
     padding-right: 16px;
