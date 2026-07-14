@@ -16,8 +16,13 @@ interface ProductsDetailConfiguratorProps {
   minOrder: number;
   imageUrl?: string;
   description: string;
-  features?: string[];
   pricingType?: string;
+  showReviews?: boolean;
+  discountPrice?: number;
+  useDiscountPrice?: boolean;
+  variants?: { name: string; addPrice: number }[];
+  addons?: { name: string; price: number; description: string }[];
+  tags?: string[];
 }
 
 export function ProductsDetailConfigurator({
@@ -30,8 +35,13 @@ export function ProductsDetailConfigurator({
   minOrder,
   imageUrl = '/images/categories/cat_printing.png',
   description,
-  features = [],
   pricingType = 'Per Unit',
+  showReviews = true,
+  discountPrice = 0,
+  useDiscountPrice = false,
+  variants = [],
+  addons = [],
+  tags = [],
 }: ProductsDetailConfiguratorProps) {
   const { addToCart } = useCart();
   const router = useRouter();
@@ -51,8 +61,16 @@ export function ProductsDetailConfigurator({
   const ratingScore = 4.8;
   const reviewCount = 245;
 
-  // Varian configuration mapping based on category/SKU
+  // Varian configuration mapping based on category/SKU/CMS variants input
   const variantOptions = useMemo(() => {
+    if (variants && variants.length > 0) {
+      return variants.map((v, index) => ({
+        id: `VAR_${index}`,
+        name: v.name,
+        addPrice: v.addPrice,
+      }));
+    }
+
     if (sku.startsWith('KL-STI-04')) {
       // Notebook custom series
       return [
@@ -80,21 +98,24 @@ export function ProductsDetailConfigurator({
         { id: 'PREMIUM', name: 'Bahan Premium', addPrice: 10000 },
       ];
     }
-  }, [sku, category]);
+  }, [sku, category, variants]);
 
   const activeVariantObj = variantOptions.find((v) => v.id === selectedVariant) || variantOptions[0];
 
   // Dynamic pricing calculations (regular vs original crossed-out)
   const pricing = useMemo(() => {
-    const rawUnitPrice = basePrice + activeVariantObj.addPrice;
+    const currentBasePrice = (useDiscountPrice && discountPrice !== undefined) ? discountPrice : basePrice;
+    const rawUnitPrice = currentBasePrice + activeVariantObj.addPrice;
     
-    // Add-on Unit Fees
-    const laminationFee = addOnLamination ? 1500 : 0;
-    const giftBoxFee = addOnGiftBox ? 5000 : 0;
-    const expressFee = addOnExpress ? 25000 : 0;
+    // Add-on Unit Fees (support dynamic addons from CMS)
+    const activeAddons = addons && addons.length > 0 ? addons.slice(0, 3) : [];
+    
+    const laminationFee = addOnLamination && activeAddons[0] ? activeAddons[0].price : (addOnLamination && !addons ? 1500 : 0);
+    const giftBoxFee = addOnGiftBox && activeAddons[1] ? activeAddons[1].price : (addOnGiftBox && !addons ? 5000 : 0);
+    const expressFee = addOnExpress && activeAddons[2] ? activeAddons[2].price : (addOnExpress && !addons ? 25000 : 0);
 
-    // Original price is mapped to a 25% markup to show discount
-    const originalUnitPrice = Math.round((rawUnitPrice + laminationFee + giftBoxFee) * 1.25);
+    // Crossed-out original price (only shown if discount is active)
+    const originalUnitPrice = useDiscountPrice ? (basePrice + activeVariantObj.addPrice) : 0;
 
     // Volume Discount Tiers
     let discountPct = 0;
@@ -114,13 +135,15 @@ export function ProductsDetailConfigurator({
     const discountedUnitPriceWithAddons = discountedBasePrice + laminationFee + giftBoxFee;
     const itemsTotal = (discountedUnitPriceWithAddons * quantity) + expressFee;
 
+    const discountTagPct = useDiscountPrice && basePrice > 0 ? Math.round(((basePrice - currentBasePrice) / basePrice) * 100) : Math.round(discountPct * 100);
+
     return {
       unitPriceOriginal: originalUnitPrice,
       unitPriceFinal: discountedUnitPriceWithAddons,
       itemsTotal: itemsTotal,
-      discountPct: Math.round(discountPct * 100),
+      discountPct: discountTagPct,
     };
-  }, [basePrice, activeVariantObj, quantity, scheme, addOnLamination, addOnGiftBox, addOnExpress]);
+  }, [basePrice, discountPrice, useDiscountPrice, activeVariantObj, quantity, scheme, addons, addOnLamination, addOnGiftBox, addOnExpress]);
 
   // Formatter helper
   const formatPrice = (price: number) => {
@@ -141,6 +164,7 @@ export function ProductsDetailConfigurator({
 
   // Add to cart handler
   const handleAddToCart = () => {
+    const activeAddons = addons && addons.length > 0 ? addons.slice(0, 3) : [];
     addToCart({
       sku,
       name,
@@ -158,6 +182,12 @@ export function ProductsDetailConfigurator({
       addOnLamination: addOnLamination,
       addOnGiftBox: addOnGiftBox,
       addOnExpress: addOnExpress,
+      addOnLaminationName: activeAddons[0]?.name,
+      addOnLaminationPrice: activeAddons[0]?.price,
+      addOnGiftBoxName: activeAddons[1]?.name,
+      addOnGiftBoxPrice: activeAddons[1]?.price,
+      addOnExpressName: activeAddons[2]?.name,
+      addOnExpressPrice: activeAddons[2]?.price,
     });
 
     // Show temporary success banner
@@ -169,6 +199,7 @@ export function ProductsDetailConfigurator({
 
   // Buy Now handler
   const handleBuyNow = () => {
+    const activeAddons = addons && addons.length > 0 ? addons.slice(0, 3) : [];
     addToCart({
       sku,
       name,
@@ -186,6 +217,12 @@ export function ProductsDetailConfigurator({
       addOnLamination: addOnLamination,
       addOnGiftBox: addOnGiftBox,
       addOnExpress: addOnExpress,
+      addOnLaminationName: activeAddons[0]?.name,
+      addOnLaminationPrice: activeAddons[0]?.price,
+      addOnGiftBoxName: activeAddons[1]?.name,
+      addOnGiftBoxPrice: activeAddons[1]?.price,
+      addOnExpressName: activeAddons[2]?.name,
+      addOnExpressPrice: activeAddons[2]?.price,
     });
     router.push('/cart');
   };
@@ -243,18 +280,6 @@ export function ProductsDetailConfigurator({
         </p>
       </div>
 
-      {/* Features Bullet List */}
-      {features && features.length > 0 && (
-        <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-text-main)' }}>Fitur Utama:</span>
-          <ul style={{ margin: 0, paddingLeft: '20px', listStyleType: 'disc', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            {features.map((feat, idx) => (
-              <li key={idx} style={{ fontSize: '12px', color: '#475569', lineHeight: '1.5' }}>{feat}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-
       <div className={styles.divider}></div>
 
       {/* 6. Variant Pills side-by-side */}
@@ -292,51 +317,72 @@ export function ProductsDetailConfigurator({
               </span>
             </div>
           </label>
-          
-          <label className={styles.addOnLabel}>
-            <input
-              type="checkbox"
-              className={styles.addOnCheckbox}
-              checked={addOnLamination}
-              onChange={() => setAddOnLamination(!addOnLamination)}
-            />
-            <div className={styles.addOnText}>
-              <span className={styles.addOnTitle}>Laminasi Protektif Premium</span>
-              <span className={styles.addOnDesc}>
-                Lapisan doff/glossy pelindung anti air (+{formatPrice(1500)} / {unit}).
-              </span>
-            </div>
-          </label>
 
-          <label className={styles.addOnLabel}>
-            <input
-              type="checkbox"
-              className={styles.addOnCheckbox}
-              checked={addOnGiftBox}
-              onChange={() => setAddOnGiftBox(!addOnGiftBox)}
-            />
-            <div className={styles.addOnText}>
-              <span className={styles.addOnTitle}>Kemasan Dus Kado Eksklusif</span>
-              <span className={styles.addOnDesc}>
-                Boks kemasan premium tebal & siap saji souvenir (+{formatPrice(5000)} / {unit}).
-              </span>
-            </div>
-          </label>
+          {/* Add-on 1 */}
+          {((addons && addons.length > 0 && addons[0]) || (!addons || addons.length === 0)) && (
+            <label className={styles.addOnLabel}>
+              <input
+                type="checkbox"
+                className={styles.addOnCheckbox}
+                checked={addOnLamination}
+                onChange={() => setAddOnLamination(!addOnLamination)}
+              />
+              <div className={styles.addOnText}>
+                <span className={styles.addOnTitle}>
+                  {addons && addons[0] ? addons[0].name : 'Laminasi Protektif Premium'}
+                </span>
+                <span className={styles.addOnDesc}>
+                  {addons && addons[0]
+                    ? `${addons[0].description} (+${formatPrice(addons[0].price)} / ${unit})`
+                    : `Lapisan doff/glossy pelindung anti air (+${formatPrice(1500)} / ${unit})`}
+                </span>
+              </div>
+            </label>
+          )}
 
-          <label className={styles.addOnLabel}>
-            <input
-              type="checkbox"
-              className={styles.addOnCheckbox}
-              checked={addOnExpress}
-              onChange={() => setAddOnExpress(!addOnExpress)}
-            />
-            <div className={styles.addOnText}>
-              <span className={styles.addOnTitle}>Proses Prioritas Kilat (Express)</span>
-              <span className={styles.addOnDesc}>
-                Prioritas antrean cetak utama, selesai dalam 1-2 hari kerja (+{formatPrice(25000)} flat).
-              </span>
-            </div>
-          </label>
+          {/* Add-on 2 */}
+          {((addons && addons.length > 1 && addons[1]) || (!addons || addons.length === 0)) && (
+            <label className={styles.addOnLabel}>
+              <input
+                type="checkbox"
+                className={styles.addOnCheckbox}
+                checked={addOnGiftBox}
+                onChange={() => setAddOnGiftBox(!addOnGiftBox)}
+              />
+              <div className={styles.addOnText}>
+                <span className={styles.addOnTitle}>
+                  {addons && addons[1] ? addons[1].name : 'Kemasan Dus Kado Eksklusif'}
+                </span>
+                <span className={styles.addOnDesc}>
+                  {addons && addons[1]
+                    ? `${addons[1].description} (+${formatPrice(addons[1].price)} / ${unit})`
+                    : `Boks kemasan premium tebal & siap saji souvenir (+${formatPrice(5000)} / ${unit})`}
+                </span>
+              </div>
+            </label>
+          )}
+
+          {/* Add-on 3 */}
+          {((addons && addons.length > 2 && addons[2]) || (!addons || addons.length === 0)) && (
+            <label className={styles.addOnLabel}>
+              <input
+                type="checkbox"
+                className={styles.addOnCheckbox}
+                checked={addOnExpress}
+                onChange={() => setAddOnExpress(!addOnExpress)}
+              />
+              <div className={styles.addOnText}>
+                <span className={styles.addOnTitle}>
+                  {addons && addons[2] ? addons[2].name : 'Proses Prioritas Kilat (Express)'}
+                </span>
+                <span className={styles.addOnDesc}>
+                  {addons && addons[2]
+                    ? `${addons[2].description} (+${formatPrice(addons[2].price)} flat)`
+                    : `Prioritas antrean cetak utama, selesai dalam 1-2 hari kerja (+${formatPrice(25000)} flat)`}
+                </span>
+              </div>
+            </label>
+          )}
 
         </div>
       </div>
@@ -396,7 +442,9 @@ export function ProductsDetailConfigurator({
         </div>
         <div className={styles.metaLine}>
           <span className={styles.metaLabel}>Tags:</span>
-          <span className={styles.metaValue}>{category}, {scheme}</span>
+          <span className={styles.metaValue}>
+            {tags && tags.length > 0 ? tags.join(', ') : `${category}, ${scheme}`}
+          </span>
         </div>
       </div>
 
