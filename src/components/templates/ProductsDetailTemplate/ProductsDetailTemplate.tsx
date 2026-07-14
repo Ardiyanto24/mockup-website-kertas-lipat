@@ -92,6 +92,8 @@ export function ProductsDetailTemplate({ product: staticProduct }: ProductsDetai
               minOrder={activeProduct.minOrder}
               imageUrl={activeProduct.imageUrl}
               description={activeProduct.description}
+              features={activeProduct.features}
+              pricingType={activeProduct.pricingType}
             />
           </div>
         </div>
