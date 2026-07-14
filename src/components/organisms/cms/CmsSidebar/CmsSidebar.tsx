@@ -19,8 +19,9 @@ interface CmsSidebarProps {
   setIsBerandaExpanded: (expanded: boolean) => void;
   handleLogout: () => void;
   submenus: SubmenuItem[];
+  isOpen: boolean;
 }
-
+ 
 export function CmsSidebar({
   activeMainMenu,
   setActiveMainMenu,
@@ -30,9 +31,10 @@ export function CmsSidebar({
   setIsBerandaExpanded,
   handleLogout,
   submenus,
+  isOpen,
 }: CmsSidebarProps) {
   return (
-    <aside className={styles.sidebar}>
+    <aside className={`${styles.sidebar} ${isOpen ? '' : styles.sidebarClosed}`}>
       <div className={styles.sidebarHeader}>
         <div className={styles.logoIcon}>K</div>
         <span className={styles.logoText}>
