@@ -26,7 +26,7 @@ export function CmsLeadsTracker() {
       if (stored) {
         setLeads(JSON.parse(stored));
       } else {
-        const dummyLeads = [
+        const dummyLeads: Lead[] = [
           {
             id: 'lead_dummy_1',
             type: 'checkout',
