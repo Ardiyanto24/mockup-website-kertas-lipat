@@ -70,6 +70,8 @@ export function CmsCatalogManager() {
       images: ['/images/categories/cat_printing.png', '', '', '', '', '', '', ''],
       displayImageCount: 8,
       showReviews: true,
+      ratingScore: 4.8,
+      reviewCount: 245,
       useDiscountPrice: false,
       discountPrice: 0,
       variants: [],
@@ -96,6 +98,8 @@ export function CmsCatalogManager() {
     
     if (normalized.displayImageCount === undefined) normalized.displayImageCount = 8;
     if (normalized.showReviews === undefined) normalized.showReviews = true;
+    if (normalized.ratingScore === undefined) normalized.ratingScore = 4.8;
+    if (normalized.reviewCount === undefined) normalized.reviewCount = 245;
     if (normalized.useDiscountPrice === undefined) normalized.useDiscountPrice = false;
     if (normalized.discountPrice === undefined) normalized.discountPrice = 0;
     if (!normalized.variants) normalized.variants = [];
@@ -529,6 +533,40 @@ export function CmsCatalogManager() {
                     </label>
                   </div>
 
+                  {/* Manual Reviews Input */}
+                  {editProduct.showReviews && (
+                    <>
+                      <div className={styles.formGroup}>
+                        <label className={styles.label}>Skor Ulasan (1.0 - 5.0) *</label>
+                        <input
+                          type="number"
+                          step="0.1"
+                          min="1"
+                          max="5"
+                          value={editProduct.ratingScore}
+                          onChange={(e) =>
+                            setEditProduct({ ...editProduct, ratingScore: parseFloat(e.target.value) || 5.0 })
+                          }
+                          className={styles.input}
+                          required
+                        />
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label className={styles.label}>Jumlah Ulasan (Jumlah Review) *</label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={editProduct.reviewCount}
+                          onChange={(e) =>
+                            setEditProduct({ ...editProduct, reviewCount: parseInt(e.target.value) || 0 })
+                          }
+                          className={styles.input}
+                          required
+                        />
+                      </div>
+                    </>
+                  )}
+
                   {/* Harga Diskon Toggle */}
                   <div className={styles.formGroup} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <input
@@ -763,11 +801,11 @@ export function CmsCatalogManager() {
                   {/* Add-ons Builder */}
                   <div className={`${styles.formGroup} ${styles.formGroupFull}`} style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px', marginTop: '16px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                      <label className={styles.label} style={{ margin: 0, fontWeight: 'bold' }}>Kelola Layanan Add-on (Maksimal 3)</label>
+                      <label className={styles.label} style={{ margin: 0, fontWeight: 'bold' }}>Kelola Layanan Add-on (Maksimal 10)</label>
                       <button
                         type="button"
                         onClick={handleAddAddon}
-                        disabled={editProduct.addons && editProduct.addons.length >= 3}
+                        disabled={editProduct.addons && editProduct.addons.length >= 10}
                         className={styles.btnSecondary}
                         style={{ padding: '6px 12px', fontSize: '12px' }}
                       >
