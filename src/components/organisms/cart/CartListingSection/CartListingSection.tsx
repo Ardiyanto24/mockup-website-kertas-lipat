@@ -48,9 +48,18 @@ export function CartListingSection() {
 
   // Calculate item unit price with variant addon and volume discount
   const getItemFinalUnitPrice = (item: CartItem) => {
-    const unitPriceWithVariant = item.basePrice + item.variantAddPrice;
-    const laminationFee = item.addOnLamination ? (item.addOnLaminationPrice ?? 1500) : 0;
-    const giftBoxFee = item.addOnGiftBox ? (item.addOnGiftBoxPrice ?? 5000) : 0;
+    let addonsUnitFee = 0;
+    if (item.selectedAddons && item.selectedAddons.length > 0) {
+      item.selectedAddons.forEach((a) => {
+        const isFlat = a.name.toLowerCase().includes('express') || a.name.toLowerCase().includes('kilat') || a.description?.toLowerCase().includes('flat');
+        if (!isFlat) {
+          addonsUnitFee += a.price;
+        }
+      });
+    } else {
+      if (item.addOnLamination) addonsUnitFee += item.addOnLaminationPrice ?? 1500;
+      if (item.addOnGiftBox) addonsUnitFee += item.addOnGiftBoxPrice ?? 5000;
+    }
     
     let discountPct = 0;
     if (item.scheme === 'Produk Satuan') {
@@ -66,7 +75,7 @@ export function CartListingSection() {
     }
 
     const discountedBase = Math.max(0, Math.round(unitPriceWithVariant * (1 - discountPct)));
-    return discountedBase + laminationFee + giftBoxFee;
+    return discountedBase + addonsUnitFee;
   };
 
   return (
@@ -76,8 +85,20 @@ export function CartListingSection() {
       <div className={styles.list}>
         {cartItems.map((item) => {
           const finalUnitPrice = getItemFinalUnitPrice(item);
-          const expressFee = item.addOnExpress ? (item.addOnExpressPrice ?? 25000) : 0;
-          const itemTotal = (finalUnitPrice * item.quantity) + expressFee;
+          
+          let addonsFlatFee = 0;
+          if (item.selectedAddons && item.selectedAddons.length > 0) {
+            item.selectedAddons.forEach((a) => {
+              const isFlat = a.name.toLowerCase().includes('express') || a.name.toLowerCase().includes('kilat') || a.description?.toLowerCase().includes('flat');
+              if (isFlat) {
+                addonsFlatFee += a.price;
+              }
+            });
+          } else {
+            if (item.addOnExpress) addonsFlatFee += item.addOnExpressPrice ?? 25000;
+          }
+          
+          const itemTotal = (finalUnitPrice * item.quantity) + addonsFlatFee;
           
           const uniqueKey = `${item.sku}-${item.variantId}-${item.needDesignService ? 'design' : 'nodesign'}-${item.addOnLamination ? 'lam' : 'nolam'}-${item.addOnGiftBox ? 'box' : 'nobox'}-${item.addOnExpress ? 'exp' : 'noexp'}`;
 
@@ -109,14 +130,22 @@ export function CartListingSection() {
                   {item.needDesignService && (
                     <span className={`${styles.badge} ${styles.designBadge}`}>+ Jasa Desain</span>
                   )}
-                  {item.addOnLamination && (
-                    <span className={`${styles.badge} ${styles.addOnBadge}`}>+ {item.addOnLaminationName ?? 'Laminasi'}</span>
-                  )}
-                  {item.addOnGiftBox && (
-                    <span className={`${styles.badge} ${styles.addOnBadge}`}>+ {item.addOnGiftBoxName ?? 'Dus Kado'}</span>
-                  )}
-                  {item.addOnExpress && (
-                    <span className={`${styles.badge} ${styles.addOnBadge}`}>+ {item.addOnExpressName ?? 'Kilat'}</span>
+                  {item.selectedAddons && item.selectedAddons.length > 0 ? (
+                    item.selectedAddons.map((a, idx) => (
+                      <span key={idx} className={`${styles.badge} ${styles.addOnBadge}`}>+ {a.name}</span>
+                    ))
+                  ) : (
+                    <>
+                      {item.addOnLamination && (
+                        <span className={`${styles.badge} ${styles.addOnBadge}`}>+ {item.addOnLaminationName ?? 'Laminasi'}</span>
+                      )}
+                      {item.addOnGiftBox && (
+                        <span className={`${styles.badge} ${styles.addOnBadge}`}>+ {item.addOnGiftBoxName ?? 'Dus Kado'}</span>
+                      )}
+                      {item.addOnExpress && (
+                        <span className={`${styles.badge} ${styles.addOnBadge}`}>+ {item.addOnExpressName ?? 'Kilat'}</span>
+                      )}
+                    </>
                   )}
                 </div>
                 <div className={styles.unitPriceInfo}>

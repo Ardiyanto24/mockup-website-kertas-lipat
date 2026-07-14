@@ -23,9 +23,18 @@ export function CartCheckoutPanel() {
 
   // Helper: calculate unit price with variant addon and volume discount
   const getItemFinalUnitPrice = (item: CartItem) => {
-    const unitPriceWithVariant = item.basePrice + item.variantAddPrice;
-    const laminationFee = item.addOnLamination ? (item.addOnLaminationPrice ?? 1500) : 0;
-    const giftBoxFee = item.addOnGiftBox ? (item.addOnGiftBoxPrice ?? 5000) : 0;
+    let addonsUnitFee = 0;
+    if (item.selectedAddons && item.selectedAddons.length > 0) {
+      item.selectedAddons.forEach((a) => {
+        const isFlat = a.name.toLowerCase().includes('express') || a.name.toLowerCase().includes('kilat') || a.description?.toLowerCase().includes('flat');
+        if (!isFlat) {
+          addonsUnitFee += a.price;
+        }
+      });
+    } else {
+      if (item.addOnLamination) addonsUnitFee += item.addOnLaminationPrice ?? 1500;
+      if (item.addOnGiftBox) addonsUnitFee += item.addOnGiftBoxPrice ?? 5000;
+    }
     
     let discountPct = 0;
     
@@ -42,7 +51,7 @@ export function CartCheckoutPanel() {
     }
 
     const discountedBase = Math.max(0, Math.round(unitPriceWithVariant * (1 - discountPct)));
-    return discountedBase + laminationFee + giftBoxFee;
+    return discountedBase + addonsUnitFee;
   };
 
   // Combined price calculations
@@ -50,8 +59,20 @@ export function CartCheckoutPanel() {
     // 1. Items subtotal
     const itemsSubtotal = cartItems.reduce((acc, item) => {
       const finalPrice = getItemFinalUnitPrice(item);
-      const expressFee = item.addOnExpress ? (item.addOnExpressPrice ?? 25000) : 0;
-      return acc + (finalPrice * item.quantity) + expressFee;
+      
+      let addonsFlatFee = 0;
+      if (item.selectedAddons && item.selectedAddons.length > 0) {
+        item.selectedAddons.forEach((a) => {
+          const isFlat = a.name.toLowerCase().includes('express') || a.name.toLowerCase().includes('kilat') || a.description?.toLowerCase().includes('flat');
+          if (isFlat) {
+            addonsFlatFee += a.price;
+          }
+        });
+      } else {
+        if (item.addOnExpress) addonsFlatFee += item.addOnExpressPrice ?? 25000;
+      }
+
+      return acc + (finalPrice * item.quantity) + addonsFlatFee;
     }, 0);
 
     // 2. Sum up design fees for each item having needDesignService active
@@ -114,14 +135,31 @@ export function CartCheckoutPanel() {
     // Compile items list string
     const itemsListBrief = cartItems.map((item, index) => {
       const unitPrice = getItemFinalUnitPrice(item);
-      const expressFee = item.addOnExpress ? (item.addOnExpressPrice ?? 25000) : 0;
-      const total = (unitPrice * item.quantity) + expressFee;
       
-      const addOnsList = [
-        item.addOnLamination && `${item.addOnLaminationName ?? 'Laminasi'} (+${formatPrice(item.addOnLaminationPrice ?? 1500)})`,
-        item.addOnGiftBox && `${item.addOnGiftBoxName ?? 'Dus Kado'} (+${formatPrice(item.addOnGiftBoxPrice ?? 5000)})`,
-        item.addOnExpress && `${item.addOnExpressName ?? 'Kilat'} (+${formatPrice(item.addOnExpressPrice ?? 25000)})`,
-      ].filter(Boolean).join(', ');
+      let addonsFlatFee = 0;
+      if (item.selectedAddons && item.selectedAddons.length > 0) {
+        item.selectedAddons.forEach((a) => {
+          const isFlat = a.name.toLowerCase().includes('express') || a.name.toLowerCase().includes('kilat') || a.description?.toLowerCase().includes('flat');
+          if (isFlat) {
+            addonsFlatFee += a.price;
+          }
+        });
+      } else {
+        if (item.addOnExpress) addonsFlatFee += item.addOnExpressPrice ?? 25000;
+      }
+      
+      const total = (unitPrice * item.quantity) + addonsFlatFee;
+      
+      let addOnsList = '';
+      if (item.selectedAddons && item.selectedAddons.length > 0) {
+        addOnsList = item.selectedAddons.map(a => `${a.name} (+${formatPrice(a.price)})`).join(', ');
+      } else {
+        addOnsList = [
+          item.addOnLamination && `${item.addOnLaminationName ?? 'Laminasi'} (+${formatPrice(item.addOnLaminationPrice ?? 1500)})`,
+          item.addOnGiftBox && `${item.addOnGiftBoxName ?? 'Dus Kado'} (+${formatPrice(item.addOnGiftBoxPrice ?? 5000)})`,
+          item.addOnExpress && `${item.addOnExpressName ?? 'Kilat'} (+${formatPrice(item.addOnExpressPrice ?? 25000)})`,
+        ].filter(Boolean).join(', ');
+      }
 
       return `${index + 1}. *${item.name}* (${item.sku})
    - Kuantitas: ${item.quantity} ${item.unit}
