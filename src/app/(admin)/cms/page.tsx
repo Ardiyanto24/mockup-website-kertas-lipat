@@ -15,7 +15,7 @@ import {
   Mail,
   MapPin,
 } from 'lucide-react';
-import { useHomepageContent } from '@/hooks/useHomepageContent';
+import { useHomepageContent, HomepageContent } from '@/hooks/useHomepageContent';
 import { CmsTemplate } from '@/components/templates/CmsTemplate/CmsTemplate';
 import { SubmenuItem } from '@/components/organisms/cms/CmsSidebar/CmsSidebar';
 
@@ -24,7 +24,7 @@ export default function CMSPage() {
   const { content, isLoaded, saveContent, resetToDefault } = useHomepageContent();
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [draftContent, setDraftContent] = useState<any>(null);
+  const [draftContent, setDraftContent] = useState<HomepageContent | null>(null);
   const [activeSubMenu, setActiveSubMenu] = useState('HERO');
   const [showNotification, setShowNotification] = useState(false);
   const [isBerandaExpanded, setIsBerandaExpanded] = useState(true);

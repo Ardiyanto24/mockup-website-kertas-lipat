@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React from 'react';
 import { Undo, Save, Plus, Trash2 } from 'lucide-react';
-import { HomepageContent, QualityTab, ShowcaseHotspot, TestimonialItem } from '@/hooks/useHomepageContent';
+import { HomepageContent } from '@/hooks/useHomepageContent';
 import { products } from '@/data/products';
 import styles from './CmsEditorForm.module.css';
 
