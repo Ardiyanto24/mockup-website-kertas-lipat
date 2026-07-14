@@ -1,0 +1,105 @@
+.wrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  color: var(--color-text-main);
+  font-family: var(--font-sans);
+}
+
+.centeredWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  color: var(--color-text-main);
+  font-family: var(--font-sans);
+}
+
+.loadingCard {
+  background-color: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 30px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-sm);
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.spinIcon {
+  color: var(--color-primary);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Main Layout Area */
+.mainArea {
+  margin-left: 280px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  transition: margin-left var(--transition-normal);
+}
+
+/* Toast alert notification styling */
+.toast {
+  position: fixed;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.toastBody {
+  background-color: #0f172a;
+  color: white;
+  padding: 14px 24px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.2);
+}
+
+.toastIcon {
+  width: 20px;
+  height: 20px;
+  background-color: #22c55e;
+  color: white;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+@keyframes slideDown {
+  from {
+    top: 10px;
+    opacity: 0;
+  }
+  to {
+    top: 30px;
+    opacity: 1;
+  }
+}
+
+/* Responsive sidebars matching wrapper layout rules */
+@media (max-width: 768px) {
+  .mainArea {
+    margin-left: 70px;
+  }
+}
