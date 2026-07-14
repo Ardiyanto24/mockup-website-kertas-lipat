@@ -1,0 +1,321 @@
+.editorWorkspace {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 40px;
+}
+
+.editorCard {
+  background-color: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.editorHeader {
+  padding: 24px 30px;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.editorTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin: 0;
+}
+
+.editorSubtitle {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 4px;
+  display: block;
+}
+
+.editorActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btnSecondary {
+  padding: 8px 16px;
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btnSecondary:hover {
+  background-color: #e2e8f0;
+}
+
+.btnPrimary {
+  padding: 8px 16px;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  box-shadow: 0 2px 4px rgba(38, 122, 236, 0.15);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btnPrimary:hover {
+  background-color: var(--color-primary-hover);
+  box-shadow: 0 4px 6px rgba(38, 122, 236, 0.25);
+}
+
+.btnDanger {
+  padding: 8px 12px;
+  background-color: rgba(239, 68, 68, 0.08);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnDanger:hover {
+  background-color: #ef4444;
+  color: white;
+}
+
+.editorBody {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Forms layout */
+.formRow {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formGroupFull {
+  grid-column: span 2;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-family: var(--font-sans);
+  background-color: #ffffff;
+  color: var(--color-text-main);
+  transition: border-color var(--transition-fast);
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Slide Editor Cards */
+.slideCard {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  background-color: #fafcff;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.slideCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 12px;
+}
+
+.slideTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* Feature grid in USP */
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.tipsBanner {
+  background-color: rgba(38, 122, 236, 0.05);
+  border: 1px solid rgba(38, 122, 236, 0.15);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: #1e3a8a;
+  line-height: 1.5;
+}
+
+/* Catalog selector grid */
+.catalogGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  padding: 16px;
+  max-height: 400px;
+  overflow-y: auto;
+  border-top: 1px solid #f1f5f9;
+}
+
+.checkboxItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background-color: transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.checkboxItem:hover {
+  border-color: var(--color-primary);
+  background-color: #fafcff;
+}
+
+.checkboxItemChecked {
+  border-color: var(--color-primary);
+  background-color: rgba(38, 122, 236, 0.03);
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  margin-top: 3px;
+  cursor: pointer;
+}
+
+.checkboxLabelText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.checkboxTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.checkboxDesc {
+  font-size: 10px;
+  color: #64748b;
+}
+
+/* Table Style for consultation inbox / testimonials */
+.tableWrapper {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+}
+
+.table th {
+  text-align: left;
+  padding: 12px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  background-color: #f8fafc;
+  border-bottom: 1px solid var(--color-border);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.table td {
+  padding: 16px 20px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+@media (max-width: 768px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+  
+  .formGroupFull {
+    grid-column: span 1;
+  }
+  
+  .featuresGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .catalogGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .editorBody {
+    padding: 20px;
+  }
+}
