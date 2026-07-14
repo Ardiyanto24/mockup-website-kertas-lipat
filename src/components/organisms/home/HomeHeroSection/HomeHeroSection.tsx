@@ -7,7 +7,7 @@ import styles from './HomeHeroSection.module.css';
 
 interface Slide {
   id: number;
-  title: string;
+  titleSegments: { text: string; highlight?: boolean; orange?: boolean }[];
   subText: string;
   image: string;
   ctaText: string;
@@ -19,7 +19,12 @@ interface Slide {
 const slides: Slide[] = [
   {
     id: 1,
-    title: 'Cetak Ide Kreatifmu, Hidupkan Brand-mu.',
+    titleSegments: [
+      { text: 'Cetak ' },
+      { text: 'Ide Kreatifmu', highlight: true },
+      { text: ', Hidupkan ' },
+      { text: 'Brand-mu.', orange: true },
+    ],
     subText: 'Solusi cetak, merchandise custom, dan kebutuhan branding terlengkap. Tanpa batas minimal order kaku, pengerjaan cepat, dan jaminan kualitas premium untuk UMKM, kampus, hingga korporasi.',
     image: '/images/hero_branding_mockup.png',
     ctaText: 'Jelajahi Produk',
@@ -29,7 +34,12 @@ const slides: Slide[] = [
   },
   {
     id: 2,
-    title: 'Sukseskan Event Kampusmu Tanpa Beban Minimum Order.',
+    titleSegments: [
+      { text: 'Sukseskan ' },
+      { text: 'Event Kampusmu', highlight: true },
+      { text: ' Tanpa Beban ' },
+      { text: 'Minimum Order.', orange: true },
+    ],
     subText: 'Bikin kaos panitia, ID card, banner promosi, kipas tangan, hingga pin custom dengan fleksibilitas order satuan. Hemat anggaran, pengerjaan cepat, hasil dijamin memuaskan!',
     image: '/images/hero_campus_mockup.png',
     ctaText: 'Lihat Produk Kampus',
@@ -39,7 +49,12 @@ const slides: Slide[] = [
   },
   {
     id: 3,
-    title: 'Abadikan Momen Kelulusan & Tingkatkan Citra Profesional.',
+    titleSegments: [
+      { text: 'Abadikan ' },
+      { text: 'Momen Kelulusan', highlight: true },
+      { text: ' & Tingkatkan ' },
+      { text: 'Citra Profesional.', orange: true },
+    ],
     subText: 'Penyedia satu atap untuk Buku Tahunan Sekolah premium, souvenir kelulusan, dan seminar kit eksklusif perusahaan. Dilengkapi bantuan desain profesional dan contoh fisik nyata.',
     image: '/images/hero_school_mockup.png',
     ctaText: 'Lihat Paket Kelulusan',
@@ -81,7 +96,16 @@ export function HomeHeroSection() {
 
             <div className={`${styles.contentContainer} container`}>
               <div className={styles.textOverlay}>
-                <h1 className={styles.title}>{slide.title}</h1>
+                <h1 className={styles.title}>
+                  {slide.titleSegments.map((seg, sIdx) => (
+                    <span
+                      key={sIdx}
+                      className={seg.highlight ? styles.highlightText : (seg.orange ? styles.orangeText : '')}
+                    >
+                      {seg.text}
+                    </span>
+                  ))}
+                </h1>
                 <p className={styles.subText}>{slide.subText}</p>
                 <div className={styles.ctaGroup}>
                   <Button href={slide.ctaHref} variant="primary" size="lg">

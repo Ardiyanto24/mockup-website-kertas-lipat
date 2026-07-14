@@ -61,6 +61,18 @@
   letter-spacing: -0.02em;
 }
 
+.highlightText {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.orangeText {
+  background: linear-gradient(135deg, #ffb076 0%, #ff8a3d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .subText {
   font-size: 1.1rem;
   line-height: 1.6;
