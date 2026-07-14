@@ -103,30 +103,7 @@ export function ProductsDetailTemplate({ product }: ProductsDetailTemplateProps)
           </div>
         </section>
 
-        {/* Highlights Features badges row at bottom */}
-        <section className={styles.highlightsRow}>
-          <div className={styles.highlightBadge}>
-            <span className={styles.highlightIcon}>🚚</span>
-            <div className={styles.highlightText}>
-              <h4 className={styles.highlightTitle}>Free Shipping</h4>
-              <p className={styles.highlightDesc}>Bebas ongkir untuk pesanan di atas Rp 100.000</p>
-            </div>
-          </div>
-          <div className={styles.highlightBadge}>
-            <span className={styles.highlightIcon}>💳</span>
-            <div className={styles.highlightText}>
-              <h4 className={styles.highlightTitle}>Flexible Payment</h4>
-              <p className={styles.highlightDesc}>Opsi bayar DP 50% untuk pesanan kustom besar</p>
-            </div>
-          </div>
-          <div className={styles.highlightBadge}>
-            <span className={styles.highlightIcon}>💬</span>
-            <div className={styles.highlightText}>
-              <h4 className={styles.highlightTitle}>24x7 Support</h4>
-              <p className={styles.highlightDesc}>Konsultasi gratis & respon cepat via WhatsApp</p>
-            </div>
-          </div>
-        </section>
+
       </main>
 
       <Footer />
