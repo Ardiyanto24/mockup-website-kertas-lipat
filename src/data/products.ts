@@ -18,6 +18,8 @@ export interface Product {
   variants?: { name: string; addPrice: number }[];
   addons?: { name: string; price: number; description: string }[];
   tags?: string[];
+  ratingScore?: number;
+  reviewCount?: number;
 }
 
 export const products: Product[] = [
