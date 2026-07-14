@@ -7,9 +7,17 @@ export interface Product {
   basePrice: number;
   unit: string;
   minOrder: number;
-  features: string[];
+  features?: string[];
   description: string;
   imageUrl: string;
+  images?: string[];
+  displayImageCount?: number;
+  showReviews?: boolean;
+  discountPrice?: number;
+  useDiscountPrice?: boolean;
+  variants?: { name: string; addPrice: number }[];
+  addons?: { name: string; price: number; description: string }[];
+  tags?: string[];
 }
 
 export const products: Product[] = [
