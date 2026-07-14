@@ -77,6 +77,8 @@ export function ProductsDetailTemplate({ product: staticProduct }: ProductsDetai
               sku={activeProduct.sku}
               scheme={activeProduct.scheme}
               imageUrl={activeProduct.imageUrl}
+              images={activeProduct.images}
+              displayImageCount={activeProduct.displayImageCount}
             />
           </div>
 
@@ -92,8 +94,13 @@ export function ProductsDetailTemplate({ product: staticProduct }: ProductsDetai
               minOrder={activeProduct.minOrder}
               imageUrl={activeProduct.imageUrl}
               description={activeProduct.description}
-              features={activeProduct.features}
               pricingType={activeProduct.pricingType}
+              showReviews={activeProduct.showReviews}
+              discountPrice={activeProduct.discountPrice}
+              useDiscountPrice={activeProduct.useDiscountPrice}
+              variants={activeProduct.variants}
+              addons={activeProduct.addons}
+              tags={activeProduct.tags}
             />
           </div>
         </div>
