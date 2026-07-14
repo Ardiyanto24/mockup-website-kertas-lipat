@@ -24,6 +24,7 @@ export default function CMSPage() {
   const { content, isLoaded, saveContent, resetToDefault } = useHomepageContent();
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [activeMainMenu, setActiveMainMenu] = useState<'BERANDA' | 'KATALOG'>('BERANDA');
   const [draftContent, setDraftContent] = useState<HomepageContent | null>(null);
   const [activeSubMenu, setActiveSubMenu] = useState('HERO');
   const [showNotification, setShowNotification] = useState(false);
@@ -99,6 +100,8 @@ export default function CMSPage() {
     <CmsTemplate
       isAuthenticated={isAuthenticated}
       isLoaded={isLoaded}
+      activeMainMenu={activeMainMenu}
+      setActiveMainMenu={setActiveMainMenu}
       draftContent={draftContent}
       setDraftContent={setDraftContent}
       activeSubMenu={activeSubMenu}
