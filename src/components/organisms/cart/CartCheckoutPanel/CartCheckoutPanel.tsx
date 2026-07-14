@@ -24,8 +24,8 @@ export function CartCheckoutPanel() {
   // Helper: calculate unit price with variant addon and volume discount
   const getItemFinalUnitPrice = (item: CartItem) => {
     const unitPriceWithVariant = item.basePrice + item.variantAddPrice;
-    const laminationFee = item.addOnLamination ? 1500 : 0;
-    const giftBoxFee = item.addOnGiftBox ? 5000 : 0;
+    const laminationFee = item.addOnLamination ? (item.addOnLaminationPrice ?? 1500) : 0;
+    const giftBoxFee = item.addOnGiftBox ? (item.addOnGiftBoxPrice ?? 5000) : 0;
     
     let discountPct = 0;
     
@@ -50,7 +50,7 @@ export function CartCheckoutPanel() {
     // 1. Items subtotal
     const itemsSubtotal = cartItems.reduce((acc, item) => {
       const finalPrice = getItemFinalUnitPrice(item);
-      const expressFee = item.addOnExpress ? 25000 : 0;
+      const expressFee = item.addOnExpress ? (item.addOnExpressPrice ?? 25000) : 0;
       return acc + (finalPrice * item.quantity) + expressFee;
     }, 0);
 
@@ -114,13 +114,13 @@ export function CartCheckoutPanel() {
     // Compile items list string
     const itemsListBrief = cartItems.map((item, index) => {
       const unitPrice = getItemFinalUnitPrice(item);
-      const expressFee = item.addOnExpress ? 25000 : 0;
+      const expressFee = item.addOnExpress ? (item.addOnExpressPrice ?? 25000) : 0;
       const total = (unitPrice * item.quantity) + expressFee;
       
       const addOnsList = [
-        item.addOnLamination && 'Laminasi Protektif (+Rp 1.500)',
-        item.addOnGiftBox && 'Dus Kado Eksklusif (+Rp 5.000)',
-        item.addOnExpress && 'Prioritas Express (+Rp 25.000)',
+        item.addOnLamination && `${item.addOnLaminationName ?? 'Laminasi'} (+${formatPrice(item.addOnLaminationPrice ?? 1500)})`,
+        item.addOnGiftBox && `${item.addOnGiftBoxName ?? 'Dus Kado'} (+${formatPrice(item.addOnGiftBoxPrice ?? 5000)})`,
+        item.addOnExpress && `${item.addOnExpressName ?? 'Kilat'} (+${formatPrice(item.addOnExpressPrice ?? 25000)})`,
       ].filter(Boolean).join(', ');
 
       return `${index + 1}. *${item.name}* (${item.sku})

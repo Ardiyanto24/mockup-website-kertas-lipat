@@ -19,6 +19,12 @@ export interface CartItem {
   addOnLamination?: boolean;
   addOnGiftBox?: boolean;
   addOnExpress?: boolean;
+  addOnLaminationName?: string;
+  addOnLaminationPrice?: number;
+  addOnGiftBoxName?: string;
+  addOnGiftBoxPrice?: number;
+  addOnExpressName?: string;
+  addOnExpressPrice?: number;
 }
 
 interface CartContextType {
