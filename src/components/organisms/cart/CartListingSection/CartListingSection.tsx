@@ -52,7 +52,7 @@ export function CartListingSection() {
     let addonsUnitFee = 0;
     if (item.selectedAddons && item.selectedAddons.length > 0) {
       item.selectedAddons.forEach((a) => {
-        const isFlat = a.name.toLowerCase().includes('express') || a.name.toLowerCase().includes('kilat') || a.description?.toLowerCase().includes('flat');
+        const isFlat = a.name.toLowerCase().includes('express') || a.name.toLowerCase().includes('kilat') || (a.description || '').toLowerCase().includes('flat');
         if (!isFlat) {
           addonsUnitFee += a.price;
         }
@@ -90,7 +90,7 @@ export function CartListingSection() {
           let addonsFlatFee = 0;
           if (item.selectedAddons && item.selectedAddons.length > 0) {
             item.selectedAddons.forEach((a) => {
-              const isFlat = a.name.toLowerCase().includes('express') || a.name.toLowerCase().includes('kilat') || a.description?.toLowerCase().includes('flat');
+              const isFlat = a.name.toLowerCase().includes('express') || a.name.toLowerCase().includes('kilat') || (a.description || '').toLowerCase().includes('flat');
               if (isFlat) {
                 addonsFlatFee += a.price;
               }
