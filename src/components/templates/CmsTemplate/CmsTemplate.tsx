@@ -6,11 +6,14 @@ import { HomepageContent } from '@/hooks/useHomepageContent';
 import { CmsSidebar, SubmenuItem } from '@/components/organisms/cms/CmsSidebar/CmsSidebar';
 import { CmsHeader } from '@/components/organisms/cms/CmsHeader/CmsHeader';
 import { CmsEditorForm } from '@/components/organisms/cms/CmsEditorForm/CmsEditorForm';
+import { CmsCatalogManager } from '@/components/organisms/cms/CmsCatalogManager/CmsCatalogManager';
 import styles from './CmsTemplate.module.css';
 
 interface CmsTemplateProps {
   isAuthenticated: boolean;
   isLoaded: boolean;
+  activeMainMenu: 'BERANDA' | 'KATALOG';
+  setActiveMainMenu: (menu: 'BERANDA' | 'KATALOG') => void;
   draftContent: HomepageContent | null;
   setDraftContent: (content: HomepageContent) => void;
   activeSubMenu: string;
@@ -28,6 +31,8 @@ interface CmsTemplateProps {
 export function CmsTemplate({
   isAuthenticated,
   isLoaded,
+  activeMainMenu,
+  setActiveMainMenu,
   draftContent,
   setDraftContent,
   activeSubMenu,
@@ -64,6 +69,8 @@ export function CmsTemplate({
     );
   }
 
+  const isKatalog = activeMainMenu === 'KATALOG';
+
   return (
     <div className={styles.wrapper}>
       {/* Toast Notification Alert */}
@@ -78,6 +85,8 @@ export function CmsTemplate({
 
       {/* Navigation Sidebar Organism */}
       <CmsSidebar
+        activeMainMenu={activeMainMenu}
+        setActiveMainMenu={setActiveMainMenu}
         activeSubMenu={activeSubMenu}
         setActiveSubMenu={setActiveSubMenu}
         isBerandaExpanded={isBerandaExpanded}
@@ -89,18 +98,25 @@ export function CmsTemplate({
       {/* Main CMS Contents Workspace */}
       <main className={styles.mainArea}>
         {/* Workspace Top Header Bar Organism */}
-        <CmsHeader handleResetToDefault={handleResetToDefault} />
+        <CmsHeader
+          activeMainMenu={activeMainMenu}
+          handleResetToDefault={handleResetToDefault}
+        />
 
-        {/* Editor Form Sheet Organism */}
+        {/* Editor Form Sheet Organism / Catalog Manager */}
         <div style={{ padding: '40px', maxWidth: '1400px', width: '100%', margin: '0 auto' }}>
-          <CmsEditorForm
-            activeSubMenu={activeSubMenu}
-            draftContent={draftContent}
-            setDraftContent={setDraftContent}
-            handleSave={handleSave}
-            handleCancel={handleCancel}
-            submenus={submenus}
-          />
+          {isKatalog ? (
+            <CmsCatalogManager />
+          ) : (
+            <CmsEditorForm
+              activeSubMenu={activeSubMenu}
+              draftContent={draftContent}
+              setDraftContent={setDraftContent}
+              handleSave={handleSave}
+              handleCancel={handleCancel}
+              submenus={submenus}
+            />
+          )}
         </div>
       </main>
     </div>
