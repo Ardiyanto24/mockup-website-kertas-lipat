@@ -5,15 +5,27 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Badge } from '@/components/atoms/Badge/Badge';
-import { HotspotTooltip } from '@/components/molecules/shared/HotspotTooltip/HotspotTooltip';
-import { useHomepageContent, ShowcaseHotspot } from '@/hooks/useHomepageContent';
-import { products } from '@/data/products';
+import { useHomepageContent } from '@/hooks/useHomepageContent';
 import styles from './HomeShowcaseSection.module.css';
 
-const STATIC_HOTSPOTS: ShowcaseHotspot[] = [
-  { id: 1, name: 'Stiker Vinyl Label', x: 23, y: 38, targetSku: 'KL-STI-01' },
-  { id: 2, name: 'Celemek Custom Logo', x: 50, y: 73, targetSku: 'KL-MRC-09' },
-  { id: 3, name: 'Menu Laminasi Anti Air', x: 74, y: 28, targetSku: 'KL-PRM-06' }
+interface GalleryItem {
+  id: number;
+  name: string;
+  category: string;
+  image: string;
+  sku: string;
+  sizeClass: 'medium' | 'large' | 'wide' | 'tall';
+}
+
+const STATIC_GALLERY: GalleryItem[] = [
+  { id: 1, name: 'Stiker Vinyl Custom', category: 'Stiker & Label', image: '/images/gallery/gallery_sticker.png', sku: 'KL-STI-01', sizeClass: 'medium' },
+  { id: 2, name: 'Kaos Cotton Combat Sablon', category: 'Pakaian & Merchandise', image: '/images/gallery/gallery_shirt.png', sku: 'KL-MRC-01', sizeClass: 'large' },
+  { id: 3, name: 'Buku Tahunan Sekolah Premium', category: 'Buku & Jilid', image: '/images/gallery/gallery_yearbook.png', sku: 'KL-BDL-YB-01', sizeClass: 'wide' },
+  { id: 4, name: 'Tote Bag Kanvas Custom', category: 'Pakaian & Merchandise', image: '/images/gallery/gallery_tote.png', sku: 'KL-MRC-06', sizeClass: 'medium' },
+  { id: 5, name: 'Kartu Nama Premium Doff', category: 'Cetak Dokumen', image: '/images/gallery/gallery_card.png', sku: 'KL-PRT-03', sizeClass: 'tall' },
+  { id: 6, name: 'Menu Resto Anti Air', category: 'Cetak Dokumen', image: '/images/gallery/gallery_menu.png', sku: 'KL-PRM-06', sizeClass: 'medium' },
+  { id: 7, name: 'X-Banner Promosi Toko', category: 'Promosi & Banner', image: '/images/gallery/gallery_banner.png', sku: 'KL-PRT-02', sizeClass: 'tall' },
+  { id: 8, name: 'Celemek Barista Custom', category: 'Pakaian & Merchandise', image: '/images/gallery/gallery_apron.png', sku: 'KL-MRC-09', sizeClass: 'medium' },
 ];
 
 export function HomeShowcaseSection() {
@@ -24,18 +36,14 @@ export function HomeShowcaseSection() {
     title: 'Galeri Hasil Cetak Kertas Lipat',
     subtitle: 'Inspirasi branding nyata dari ribuan produk yang kami produksi dengan presisi tinggi untuk UMKM, Event, Sekolah, dan Korporasi.',
   });
-  const [activeHotspots, setActiveHotspots] = useState<ShowcaseHotspot[]>(STATIC_HOTSPOTS);
 
   useEffect(() => {
     if (isLoaded && content?.showcase) {
       setActiveHeader({
-        badge: content.showcase.badge,
-        title: content.showcase.title,
-        subtitle: content.showcase.subtitle,
+        badge: content.showcase.badge || 'Shop The Look',
+        title: content.showcase.title || 'Galeri Hasil Cetak Kertas Lipat',
+        subtitle: content.showcase.subtitle || 'Inspirasi branding nyata dari ribuan produk yang kami produksi dengan presisi tinggi untuk UMKM, Event, Sekolah, dan Korporasi.',
       });
-      if (content.showcase.hotspots) {
-        setActiveHotspots(content.showcase.hotspots);
-      }
     }
   }, [isLoaded, content]);
 
@@ -53,49 +61,28 @@ export function HomeShowcaseSection() {
           <p className={styles.subtitle}>{activeHeader.subtitle}</p>
         </div>
 
-        {/* Hotspots Interactive Showcase Container */}
-        <div 
-          className={styles.flatlayWrapper} 
-          style={{ 
-            position: 'relative', 
-            width: '100%', 
-            borderRadius: '24px', 
-            overflow: 'hidden', 
-            border: '1px solid rgba(15, 23, 42, 0.08)', 
-            boxShadow: '0 20px 40px rgba(15, 23, 42, 0.06)' 
-          }}
-        >
-          {/* Main flatlay theme image */}
-          <Image
-            src="/images/showcase_flatlay.png"
-            alt="Kertas Lipat Creative Flatlay Showcase"
-            width={1200}
-            height={600}
-            style={{ width: '100%', height: 'auto', display: 'block' }}
-            priority
-          />
-          
-          {/* Map interactive hotspot pulse icons */}
-          {activeHotspots.map((spot) => {
-            const spotProduct = products.find(p => p.sku === spot.targetSku);
-            const title = spotProduct ? spotProduct.name : spot.name;
-            const price = spotProduct ? `Mulai Rp ${spotProduct.basePrice.toLocaleString('id-ID')}` : 'Hubungi Kami';
-            
-            // Adjust tooltip box side position based on hotspot screen location
-            const tooltipPos = spot.x > 75 ? 'left' : (spot.x < 25 ? 'right' : 'top');
-
-            return (
-              <HotspotTooltip
-                key={spot.id}
-                x={spot.x}
-                y={spot.y}
-                title={title}
-                price={price}
-                tooltipPosition={tooltipPos}
-                onClick={() => router.push(`/products/${spot.targetSku.toLowerCase()}`)}
+        {/* Bento Grid Asymmetric Gallery */}
+        <div className={styles.bentoGrid}>
+          {STATIC_GALLERY.map((item) => (
+            <div
+              key={item.id}
+              className={`${styles.bentoItem} ${styles[item.sizeClass]}`}
+              onClick={() => router.push(`/products/${item.sku.toLowerCase()}`)}
+            >
+              <Image
+                src={item.image}
+                alt={item.name}
+                fill
+                className={styles.image}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
-            );
-          })}
+              <div className={styles.overlay}>
+                <span className={styles.category}>{item.category}</span>
+                <h3 className={styles.itemName}>{item.name}</h3>
+                <span className={styles.actionLink}>Lihat Detail Produk →</span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
