@@ -29,6 +29,15 @@ export default function CMSPage() {
   const [activeSubMenu, setActiveSubMenu] = useState('HERO');
   const [showNotification, setShowNotification] = useState(false);
   const [isBerandaExpanded, setIsBerandaExpanded] = useState(true);
+  
+  // Responsive sidebar open/close state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+ 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+      setIsSidebarOpen(false);
+    }
+  }, []);
 
   // Authenticate session on client mount
   useEffect(() => {
@@ -114,6 +123,8 @@ export default function CMSPage() {
       handleSave={handleSave}
       handleCancel={handleCancel}
       submenus={submenus}
+      isSidebarOpen={isSidebarOpen}
+      setIsSidebarOpen={setIsSidebarOpen}
     />
   );
 }
