@@ -7,13 +7,14 @@ import { CmsSidebar, SubmenuItem } from '@/components/organisms/cms/CmsSidebar/C
 import { CmsHeader } from '@/components/organisms/cms/CmsHeader/CmsHeader';
 import { CmsEditorForm } from '@/components/organisms/cms/CmsEditorForm/CmsEditorForm';
 import { CmsCatalogManager } from '@/components/organisms/cms/CmsCatalogManager/CmsCatalogManager';
+import { CmsLeadsTracker } from '@/components/organisms/cms/CmsLeadsTracker/CmsLeadsTracker';
 import styles from './CmsTemplate.module.css';
 
 interface CmsTemplateProps {
   isAuthenticated: boolean;
   isLoaded: boolean;
-  activeMainMenu: 'BERANDA' | 'KATALOG';
-  setActiveMainMenu: (menu: 'BERANDA' | 'KATALOG') => void;
+  activeMainMenu: 'BERANDA' | 'KATALOG' | 'RIWAYAT';
+  setActiveMainMenu: (menu: 'BERANDA' | 'KATALOG' | 'RIWAYAT') => void;
   draftContent: HomepageContent | null;
   setDraftContent: (content: HomepageContent) => void;
   activeSubMenu: string;
@@ -69,7 +70,6 @@ export function CmsTemplate({
     );
   }
 
-  const isKatalog = activeMainMenu === 'KATALOG';
 
   return (
     <div className={styles.wrapper}>
@@ -105,8 +105,10 @@ export function CmsTemplate({
 
         {/* Editor Form Sheet Organism / Catalog Manager */}
         <div style={{ padding: '40px', maxWidth: '1400px', width: '100%', margin: '0 auto' }}>
-          {isKatalog ? (
+          {activeMainMenu === 'KATALOG' ? (
             <CmsCatalogManager />
+          ) : activeMainMenu === 'RIWAYAT' ? (
+            <CmsLeadsTracker />
           ) : (
             <CmsEditorForm
               activeSubMenu={activeSubMenu}
